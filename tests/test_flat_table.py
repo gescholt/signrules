@@ -1,20 +1,17 @@
 """
 The flat sign table (a list indexed by basis id, UNKNOWN = 0) and the search statistics it must
-reproduce.  The golden numbers were recorded with the dict-based table of commit 47f03cf before the
-change: same propagators, same priority levels, same branching order, hence the same trees.
+reproduce.  The golden numbers were recorded with the earlier dict-based table (feasible_ecologies
+history, 2026-10) before the change: same propagators, same priority levels, same branching order, hence the same trees.
 """
 import json
-import sys
-from pathlib import Path
 
 import numpy as np
 from signrules.data import DATA_DIR
 import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
-from signrules.patterns import ELEVEN  # noqa: E402
+from signrules.patterns import ELEVEN
 
-from signrules import (Ecology, complete, UNKNOWN, index, build_relations,  # noqa: E402
+from signrules import (Ecology, complete, UNKNOWN, index, build_relations,
                            build_relation_ids, propagate, violates)
 
 # name -> ((root kill, nodes, conflicts, completions) under R1,R2n, the same under all rules)
@@ -40,7 +37,7 @@ GOLDEN_N5 = {
     1031600: (False, 59, 0, 1, 103),
     3636688: (False, 69, 0, 1, 125),
 }
-# the same for five open n = 6 patterns of signrules/data/n6/extension_screen.jsonl (recorded 2026-10-20 with
+# the same for five open n = 6 patterns of signrules/data/n6/extension_screen.jsonl (recorded with
 # scripts/rule_ablation.py, variant "all"; the full 237-pattern record is signrules/data/rule_ablation/all.jsonl)
 GOLDEN_N6 = {
     15518791496: (False, 188, 29, 1, 723),

@@ -75,6 +75,12 @@ def _lines(label, size: float, color: str) -> List[Tuple[str, float, str]]:
 
 
 class Diagram:
+    """A graph of boxed nodes with mathtext labels: laid out by Graphviz (``dot -Tjson``), drawn with matplotlib.
+
+    Build it with ``node``, ``edge``, ``cluster`` and ``legend_item``, then ``save(stem)`` writes ``stem.png``,
+    ``stem.pdf`` and a plain-text ``stem.dot``.
+    """
+
     def __init__(self, rankdir: str = "TB", nodesep: float = 0.22, ranksep: float = 0.4,
                  fontsize: float = 10, title: Optional[Line] = None, title_size: float = 11):
         self.rankdir, self.nodesep, self.ranksep, self.fontsize = rankdir, nodesep, ranksep, fontsize
@@ -218,9 +224,11 @@ class Diagram:
         return "\n".join(g)
 
     def to_dot(self) -> str:
+        """Graphviz source with plain-text labels."""
         return self._dot_source(plain_labels=True)
 
     def layout(self) -> dict:
+        """Node positions and edge splines from ``dot -Tjson`` (cached)."""
         if self._layout is not None:
             return self._layout
         if shutil.which("dot") is None:
@@ -274,6 +282,7 @@ class Diagram:
         return MplPath(verts, codes), (end or verts[-1])
 
     def draw(self, dpi: int = 170):
+        """Draw the laid-out diagram with matplotlib; returns the figure."""
         import matplotlib.pyplot as plt
         style.use_math_fonts()
         lay = self.layout()

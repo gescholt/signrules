@@ -6,16 +6,15 @@ how many further signs the propagation forced, how many stay open, and whether t
 completion or a conflict (with the rule).  This script plots the tree with matplotlib (PNG) and,
 if plotly is installed, as an interactive HTML page with hover details, without Graphviz.
 
-    python scripts/search_trees_n4.py                       # the built-in cases into signrules/data/n4/trees/
+    python scripts/search_trees_n4.py                       # the built-in cases into out/n4_trees/
     python scripts/search_trees_n4.py --only S-d --rules R1,R2n --out out/
     python scripts/search_trees_n4.py --n3                  # an open three-species pattern
     python scripts/search_trees_n4.py --only A-c --rules R1,R2 --no-labels   # 647 nodes
 
-Built-in cases: the eleven candidates of Meng et al. under a chosen rule set (all rules kill them at
+Built-in cases: the eleven proved-impossible patterns of Meng et al. / Çelik–Isoldi–Portakal–Zucal under a chosen rule set (all rules kill them at
 the root, so the interesting trees come from the weaker sets R1,R2n and R1,R2), and an open n = 3 pattern.
 """
 
-import sys
 import argparse
 from pathlib import Path
 

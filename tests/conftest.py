@@ -1,4 +1,4 @@
-"""The tests import two scripts (sign_correlations_exact, r4_subsumption) as modules."""
+"""The tests import three scripts as modules: sign_correlations_exact, r4_subsumption, rule_ablation."""
 import sys
 from pathlib import Path
 

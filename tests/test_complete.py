@@ -3,14 +3,12 @@ Regression tests for the search and the derivation graphs: the documented result
 docs/SIGNRULES.md §4 (the eleven n = 4 kills, the R1,R2n ablation counts) and the
 Graphviz renderers.  Everything here runs in well under a second per case.
 """
-import sys
-from pathlib import Path
 
 import pytest
 
-from signrules.patterns import ELEVEN  # noqa: E402
+from signrules.patterns import ELEVEN
 
-from signrules import Ecology, complete, certificate_dot, completion_dot, UNKNOWN  # noqa: E402
+from signrules import Ecology, complete, certificate_dot, completion_dot, UNKNOWN
 
 
 @pytest.mark.parametrize("name", list(ELEVEN))
@@ -28,7 +26,7 @@ def test_eleven_killed_at_root(name):
     ("S-e {0,1}|{2,3}, both obligate", 64),
 ])
 def test_ablation_counts_r1_r2n(name, count):
-    """Weak-completion counts of the Grassmannian paper's algorithm (the 3-term conflicts below the root used to crash)."""
+    """Weak-completion counts of the algorithm of the Annals paper (R1 + R2n), as quoted in Çelik–Isoldi–Portakal–Zucal."""
     a, B = ELEVEN[name]
     res = complete(Ecology(a, B), use=("R1", "R2n"))
     assert res.root_conflict is None

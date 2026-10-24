@@ -3,29 +3,30 @@ Search trees and certificates for the five-species ecologies proved impossible.
 
 The 21 kills of the n = 5 screen (`killed_patterns.json`) all die at the root under the full rule
 set, so their search tree is a single node and the proof is the certificate DAG.  Under the classical
-rules R1+R2n (feasibility + weak stability, the algorithm of the Grassmannian paper) they survive
+rules R1+R2n (feasibility + weak stability, the algorithm of the Annals paper) they survive
 root propagation with 150–175 open signs and the branching search finds completions without end.
 This script writes, for each selected pattern,
 
-  <id>_certificate.png/.pdf/.dot   the root kill under all rules (derivation DAG)
-  <id>_R1-R2n.png/.html            the classical search tree, stopped after --max completions
-                                   (matplotlib PNG, plotly HTML)
-  <id>_<rules>.png/.html      optionally the tree under another rule set (--rules)
+  <id:02d>_certificate.png/.pdf/.dot   the root kill under all rules (derivation DAG)
+  <id:02d>_R1-R2n.png/.html            the classical search tree, stopped after --max completions
+                                       (matplotlib PNG, plotly HTML)
+  <id:02d>_<rules>.png/.html           optionally the tree under another rule set (--rules)
+
+into --out (default out/n5_trees).
 
     python scripts/search_trees_n5.py                         # the ten kills not covered by the papers' theorems
     python scripts/search_trees_n5.py --ids 21 7 --max 16     # chosen patterns
     python scripts/search_trees_n5.py --rules R1,R2,R5 --max-nodes 300
 """
 
-import sys
 import json
 import argparse
 from pathlib import Path
 
 
 from signrules import (Ecology, complete, write_certificate, search_tree_text,
+                       save_search_tree_png, save_search_tree_html)
 from signrules.data import DATA_DIR
-                           save_search_tree_png, save_search_tree_html)
 
 NEW_TEN = [2, 3, 4, 5, 6, 15, 16, 17, 18, 19]     # not covered by Theorems 3.1–3.6
 

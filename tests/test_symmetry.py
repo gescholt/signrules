@@ -2,17 +2,15 @@
 Relabelling symmetry: the stabilizer acts on sign tables, the rules commute with it, and
 complete(symmetry=True) keeps the verdicts and finds every completion up to the stabilizer.
 """
-import sys
-from pathlib import Path
 
 import pytest
 
-from signrules.patterns import ELEVEN  # noqa: E402
+from signrules.patterns import ELEVEN
 
-from signrules import Ecology, complete, completion_dot  # noqa: E402
-from signrules.engine import Engine  # noqa: E402
-from signrules.patterns import random_pattern  # noqa: E402
-from signrules.symmetry import (pattern_stabilizer, stabilizer_actions, expand_orbits,  # noqa: E402
+from signrules import Ecology, complete, completion_dot
+from signrules.engine import Engine
+from signrules.patterns import random_pattern
+from signrules.symmetry import (pattern_stabilizer, stabilizer_actions, expand_orbits,
                                     orbit_representatives)
 
 

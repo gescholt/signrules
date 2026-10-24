@@ -30,8 +30,8 @@ Outcomes
   (rendered by ``certificate.completion_dot``).
 
 ``use`` selects the rules by name (see ``Ecology.RULES``); ``("R1", "R2n")``
-reproduces the feasibility + weak-stability algorithm of the Grassmannian
-paper, and ``()`` runs the chirotope propagation alone.
+reproduces the feasibility + weak-stability algorithm of the Annals paper
+(Çelik–Haas–Scholten–Wang–Zucal, Ann. Comb. 2026), and ``()`` runs the chirotope propagation alone.
 """
 
 import random
@@ -98,6 +98,7 @@ class SearchResult:
         self.assumed: Dict[int, int] = {}          # the extra hypotheses of complete(assume=...), by basis id
 
     def summary(self) -> str:
+        """One line: the root conflict, or completions / nodes / pruned branches (and whether the search stopped early)."""
         if self.root_conflict:
             return f"impossible at the root ({self.root_conflict})"
         tail = " (search stopped early)" if self.stopped else ""

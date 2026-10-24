@@ -1,26 +1,23 @@
 """
-complete(root_only=...) and complete(stats=True): the ablation switches of bead Python-3r8.
+complete(root_only=...) and complete(stats=True): the ablation switches used by scripts/rule_ablation.py.
 
 root_only keeps the propagators registered (same watcher counts, same branching order) and stops
 waking them below the root; stats counts runs, signs and conflicts per rule.  Neither may change
 the search when off, and root_only may never reject a realized sign table.
 """
 import json
-import sys
-from pathlib import Path
 
 import numpy as np
 from signrules.data import DATA_DIR
 import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
-from signrules.patterns import ELEVEN  # noqa: E402
+from signrules.patterns import ELEVEN
 
-from signrules import Ecology, complete, Conflict  # noqa: E402
-from signrules.engine import Engine  # noqa: E402
-from signrules.patterns import random_pattern  # noqa: E402
-from test_flat_table import GOLDEN_N5, stats  # noqa: E402
-from test_soundness import random_feasible_stable  # noqa: E402
+from signrules import Ecology, complete, Conflict
+from signrules.engine import Engine
+from signrules.patterns import random_pattern
+from test_flat_table import GOLDEN_N5, stats
+from test_soundness import random_feasible_stable
 
 
 def n5_pattern(code):

@@ -4,16 +4,13 @@ from a table with extra signs, and deciding whether two Plücker coordinates are
 completion without enumerating them.
 """
 import itertools
-import sys
-from pathlib import Path
 
 import numpy as np
 import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
-from sign_correlations_exact import analyse, prove_pair  # noqa: E402
+from sign_correlations_exact import analyse, prove_pair
 
-from signrules import Ecology, complete  # noqa: E402
+from signrules import Ecology, complete
 
 HUB = ([-1, -1, -1], [[1, 1, -1], [1, 1, -1], [-1, -1, 1]])     # the obligate hub (species 2) with competing satellites
 F, G = ((0, 2), (0, 1)), ((1, 2), (0, 1))

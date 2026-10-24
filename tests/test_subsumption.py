@@ -1,5 +1,5 @@
 """
-R4 and R6 are subsumed (bead Python-7d3): on a table closed under the other rules they force nothing.
+R4 and R6 are subsumed: on a table closed under the other rules they force nothing.
 
 R6(a) can only fire on a 2×2 block (a k×k matrix without zero entries has permutation terms of both
 signs for k ≥ 3), and there Sylvester's identity is a 3-term Grassmann–Plücker relation; R6(b) is the
@@ -12,17 +12,13 @@ propagation R4 is subsumed only up to one branching (test_r4_subsumption.py has 
 which it fires after the other rules, and the exhaustive check from its premises).
 """
 import random
-import sys
-from pathlib import Path
 
 import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
-
-from signrules import Ecology, Conflict  # noqa: E402
-from signrules.engine import Engine  # noqa: E402
-from signrules.patterns import random_pattern  # noqa: E402
-from signrules.plucker_index import UNKNOWN  # noqa: E402
+from signrules import Ecology, Conflict
+from signrules.engine import Engine
+from signrules.patterns import random_pattern
+from signrules.plucker_index import UNKNOWN
 
 ALL = Ecology.ALL_RULES
 

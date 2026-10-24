@@ -1,19 +1,17 @@
 """
-R8 (real eigenvalue): the benefactor-permutation patterns of docs/tex/sign_rules.tex Prop. 6.6(c).
-The proposition is checked numerically, and R8 is checked never to kill an n = 3 pattern that
-R1-R7 leave open (all of those are certified possible by tropical witnesses).
+R8 (real eigenvalue): the benefactor-permutation patterns (scripts/families.py, cases (c) and (d)).
+The statement is checked numerically, and R8 is checked never to kill an n = 3 pattern that
+R1-R7 leave open (all of those are certified possible by the tropical witnesses of feasible_ecologies).
 """
 import itertools
-import sys
-from pathlib import Path
 
 import numpy as np
 import pytest
 
-from signrules.patterns import parity_pattern  # noqa: E402
+from signrules.patterns import parity_pattern
 
-from signrules import Ecology, complete  # noqa: E402
-from signrules import labels as L  # noqa: E402
+from signrules import Ecology, complete
+from signrules import labels as L
 
 PARITY_K2 = parity_pattern(5, [[0, 1], [2, 3]], [4])
 
@@ -67,7 +65,7 @@ def test_r8_kills_nothing_that_r1_to_r7_leave_open_at_n3():
     assert fired > 0
 
 
-# ---------------------------------------------------------------- Prop. 6.6(d): one wrong growth sign
+# ---------------------------------------------------------------- case (d): one wrong growth sign
 
 def _flip(pattern, i):
     a, B = pattern
@@ -104,13 +102,14 @@ def test_one_wrong_sign_patterns_have_a_negative_real_eigenvalue(pattern):
         C = _sample(a, B, rng)
         ev = np.linalg.eigvals(C)
         assert (ev.real < 0).any()                                   # never positive stable
-        if np.linalg.det(C) > 0:                                     # Prop. 6.6(d): a negative real eigenvalue
+        if np.linalg.det(C) > 0:                                     # case (d): a negative real eigenvalue
             assert any(abs(e.imag) < 1e-9 * abs(e) and e.real < 0 for e in ev)
 
 
 def test_one_wrong_sign_needs_even_cycles():
     """One wrong growth sign with k odd (obligate 3-cycle, one fixed point): R8 stays silent, and the
-    pattern is possible (it has a tropical witness: 3cycle with one species growing is in the n=4 census)."""
+    pattern (all four species obligate, a 3-cycle under a species benefiting from everyone) is possible: it has a
+    tropical witness in feasible_ecologies."""
     a, B = _flip(parity_pattern(4, [[0, 1, 2]], [3]), 3)              # (-,-,-,-), k = 1
     assert complete(Ecology(a, B), use=("R8",), max_nodes=0).root_conflict is None
     a, B = _flip(parity_pattern(5, [[0, 1], [2, 3]], [4]), 0)
@@ -135,7 +134,7 @@ def _twisted(a, B):
 
 
 def test_r8_with_one_wrong_sign_kills_nothing_open_at_n4():
-    """Every n = 4 class that R1-R7 leave open has a tropical witness, so R8 must not fire on any of
+    """Every n = 4 class that R1-R7 leave open has a tropical witness (feasible_ecologies), so R8 must not fire on any of
     them (exhaustive over the 65,536 four-species patterns)."""
     rest = [r for r in Ecology.ALL_RULES if r != "R8"]
     fired = checked = 0

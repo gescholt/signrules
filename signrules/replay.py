@@ -57,6 +57,7 @@ class ReplayError(Exception):
 
 @dataclass
 class ReplayReport:
+    """Outcome of a replay: ``ok``, a message, the number of steps verified and the steps per rule."""
     ok: bool
     message: str
     steps: int = 0                                  # steps verified
@@ -660,7 +661,9 @@ class Replayer:
 
 
 def replay_certificate(a_signs, B_signs, steps, conflict: str, conflict_premises) -> ReplayReport:
-    """Replay a certificate given as ``certificate_steps`` returns it (steps in basis form) plus the conflict."""
+    """Replay ``steps`` (as returned by ``certificate_steps``, in basis form) and the final ``conflict`` with its
+    ``conflict_premises`` for the pattern ``(a_signs, B_signs)``, re-deriving every step from the identity or
+    inequality it names."""
     return Replayer(a_signs, B_signs).replay(steps, conflict, conflict_premises)
 
 

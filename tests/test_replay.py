@@ -1,11 +1,7 @@
 """Tests for signrules/replay.py: independent replay of impossibility certificates."""
-import sys
-from pathlib import Path
 
 import numpy as np
 import pytest
-
-ROOT = Path(__file__).resolve().parents[1]
 
 from signrules import Ecology, complete, replay_kill, replay_certificate
 from signrules.certificate import certificate_steps

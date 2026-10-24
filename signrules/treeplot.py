@@ -187,6 +187,7 @@ def plot_search_tree(eco: Ecology, result: SearchResult, ax=None, labels="auto",
 
 
 def save_search_tree_png(eco: Ecology, result: SearchResult, path: str, dpi: int = 130, **kw) -> None:
+    """Draw the search tree with matplotlib (no Graphviz) and save it as PNG; keyword arguments as ``plot_search_tree``."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -262,5 +263,6 @@ def search_tree_plotly(eco: Ecology, result: SearchResult, plucker: bool = True,
 
 
 def save_search_tree_html(eco: Ecology, result: SearchResult, path: str, **kw) -> None:
+    """Write the interactive plotly page of the search tree (node record on hover); needs the ``html`` extra."""
     fig = search_tree_plotly(eco, result, **kw)
     fig.write_html(path, include_plotlyjs="cdn")

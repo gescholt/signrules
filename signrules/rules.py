@@ -68,15 +68,17 @@ R7  tope           the complete sign-level content of feasibility.  The sign
                    n+1 products T(e_k) C(e_k) are not all equal.  This is the
                    oriented-matroid Farkas lemma; R2 is a special case.
 R8  real_eig       if a twist s and a permutation σ ≠ id make S B P_σ a Z-matrix with
-                   s·a > 0 (R4 on the whole matrix, M-matrix case), then
-                   −diag(x*) B has a positive real eigenvalue: the pattern is
-                   impossible.  (D_t = S B X P_σ + t S P_σ stays a Z-matrix for
-                   t ≥ 0; its least real eigenvalue is > 0 at t = 0 and ≤ 0 for
-                   large t, so D_{t₁} = S (B X + t₁ I) P_σ is singular for
-                   some t₁ > 0 and −t₁ is an eigenvalue of B X.)
+                   s·a > 0 (R4 on the whole matrix, M-matrix case), or with
+                   s_i a_i < 0 for exactly one species i and σ having an even
+                   number of cycles, then −diag(x*) B has a positive real
+                   eigenvalue: the pattern is impossible.  (D_t = S B X P_σ + t S P_σ
+                   stays a Z-matrix for t ≥ 0; its least real eigenvalue is > 0 at
+                   t = 0 and ≤ 0 for large t, so D_{t₁} = S (B X + t₁ I) P_σ is
+                   singular for some t₁ > 0 and −t₁ is an eigenvalue of B X.  With
+                   one wrong sign D_0 is still an M-matrix when k is even.)
 
-R7 and R8 are not in the paper; R1–R6 correspond to Çelik–Isoldi–Portakal–Zucal, "Stable Coexistence in
-Ecologies and Games" as follows: R3 ↔ Theorems 3.1–3.2, R4 ↔ Theorems 3.4–3.6 and the
+R7 and R8 are not in the papers; R1–R6 correspond to Çelik–Isoldi–Portakal–Zucal, "Stable Coexistence in
+Ecologies and Games" (arXiv:2609.09286) as follows: R3 ↔ Theorems 3.1–3.2, R4 ↔ Theorems 3.4–3.6 and the
 Schur steps of Lemmas 3.8–3.10, R2/R5/R6 ↔ the Cramer, Laplace and "forced
 sign" steps inside those proofs.
 
@@ -89,7 +91,7 @@ opposite sign conflicts at their fixpoint, checked exhaustively from R4's premis
 to symmetry at n = 6 (scripts/r4_subsumption.py), and the search never fires it (censuses).
 ``search.complete`` therefore idles them by default (their propagators stay registered for the
 branching order); they remain here for reduced rule sets, the ladders, the certificates that cite
-them and the paper's proofs.
+them and the proofs of that paper.
 """
 
 from functools import lru_cache
@@ -812,7 +814,7 @@ class Ecology:
     ALL_RULES = ("R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8")
 
     def rule_cramer_full(self, chi, log) -> bool:
-        """R2 restricted to J = [n]: the feasibility inequalities of the original algorithm."""
+        """R2 restricted to J = [n]: the feasibility inequalities of the algorithm of the Annals paper (R1 + R2n)."""
         return self.rule_cramer(chi, log, full_system_only=True)
 
     def apply_rules(self, chi, log, use: Sequence[str] = ALL_RULES):

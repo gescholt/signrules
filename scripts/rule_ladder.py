@@ -18,7 +18,6 @@ Writes signrules/data/rule_ladder.jsonl (one record per (n, rule set, pattern)) 
 docs/rule_ladder_table.tex (rows = rule sets, columns = root / search / open per n).
 """
 
-import sys
 import json
 import time
 import argparse
@@ -30,8 +29,8 @@ ROOT = Path(__file__).resolve().parents[1]
 import numpy as np
 from signrules.data import DATA_DIR
 
-# R4 and R6 are subsumed by the other rules (docs/SIGNRULES.md "R4 and R6 are subsumed", bead Python-7d3)
-# and no longer in the ladder; the earlier rows (R1,R4), (R1,R6) are in git history.
+# R4 and R6 are subsumed by the other rules (docs/SIGNRULES.md "R4 and R6 are subsumed") and no longer in
+# the ladder (the rows (R1,R4), (R1,R6) of earlier versions were dropped).
 LADDER = [("R1", "R2n"), ("R1", "R2"), ("R1", "R7"),
           ("R1", "R2", "R3", "R5", "R7"), ("R1", "R2", "R3", "R5", "R7", "R8")]
 

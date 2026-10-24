@@ -19,9 +19,11 @@ impossible or trivial; ``run`` runs the sign rules (root, then branching) on eac
 
 The (n-1)-species impossible classes (``base``):
   census  every class of canonical_classes(n-1) on which complete() finds no completion; complete
-          when n-1 <= 4, since the rules and the tropical witnesses decide every pattern there
-  known   the 24 minimal impossible five-species classes of signrules/data/n5/extension_not_possible.jsonl
-          (n = 6 only); complete, since the n = 5 screen is
+          when n-1 <= 4, since the rules and the tropical witnesses of the repository feasible_ecologies
+          decide every pattern there
+  known   the 24 minimal impossible five-species classes, the killed_root rows of
+          signrules/data/n5/extension_screen.jsonl (n = 6 only); complete, since the n = 5 screen
+          decided every candidate
   FILE    a JSON-lines file with fields a, B (e.g. the impossible classes of a previous run)
 
     signrules-screen 5 --workers 12                  # from the n=4 census
@@ -41,7 +43,7 @@ from typing import List, Optional, Sequence, Tuple
 
 import numpy as np
 
-from .data import DATA_DIR, read_jsonl
+from .data import DATA_DIR, read_jsonl, root_kills
 from .patterns import canonical, canonical_classes, decode, encode, key, perms, trivial
 
 Base = List[Tuple[list, np.ndarray]]
@@ -66,7 +68,7 @@ def base_classes(n: int, base: str, workers: int = 4) -> Base:
     if base == "known":
         if m != 5:
             raise SystemExit("--base known is the five-species list (n = 6)")
-        return [(p["a"], np.array(p["B"])) for p in read_jsonl(DATA_DIR / "n5" / "extension_not_possible.jsonl")]
+        return [(p["a"], np.array(p["B"])) for p in root_kills(5)]
     pats = read_jsonl(base)
     return [(p["a"], np.array(p["B"])) for p in pats if len(p["a"]) == m and not trivial(p["a"], p["B"])]
 
@@ -159,6 +161,7 @@ def run(n: int, base: Optional[str] = None, workers: int = 4, max_nodes: int = 2
 
 
 def main(argv: Optional[Sequence[str]] = None):
+    """Command line of the screen (``signrules-screen``)."""
     from pathlib import Path
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("n", type=int)

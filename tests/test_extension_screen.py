@@ -1,12 +1,8 @@
 """The extension screen (signrules.screen): canonical forms and the n=5 candidate list."""
 
-import sys
 import random
-from pathlib import Path
 
 import numpy as np
-
-ROOT = Path(__file__).resolve().parents[1]
 
 from signrules.screen import base_classes, candidates
 from signrules.patterns import canonical, decode, encode, key

@@ -1,7 +1,7 @@
 """
 One palette for every drawing of the package.
 
-Colour carries exactly two meanings:
+Colour carries exactly three meanings:
 
 * **sign** — red is positive, blue is negative — for entries of B (competition / mutualism in the
   interaction graphs), for Plücker coordinates in derivation graphs, and for the branch taken in a
@@ -10,7 +10,7 @@ Colour carries exactly two meanings:
   (black ⊥), a completion (green), an unexplored subtree (grey);
 * **rule** — one hue per rule (``RULE_COLORS``): the headline of a rule box in a derivation
   graph, the ⊥ leaf that a rule closes in a search tree, the rule's box in the overview diagram.
-  None of these hues is a red or a blue.
+  None of these hues is the red or the blue of the signs.
 
 Everything else (matrices, arrows, hulls) is greyscale or a pale tint, so that the sign colours
 are the only thing that jumps out.  Where a figure needs to point at a *subset* (chosen columns
@@ -46,18 +46,22 @@ RULE_COLORS = {"GP": "#6f6f6f", "R1": "#c98a00", "R2": "#3aa89a", "R3": "#8c6d1f
 
 
 def rule_color(rule: str) -> str:
+    """The hue of a rule (``RULE_COLORS``), ink colour for anything else."""
     return RULE_COLORS.get(rule, INK)
 
 
 def sign_ink(sign) -> str:
+    """Text and line colour of a sign: red for +, blue for −."""
     return POS if sign > 0 else NEG
 
 
 def sign_tint(sign) -> str:
+    """Fill colour of a sign: pale red for +, pale blue for −."""
     return POS_TINT if sign > 0 else NEG_TINT
 
 
 def sign_line(sign) -> str:
+    """Edge colour of a sign in a search tree: red for +, blue for −."""
     return POS_LINE if sign > 0 else NEG_LINE
 
 

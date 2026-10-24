@@ -1,5 +1,5 @@
 """
-R4 is subsumed one branching step deep, exhaustively at n = 3, 4 (bead Python-jr9).
+R4 is subsumed one branching step deep, exhaustively at n = 3, 4.
 
 The propagators are monotone, so it suffices to start from the minimal table on which R4 applies (its
 premises) and check the closure under the other rules against R4's conclusions: every principal and
@@ -17,18 +17,14 @@ negative when the 1 x 1, 2 x 2 and 4 x 4 ones are positive; the opposite sign is
 deeper (an R2 Cramer conflict).  The census of whole search trees (test_subsumption.py) shows the DFS,
 which decides small minors first, never reaches such a table.
 """
-import sys
-from pathlib import Path
 
 import numpy as np
 import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
-
-import r4_subsumption as R  # noqa: E402
-from signrules import Ecology, Conflict  # noqa: E402
-from signrules.engine import Engine  # noqa: E402
-from signrules.plucker_index import UNKNOWN  # noqa: E402
+import r4_subsumption as R
+from signrules import Ecology, Conflict
+from signrules.engine import Engine
+from signrules.plucker_index import UNKNOWN
 
 OTHERS = tuple(r for r in Ecology.ALL_RULES if r != "R4")
 

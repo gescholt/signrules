@@ -6,6 +6,10 @@ Live terminal dashboard of one sign-completion search.
     python -m signrules.livesearch --random 5 --max-nodes 5000 --html tree.html   # a random pattern (--seed S to repeat one)
     python -m signrules.livesearch                    # prompts
 
+The console script ``signrules-live`` is the same program.  It needs the ``live`` extra
+(``pip install -e ".[live]"``: rich for the dashboard, questionary for the menus).  Write ``--a=-1,...``
+with ``=``: a value starting with ``-`` is otherwise read as an option.
+
     from signrules.livesearch import LiveSearch
     with LiveSearch(eco, use) as live:
         result = complete(eco, use=use, progress=live)
@@ -37,6 +41,7 @@ from rich.table import Table
 from rich.text import Text
 
 from . import labels as L
+from .patterns import random_pattern  # re-exported: tests and scripts import it from here
 from . import style
 from .rules import Ecology
 from .search import complete
@@ -256,15 +261,12 @@ def _presets():
     return out
 
 
-from .patterns import random_pattern  # noqa: E402  (kept here for compatibility)
-
-
 # ------------------------------------------------------------------ the interactive picker (questionary)
 
 RULE_NOTES = {
     "R1": "stability: det B > 0, some principal k-minor positive for every k",
     "R2": "Cramer on every subsystem: x*_j det B_JJ as a signed sum of minors",
-    "R2n": "Cramer on the full system only (with R1: the Grassmannian paper's algorithm)",
+    "R2n": "Cramer on the full system only (with R1: the algorithm of Çelik–Haas–Scholten–Wang–Zucal, Ann. Comb. 2026)",
     "R3": "balanced patterns: S B S a Z-matrix forces its principal minors",
     "R4": "Z-blocks: M-matrix blocks under a signature and a permutation (subsumed by R2,R3,R5,R7,R8: idle by default)",
     "R5": "Laplace expansions of every minor",
@@ -283,10 +285,11 @@ def _signs(a) -> str:
 
 
 def _group(name: str) -> str:
-    if name.startswith("r8_"):
+    """The menu group of a preset."""
+    if name.startswith("r8_") or name == "parity_k2":
         return "killed by R8 alone, open under R1–R7"
     if name.startswith("n6_hard_"):
-        return "six species, possible: witnesses found late (MILP time limit), slow for the optimiser"
+        return "six species, possible (the certificates of possibility in feasible_ecologies were hard to find)"
     if name[:2] in ("S-", "A-"):
         return "four species, proved impossible"
     return "five species, open patterns near the kills"
@@ -355,10 +358,11 @@ def _pick(presets: dict):
 
 
 def main(argv=None):
+    """Command line of the dashboard (``signrules-live``)."""
     ap = argparse.ArgumentParser(description="Run one sign-completion search with a live terminal dashboard.")
     ap.add_argument("--a", help="growth-rate signs, e.g. -1,-1,-1")
     ap.add_argument("--B", help="signs of B, rows separated by /")
-    ap.add_argument("--preset", help="a named pattern of signrules.patterns: the n = 5, 6 presets (PATTERNS) or the eleven n = 4 candidates (ELEVEN)")
+    ap.add_argument("--preset", help="a named pattern of signrules.patterns: the n = 5, 6 presets (PATTERNS) or the eleven proved-impossible n = 4 patterns (ELEVEN)")
     ap.add_argument("--random", type=int, metavar="N", help="a random sign pattern on N species")
     ap.add_argument("--seed", type=int, default=None, help="seed for --random (printed when omitted)")
     ap.add_argument("--rules", default="all", help="'all' (default) or a list such as R1,R2n")
@@ -388,7 +392,7 @@ def main(argv=None):
             args.seed = random.randrange(10 ** 6)
         a, B = random_pattern(args.random, args.seed)
         name = args.name or f"random n={args.random}, seed {args.seed}"
-        print(f"random pattern (seed {args.seed}):  --a {','.join(map(str, a))} "
+        print(f"random pattern (seed {args.seed}):  --a={','.join(map(str, a))} "
               f"--B \"{'/'.join(','.join(map(str, r)) for r in B)}\"")
     elif args.preset:
         a, B = presets[args.preset]

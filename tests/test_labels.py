@@ -1,14 +1,12 @@
 """The figure text is generated from the run: parser and formats of signrules/labels.py."""
 
-import sys
-from pathlib import Path
 
 import numpy as np
 
 
-from signrules.patterns import ELEVEN                                    # noqa: E402
-from signrules import Ecology, complete, labels as L                 # noqa: E402
-from signrules.certificate import certificate_diagram, search_tree_diagram   # noqa: E402
+from signrules.patterns import ELEVEN
+from signrules import Ecology, complete, labels as L
+from signrules.certificate import certificate_diagram, search_tree_diagram
 
 
 def test_plucker_and_minor_labels():

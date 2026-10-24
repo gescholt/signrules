@@ -7,9 +7,10 @@ The eleven four-species ecologies conjectured impossible in Meng et al. (2025) a
     python scripts/impossible_eleven.py --rules R1,R2n  # feasibility + weak stability only:
                                                         # the counts quoted in the paper (64, 64, 1996, 1528, ...)
     python scripts/impossible_eleven.py --rules ""      # chirotope propagation alone
-    python scripts/impossible_eleven.py --engine sweep  # the kill logs of docs/SIGNRULES.md §4 (R3/R4/R6)
+    python scripts/impossible_eleven.py --engine sweep --idle ""   # kill logs that follow the paper's proofs
+                                                        # (R3 / R4 Z-blocks / R6 Schur steps; R4 and R6 are idle by default)
     python scripts/impossible_eleven.py --only S-d --rules R1,R2n --dot out/   # derivation graphs:
-                # certificate of every kill, first completion of every survivor (dot -Tpng out/*.dot)
+                # certificate of every kill, first completion of every survivor (.png, .pdf, .dot)
 """
 import argparse
 from pathlib import Path
@@ -26,6 +27,9 @@ def main():
     ap.add_argument("--engine", default="trigger", choices=["trigger", "sweep"],
                     help="propagation engine; 'sweep' gives the kill logs that follow the paper's proofs")
     ap.add_argument("--branching", default="conflict", choices=["conflict", "constrained", "first"])
+    ap.add_argument("--idle", default="auto",
+                    help="rules kept idle although in --rules: 'auto' (default) idles the subsumed R4 and R6 when the "
+                         "subsuming rules run; '' runs every rule named")
     ap.add_argument("--dot", default=None, help="directory for Graphviz derivation graphs (certificate or first completion)")
     args = ap.parse_args()
     use = tuple(r for r in args.rules.split(",") if r)
@@ -34,7 +38,8 @@ def main():
         if args.only and args.only not in name:
             continue
         eco = Ecology(a, B, name)
-        res = complete(eco, use=use, max_completions=args.max, engine=args.engine, branching=args.branching)
+        idle = args.idle if args.idle == "auto" else tuple(r for r in args.idle.split(",") if r)
+        res = complete(eco, use=use, max_completions=args.max, engine=args.engine, branching=args.branching, idle=idle)
         n_init = eco.initial_table().count(UNKNOWN)
         print(f"{name:45s} unknown signs: {n_init:2d} initially, "
               f"{'-' if res.root_unknowns is None else res.root_unknowns:>2} after root propagation | "

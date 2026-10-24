@@ -1,7 +1,5 @@
 """The live search dashboard: its counters agree with the search result."""
 import io
-import sys
-from pathlib import Path
 
 
 from rich.console import Console

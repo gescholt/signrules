@@ -1,10 +1,10 @@
 """
-Ablation of the Schur-block rules R4 and R6 (bead Python-3r8): rerun the searches of the
+Ablation of the Schur-block rules R4 and R6: rerun the searches of the
 extension screens under variants of the rule set and compare the trees.
 
 Patterns: the eleven of scripts/impossible_eleven.py and every row of
 signrules/data/n<n>/extension_screen.jsonl for n = 5, 6 (83 + 143).  Each search is what the screen
-runs (extension_screen._job): complete(max_nodes=0), then, if open at the root,
+runs (``signrules.screen.screen_job``): complete(max_nodes=0), then, if open at the root,
 complete(max_completions=1, max_nodes=20000).  Variants:
 
     all       every rule (the baseline)
@@ -16,7 +16,7 @@ complete(max_completions=1, max_nodes=20000).  Variants:
 
     python scripts/rule_ablation.py 4 5 6 --variant all root46 drop46 --workers 8
     python scripts/rule_ablation.py --compare signrules/data/rule_ablation/all.jsonl signrules/data/rule_ablation/root46.jsonl
-    python scripts/rule_ablation.py 3 4 --census --max-nodes 3000 --workers 20      # bead Python-7d3
+    python scripts/rule_ablation.py 3 4 --census --max-nodes 3000 --workers 20
     python scripts/rule_ablation.py 5 --census --random 20000 --max-nodes 2000 --workers 20
 
 Writes signrules/data/rule_ablation/<variant>.jsonl, one record per pattern: status, nodes, conflicts,
@@ -25,14 +25,15 @@ raised; at the root and below).  ``--compare`` joins two files on (n, name), lis
 whose verdict or tree differs, sums the seconds and the R4/R6 counts, and exits 1 on a changed
 verdict.
 
-``--census`` (bead Python-7d3) runs every pattern — all 512 at n = 3, the 3044 relabelling classes at
+``--census`` runs every pattern — all 512 at n = 3, the 3044 relabelling classes at
 n = 4, or ``--random COUNT`` patterns — under the full rule set with R4 and R6 really running
 (``idle=()``), whole trees up to ``--max-nodes`` and ``--max-completions``, and counts what R4 and R6
 contribute: they sit at the highest priority levels, so each of their runs sees a table closed under
 GP, R1, R2, R3, R5, R7, R8, and a nonzero count is a pattern where the other rules do not subsume
 them (docs/SIGNRULES.md, "R4 and R6 are subsumed"; none found).  Records census<n>[_random].jsonl,
-with the R4/R6 counts only; exit code 1 if any pattern fired.  The random census files for n = 5, 6
-are not committed (10 MB): the summaries are in the docs.
+with the R4/R6 counts only; exit code 1 if any pattern fired.  Shipped records: all.jsonl, root46.jsonl,
+drop46.jsonl, census3.jsonl, census4.jsonl; the random census files for n = 5, 6 are not committed (10 MB),
+their summary is in docs/SIGNRULES.md §3 ("R4 and R6 are subsumed").
 """
 
 import sys
@@ -41,9 +42,6 @@ import time
 import hashlib
 import argparse
 from multiprocessing import Pool
-from pathlib import Path
-
-ROOT = Path(__file__).resolve().parents[1]
 
 import numpy as np
 from signrules.data import DATA_DIR
@@ -168,7 +166,7 @@ def compare(base_path, other_path):
     return 1 if verdicts else 0
 
 
-# ------------------------------------------------------------------ census (bead Python-7d3)
+# ------------------------------------------------------------------ census
 
 def census_patterns(n, random_count, seed):
     """All 512 patterns at n = 3, the 3044 relabelling classes at n = 4, or a random sample."""
@@ -250,7 +248,7 @@ def main():
     ap.add_argument("--max-nodes", type=int, default=20000)
     ap.add_argument("--compare", nargs=2, metavar=("BASE", "OTHER"))
     ap.add_argument("--census", action="store_true",
-                    help="exhaustive census of R4/R6 activity under the full rule set (bead Python-7d3)")
+                    help="exhaustive census of R4/R6 activity under the full rule set")
     ap.add_argument("--max-completions", type=int, default=10 ** 9, help="census: completions per pattern")
     ap.add_argument("--random", type=int, default=0, metavar="COUNT", help="census: random patterns instead")
     ap.add_argument("--seed", type=int, default=0)

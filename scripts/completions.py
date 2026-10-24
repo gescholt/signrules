@@ -1,8 +1,8 @@
 """
-Sign completions of open five-species ecologies, with their derivation graphs.
+Sign completions of the preset patterns (``signrules.patterns.PATTERNS``, n = 5 and 6), with their derivation graphs.
 
-Root propagation leaves 248,415 of the 248,436 five-species ecologies open (docs/SIGNRULES.md §6).
-This script takes a few of them, runs the branching search until a couple of completions are
+Root propagation under R1–R6 leaves 248,415 of the 248,436 five-species ecologies open (docs/SIGNRULES.md §6;
+R8 closes three more).  This script takes the presets (a certificate is drawn for those killed at the root), runs the branching search until a couple of completions are
 found, and writes for each completion its derivation graph: the root propagation, then one band
 per branch choice with every Plücker sign it forces and the rule that forced it.  A completion is a
 sign-consistent table, not a proof of possibility.
@@ -10,11 +10,9 @@ sign-consistent table, not a proof of possibility.
     python scripts/completions.py                          # built-in patterns, 2 completions each
     python scripts/completions.py --max 3 --out out/n5     # write out/n5/<pattern>_completion<k>.png / .pdf / .dot
     python scripts/completions.py --only parity            # one pattern
-    python scripts/completions.py --a=-1,-1,-1,-1,1 --B=1,-1,1,1,1/1,1,-1,1,1/... --name mine   # your own
+    python scripts/completions.py --a=-1,-1,-1,-1,1 --B=1,-1,1,1,1/1,1,-1,1,1/... --name mine   # your own (five rows)
 
 Conventions as everywhere: b_ii > 0, B[i, j] < 0 means species j benefits species i.
-
-The patterns are ``signrules.patterns.PATTERNS``.
 """
 import argparse
 import time

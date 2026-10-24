@@ -2,9 +2,9 @@
 
 Two distinct minors f, g of B that satisfy sgn f = eps * sgn g in EVERY completion of a pattern (neither
 sign constant) vanish nowhere on the feasible-stable set S_sigma, which is then disconnected as soon as
-both sides are realized (docs/STABILITY_SETS_DIRECTIONS.md, section 7).  scripts/sign_correlations_exact.py
-reads the relation off an enumerated list of completions, which is exact only when the list is complete;
-at n >= 5 it never is.  This script proves the relation without enumerating:
+both sides are realized (the repository feasible_ecologies, docs/STABILITY_SETS_DIRECTIONS.md §7, whose
+``examples/sign_correlations.py`` reads the relation off an enumerated list of completions, exact only
+when the list is complete; at n >= 5 it never is).  This script proves the relation without enumerating:
 
 1. screen: a sample of completions (``--sample``, the first ones the search finds), made to vary in every
    free coordinate: a coordinate constant on the sample is either forced or unseen, and one search for a
@@ -25,7 +25,7 @@ Every basis of the Plücker index is a minor of B up to the fixed signs of the g
 
     python scripts/sign_correlations_exact.py 3                       # the 512 labelled patterns
     python scripts/sign_correlations_exact.py 4 --workers 20          # the 3044 classes up to relabelling
-    python scripts/sign_correlations_exact.py 4 --file signrules/data/n4/topology_retest.jsonl
+    python scripts/sign_correlations_exact.py 4 --file patterns.jsonl    # rows with a, B (e.g. the sampling files of feasible_ecologies)
 Output: one JSON line per pattern that is open under the rules, in --out (default
 signrules/data/n<n>/sign_correlations_exact.jsonl), and a summary on stdout.
 """
@@ -40,8 +40,7 @@ from pathlib import Path
 import numpy as np
 from signrules.data import DATA_DIR
 
-ROOT = Path(__file__).resolve().parents[1]
-from signrules import Ecology, complete                                    # noqa: E402
+from signrules import Ecology, complete
 
 FORBIDDEN = {1: ((1, -1), (-1, 1)), -1: ((1, 1), (-1, -1))}     # eps -> the (chi[S], chi[T]) with chi[T] != eps chi[S]
 
@@ -157,7 +156,7 @@ def patterns(n, file, splits):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("n", type=int)
-    ap.add_argument("--file", help="JSONL rows with a, B (signrules/data/n4/topology_random.jsonl, ...)")
+    ap.add_argument("--file", help="JSONL rows with a, B")
     ap.add_argument("--splits", action="store_true", help="with --file: only the rows whose sample graph split")
     ap.add_argument("--sample", type=int, default=2000, help="completions in the screening sample (0 = all)")
     ap.add_argument("--max-nodes", type=int, default=200000, help="node limit of each deciding search")

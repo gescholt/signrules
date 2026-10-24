@@ -1,8 +1,6 @@
 """The interactive tree viewer: per-node records and the generated HTML."""
 import json
 import re
-import sys
-from pathlib import Path
 
 
 from signrules import Ecology, complete

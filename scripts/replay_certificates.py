@@ -18,9 +18,6 @@ import json
 import time
 import argparse
 from multiprocessing import Pool
-from pathlib import Path
-
-ROOT = Path(__file__).resolve().parents[1]
 
 import numpy as np
 from signrules.data import DATA_DIR

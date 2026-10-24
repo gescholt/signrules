@@ -1,5 +1,5 @@
 """
-R4 is subsumed, exhaustively per n (bead Python-jr9).
+R4 is subsumed, exhaustively per n.
 
 The trigger engine's propagators are monotone: for tables T ⊆ T' (T' consistent), the closure of T is
 contained in the closure of T'.  So to show that on every table closed under the other rules R4 forces
@@ -24,8 +24,8 @@ one that the other rules leave open (at n = 5 already, P = ∅, |Q| = 4).  What 
 subsumption one branching step deeper: a conclusion of R4 missing from the closure is "ok by probe"
 when its opposite sign conflicts at the fixpoint of the other rules (for the notM case this is one
 table per ordering, all leading minors positive, which R4 itself rejects).  The search never needs R4
-then: branching on that minor refutes the wrong side immediately, and the census of whole trees shows
-that the DFS, which decides small minors first, never even reaches such a table.
+then: branching on that minor refutes the wrong side immediately, and the census of whole trees
+(``scripts/rule_ablation.py --census``, ``tests/test_subsumption.py``) shows that the DFS, which decides small minors first, never even reaches such a table.
 
 A configuration that fails is printed; with ``--others`` the failing ones are retried under the full rule
 set on explicit patterns (R2, R3, R5 and R8 read the pattern).  Writes signrules/data/r4_subsumption/<n>_*.json.
@@ -34,16 +34,12 @@ set on explicit patterns (R2, R3, R5 and R8 read the pattern).  Writes signrules
     python scripts/r4_subsumption.py 5 --workers 16 --wlog --rules R1,R7 --others --patterns 256
     python scripts/r4_subsumption.py 6 --workers 16 --symmetry --rules R1,R7 --others --patterns 64
 """
-import sys
 import json
 import time
 import random
 import argparse
 from itertools import combinations, permutations, product
 from multiprocessing import Pool
-from pathlib import Path
-
-ROOT = Path(__file__).resolve().parents[1]
 
 import numpy as np
 from signrules.data import DATA_DIR

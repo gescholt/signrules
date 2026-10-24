@@ -4,9 +4,10 @@ Lotka–Volterra sign pattern by propagating signs of the minors of B.
 
 Typical use::
 
-    from signrules import Ecology, complete
-    result = complete(Ecology(a_signs=[-1, -1, -1, -1], B_signs=B))
-    print(result.summary())          # "impossible at the root (R4 ...)" or the completions found
+    from signrules import Ecology, complete, ELEVEN
+    a, B = ELEVEN["S-a obligate mutualism"]
+    result = complete(Ecology(a, B))
+    print(result.summary())          # "impossible at the root (R3 balanced ...)", or how many completions were found
 
 See docs/SIGNRULES.md for the mathematics and rules.py for the rule catalogue.
 """

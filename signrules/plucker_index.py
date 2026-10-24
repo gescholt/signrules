@@ -133,7 +133,6 @@ class PluckerIndex:
         """
         Sign of every Plücker coordinate that is determined by the signs of the
         entries alone (all permutation terms of the minor agree), UNKNOWN otherwise.
-        Equivalent to EcologyCore.process_determinants, without sympy.
         """
         B = [[int(v) for v in row] for row in np.asarray(B_signs)]
         chi: Table = [UNKNOWN] * self.m

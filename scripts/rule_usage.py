@@ -12,16 +12,14 @@ that reports the contradiction, and then drops one rule at a time to see how man
     python scripts/rule_usage.py 4 --engine sweep  # the same with the sweep engine's certificates
 """
 
-import sys
 import argparse
 from collections import Counter
 from multiprocessing import Pool
-from pathlib import Path
 
 
-from signrules.patterns import canonical_classes  # noqa: E402
-from signrules import Ecology, complete  # noqa: E402
-from signrules.certificate import certificate_steps, GP_RULE  # noqa: E402
+from signrules.patterns import canonical_classes
+from signrules import Ecology, complete
+from signrules.certificate import certificate_steps, GP_RULE
 
 RULES = Ecology.ALL_RULES
 
@@ -55,10 +53,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("n", type=int, nargs="?", default=3)
     ap.add_argument("--engine", default="trigger", choices=["trigger", "sweep"])
-    ap.add_argument("--jobs", type=int, default=4)
+    ap.add_argument("--workers", type=int, default=4)
     args = ap.parse_args()
     classes = canonical_classes(args.n)
-    with Pool(args.jobs) as pool:
+    with Pool(args.workers) as pool:
         rows = pool.map(_job, [(c, args.engine) for c in classes], chunksize=8)
     roots = [r for r in rows if r["root"]]
     imp = [r for r in rows if r["impossible"]]

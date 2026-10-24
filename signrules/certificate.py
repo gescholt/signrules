@@ -22,7 +22,7 @@ matplotlib (``gvrender.Diagram``), so the same drawing is written as PNG, PDF an
   trees; ``search_tree_text`` prints it.
 
 Colour: red = positive, blue = negative (the fill of a sign node); the border says where the sign
-came from — thin grey: read off the entries; black: forced by a rule; dashed violet: a branch
+came from — thin grey: read off the entries; black: forced by a rule; dashed black: a branch
 choice.  Rule boxes are white, the contradiction is black.
 
 Usage::
@@ -224,6 +224,7 @@ def _write(d: Diagram, path: str) -> None:
 
 
 def write_certificate(eco: Ecology, result: SearchResult, path: str, **kw) -> None:
+    """Draw the certificate of a root kill to ``path``.png, .pdf and .dot (keyword arguments as ``certificate_diagram``)."""
     kw.pop("plucker", None)
     _write(certificate_diagram(eco, result, **kw), path)
 
@@ -366,12 +367,14 @@ def completion_diagram(eco: Ecology, result: SearchResult, index: int = 0, title
 
 
 def completion_dot(eco: Ecology, result: SearchResult, index: int = 0, **kw) -> str:
+    """Graphviz source of the derivation of completion ``index`` (keyword arguments as ``completion_diagram``)."""
     kw.pop("plucker", None)
     kw.pop("show_unused_initial", None)
     return completion_diagram(eco, result, index=index, **kw).to_dot()
 
 
 def write_completion(eco: Ecology, result: SearchResult, path: str, index: int = 0, **kw) -> None:
+    """Draw the derivation of completion ``index`` to ``path``.png, .pdf and .dot."""
     kw.pop("plucker", None)
     kw.pop("show_unused_initial", None)
     _write(completion_diagram(eco, result, index=index, **kw), path)
@@ -608,10 +611,12 @@ def search_tree_diagram(eco: Ecology, result: SearchResult, title=None, label_st
 
 
 def search_tree_dot(eco: Ecology, result: SearchResult, **kw) -> str:
+    """Graphviz source of the search tree (``complete(..., record_tree=True)``)."""
     kw.pop("plucker", None)
     return search_tree_diagram(eco, result, **kw).to_dot()
 
 
 def write_search_tree(eco: Ecology, result: SearchResult, path: str, **kw) -> None:
+    """Draw the search tree to ``path``.png, .pdf and .dot with Graphviz (``treeplot`` draws large trees without it)."""
     kw.pop("plucker", None)
     _write(search_tree_diagram(eco, result, **kw), path)

@@ -5,7 +5,10 @@ Interactive viewer of a sign-completion search tree: one self-contained HTML fil
     save_tree_viewer(eco, result, "tree.html", use=("R1", "R2n"))
 
     python -m signrules.treeview --a=1,-1,-1 --B=1,1,1/-1,1,1/-1,-1,1 --rules R1,R2n --out tree.html
-    python -m signrules.treeview                     # prompts for the pattern
+    python -m signrules.treeview                     # prompts for the pattern (needs the ``live`` extra)
+
+The console script ``signrules-tree`` is the same program; ``signrules-live --html FILE`` writes the
+same page after the dashboard.
 
 The page shows the binary search tree (edges red when the branch chose +, blue when it chose −;
 completions green, contradictions black squares framed in the colour of the rule that closed them,
@@ -128,12 +131,14 @@ def tree_data(eco: Ecology, result: SearchResult, use: Optional[Sequence[str]] =
 
 
 def tree_viewer_html(eco: Ecology, result: SearchResult, use: Optional[Sequence[str]] = None) -> str:
+    """The viewer page as a string (``result`` from ``complete(..., record_tree=True)``; ``use``: the rules it ran)."""
     data = tree_data(eco, result, use)
     payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
     return _TEMPLATE.replace("__TITLE__", html.escape(f"Sign tree · {data['name']}")).replace("__DATA__", payload)
 
 
 def save_tree_viewer(eco: Ecology, result: SearchResult, path: str, use: Optional[Sequence[str]] = None) -> None:
+    """Write the self-contained HTML viewer of a recorded search tree to ``path``."""
     with open(path, "w", encoding="utf-8") as fh:
         fh.write(tree_viewer_html(eco, result, use))
 
@@ -147,6 +152,7 @@ def _parse(a_str: str, B_str: str):
 
 
 def main(argv=None):
+    """Command line of the viewer (``signrules-tree``)."""
     ap = argparse.ArgumentParser(description="Write an interactive HTML viewer of a sign-completion search tree.")
     ap.add_argument("--a", help="growth-rate signs, e.g. 1,-1,-1")
     ap.add_argument("--B", help="signs of B, rows separated by /, e.g. 1,1,1/-1,1,1/-1,-1,1")
