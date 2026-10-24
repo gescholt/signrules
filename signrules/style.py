@@ -1,7 +1,8 @@
 """
 One palette for every drawing of the package.
 
-Colour carries exactly three meanings:
+Colour carries exactly three meanings (the interaction networks of ``network.py`` follow the
+article's ``\\econet`` instead: ``FREE_BG`` … ``LOSS_LINE``):
 
 * **sign** — red is positive, blue is negative — for entries of B (competition / mutualism in the
   interaction graphs), for Plücker coordinates in derivation graphs, and for the branch taken in a
@@ -24,6 +25,15 @@ import matplotlib
 POS, NEG = "#b8321e", "#1f4fa3"
 POS_TINT, NEG_TINT = "#f6d3cd", "#d2ddf5"
 POS_LINE, NEG_LINE = "#d0503a", "#3a6bd0"
+
+# interaction networks, as the article's \econet macro: node fill = growth sign, a benefit of i from j
+# (b_ij < 0) a dashed arrow i -> j, a pair that loses both ways a thin line (compet!60), one-way losses not drawn
+FREE_BG, OBLIGATE_BG = "#f9d4d1", "#cfdcf7"     # posbg / negbg: a_i > 0 free, a_i < 0 obligate
+FREE_FG, OBLIGATE_FG = "#8b1a1a", "#1c3f9e"     # posfg / negfg: the sign text on those fills
+BENEFIT = "#1f4fd6"                             # mutual
+LOSS = "#d62728"                                # compet
+LOSS_LINE = "#e67d7e"                           # compet!60 (60 % compet on white)
+NODE_EDGE = "#666666"                           # black!60
 
 # status colours
 CHOICE = "#222222"                 # a branch choice: dashed border in this colour

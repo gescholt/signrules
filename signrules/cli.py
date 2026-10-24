@@ -39,6 +39,15 @@ COMMANDS = {
                "every step from the identity or inequality it names (signrules.replay), without the engine.",
                "signrules replay --preset A-d\n"
                "signrules replay --preset parity_k2 --cert out/"),
+    "edit": ("edit a pattern as the sign matrix [diag(a) | B] with its network drawn live, then run it",
+             "Open the pattern editor: the n × 2n sign matrix [diag(a) | B] on the left (arrows move, space flips), "
+             "the interaction network on the right in the style of the article (pink free, blue obligate, dashed "
+             "blue arrow i → j where i benefits from j, red line where both lose), and below them the root verdict "
+             "and the library pattern it matches, recomputed after every change.  l opens the library, n changes "
+             "the number of species, r runs the search, e exports the network.  Needs the live extra (textual).",
+             "signrules edit\n"
+             "signrules edit --n 5\n"
+             "signrules edit --preset A-e"),
     "presets": ("list the named patterns (the eleven n = 4 patterns, the n = 5, 6 presets) with short ids",
                 "List the patterns that --preset accepts.  A preset is named by its short id (S-a … S-e, A-a … A-f, "
                 "parity_k2, ...) or any unambiguous prefix of its name.",
@@ -270,13 +279,56 @@ def cmd_presets(args, ap) -> int:
     return 0
 
 
+def cmd_edit(args, ap) -> int:
+    if not _interactive():
+        ap.error("the editor needs a terminal (stdin and stdout must be a tty)")
+    try:
+        from .editor import command_line, edit
+    except ImportError:
+        ap.error("the editor needs textual:  pip install -e \".[live]\"  (or pip install textual)")
+    if args.preset or args.a or args.B or args.random:
+        from .patterns import short_id
+        eco = pattern_from_args(args, ap)
+        name = short_id(eco.name) if args.preset and not args.name else eco.name
+        out = edit(list(eco.a), [list(map(int, r)) for r in eco.B], name)
+    else:
+        if not 2 <= args.n <= 7:
+            ap.error("--n: between 2 and 7 species")
+        out = edit(n=args.n)
+    if out is None:
+        return 1
+    a, B, name, action = out
+    line = command_line(a, B)
+    if action == "quit":
+        print(line)
+        return 0
+    sa, sB = line.split()[2].split("=", 1)[1], line.split()[3].split("=", 1)[1]
+    argv = ["tree" if action == "tree" else "run", f"--a={sa}", f"--B={sB}", "--name", name]
+    print("$ signrules " + " ".join(argv[:3]) + f" --name '{name}'")
+    return main(argv)
+
+
+def edited_pattern() -> Optional[dict]:
+    """The pattern of the editor as the menus' {"preset", "a", "B", "random"}; None without textual or on quit."""
+    try:
+        from .editor import edit
+    except ImportError:
+        return None
+    out = edit()
+    if out is None:
+        return None
+    a, B, _, _ = out
+    return {"preset": None, "random": None, "a": ",".join(map(str, a)), "B": "/".join(",".join(map(str, r)) for r in B)}
+
+
 def cmd_screen(args, ap) -> int:
     from .screen import run_args
     run_args(args)
     return 0
 
 
-HANDLERS = {"run": cmd_run, "tree": cmd_tree, "replay": cmd_replay, "presets": cmd_presets, "screen": cmd_screen}
+HANDLERS = {"run": cmd_run, "tree": cmd_tree, "replay": cmd_replay, "edit": cmd_edit, "presets": cmd_presets,
+            "screen": cmd_screen}
 
 
 # --------------------------------------------------------------------------- the parser
@@ -296,6 +348,10 @@ def build_parser() -> argparse.ArgumentParser:
         if name in ("run", "tree", "replay"):
             add_pattern_args(sp)
             add_rule_args(sp)
+        if name == "edit":
+            add_pattern_args(sp)
+            sp.add_argument("--n", type=int, default=4, help="number of species to start from, without a pattern "
+                                                           "(default 4: free competitors)")
         if name in ("run", "replay"):
             out = sp.add_argument_group("output")
             out.add_argument("--cert", metavar="DIR",

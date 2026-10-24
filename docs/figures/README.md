@@ -56,3 +56,6 @@ mathematics).
   by the number of coordinates still open there.
 * **Not shown**: node counts, numbers of open coordinates, "hypothesis" nodes, and prose captions
   — they belong in the text (or in the plotly hover), not on the figure.
+
+`network_A-e.png` / `.pdf` / `.tex`: the interaction network of A-e as `signrules edit` exports it (`e`),
+drawn by `signrules.network.save_network` in the style of the article's `\econet` macro.

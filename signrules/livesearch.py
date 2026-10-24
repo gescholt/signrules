@@ -327,7 +327,7 @@ def _pick_pattern(presets: dict):
         for n in names:
             a, _ = presets[n]
             choices.append(Choice(f"{n:<{width}}   n = {len(a)}   a = {_signs(a)}", value=n))
-    choices += [Separator("  other"), Choice(f"{'custom':<{width}}   type a and B", value="custom"),
+    choices += [Separator("  other"), Choice(f"{'custom':<{width}}   edit the sign matrix (or type a and B)", value="custom"),
                 Choice(f"{'random':<{width}}   a random pattern", value="random")]
     pattern = questionary.select("Pattern", choices=choices, **kw).ask()
     if pattern is None:
@@ -339,6 +339,10 @@ def _pick_pattern(presets: dict):
             return None
         out["random"] = int(n)
     elif pattern == "custom":
+        from .cli import edited_pattern
+        picked = edited_pattern()                         # the matrix editor, when textual is installed
+        if picked is not None:
+            return picked
         out["a"] = questionary.text("Growth-rate signs a (1,-1,... or +-...)", default="-1,-1,-1", **kt).ask()
         out["B"] = questionary.text("Signs of B (rows separated by /)", default="1,1,1/-1,1,1/-1,-1,1", **kt).ask()
         if out["a"] is None or out["B"] is None:

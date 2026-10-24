@@ -51,7 +51,7 @@ Not on PyPI; Python 3.10 or later.
 ```bash
 git clone git@github.com:gescholt/signrules.git && cd signrules
 pip install -e .                 # the package and the signrules command: numpy, matplotlib, networkx, rich
-pip install -e ".[all,dev]"      # + questionary (menus), plotly (HTML trees), pytest
+pip install -e ".[all,dev]"      # + questionary, textual (menus, editor), plotly (HTML trees), pytest
 pytest -q                        # about a minute
 ```
 
@@ -71,7 +71,7 @@ sign table is a flat list indexed by basis id with `+1`, `-1`, `UNKNOWN = 0`; `e
 
 ## Run
 
-One command, `signrules`, with five subcommands (`signrules --help` lists them, `signrules <command> --help`
+One command, `signrules`, with six subcommands (`signrules --help` lists them, `signrules <command> --help`
 gives the options and examples of each; `python -m signrules` is the same):
 
 | command | what it does |
@@ -79,12 +79,14 @@ gives the options and examples of each; `python -m signrules` is the same):
 | `run` | complete one pattern with a live dashboard; prints the verdict and, for a kill, the certificate |
 | `tree` | complete one pattern and write an interactive HTML viewer of the search tree |
 | `replay` | kill one pattern at the root and check its certificate with the independent replayer |
+| `edit` | edit a pattern as the sign matrix [diag(a) | B] with its network drawn live, then run it |
 | `presets` | list the named patterns (the eleven n = 4 patterns, the n = 5, 6 presets) with short ids |
 | `screen` | list the candidates for impossible n-species patterns (deletion lemma) and run the rules on each |
 
 ```bash
 signrules                                          # in a terminal: menus for everything
 signrules presets                                  # the named patterns: S-a … S-e, A-a … A-f, parity_k2, ...
+signrules edit --preset A-e                        # the sign matrix and its network; edit, then r to run
 signrules run --preset A-e                         # dashboard, then the verdict and the certificate
 signrules run --preset S-d --rules R1,R2n          # 64 completions: not decided by R1, R2n alone
 signrules run --a +--- --B "+-++/-+++/+++-/++-+"   # your own pattern (or --a=1,-1,-1,-1 --B=1,-1,1,1/...)
@@ -125,6 +127,22 @@ file or pipe, prints only the verdict. The tree viewer (`--html`, or `signrules 
 self-contained HTML file: click a node to see the signs it forced with their rules, what the known signs
 say about stability and feasibility, and every minor of `B`; at a contradiction it names the violated rule
 and its premises. The old names `signrules-live`, `signrules-tree`, `signrules-screen` still work.
+
+`signrules edit` (needs the `live` extra) shows the pattern as the n × 2n sign matrix `[diag(a) | B]`:
+move with the arrows, flip a sign with space or a click; `a_i` is the diagonal of the left block, `b_ii`
+stays `+`. Beside it the interaction network is drawn in the style of the article, and below, after every
+change, whether the pattern is trivial, which library pattern it equals up to relabelling, and the root
+verdict under all rules. `l` opens the library (the presets, the eleven four-species patterns, the 24 + 41
+minimal impossible five- and six-species patterns) with a preview of each, `n` changes the number of
+species, `r` runs the search on the edited pattern, `t` writes its tree viewer, `e` exports the network
+as png, pdf and the `\econet` call for the article, `?` lists the keys, `q` quits and prints the
+`signrules run` line of the pattern. In the menus, the pattern choice "custom" opens the same editor.
+
+<img src="docs/figures/network_A-e.png" width="220" alt="network of A-e">
+
+*The network of A-e as `e` exports it: pink nodes are free (a_i > 0), blue nodes obligate; a blue dashed
+arrow i → j means i benefits from j (b_ij < 0); a thin red line marks a pair that loses both ways; one-way
+losses are not drawn. `network.econet_tex` gives `\econet[4]{p,m,m,m}{1/2/b,2/3/b,3/1/b,0/1/c,0/2/c,0/3/c}`.*
 
 The scripts under `scripts/` are not needed to run the method: they reproduce the numbers of the papers
 (see *Results and how to reproduce them* below).
@@ -203,6 +221,8 @@ signrules/
   labels.py, style.py, gvrender.py, treeplot.py   the drawings (one vocabulary, one palette)
   cli.py              the signrules command: subcommands, pattern input, menus
   report.py           the verdict printed after a search: certificate table and replay
+  editor.py           signrules edit: the sign-matrix editor (textual)
+  network.py          the interaction network as the article's \econet: matplotlib, braille, TikZ
   treeview.py         self-contained HTML viewer of a search tree          (signrules tree)
   livesearch.py       live terminal dashboard of one search               (signrules run)
   screen.py           extension screen: candidates by the deletion lemma  (signrules screen)
