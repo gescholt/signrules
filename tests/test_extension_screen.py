@@ -36,4 +36,4 @@ def test_n5_candidates_contain_the_known_kills():
     assert (n_reps, len(cands)) == (2142, 83)
     found = {key(*decode(c, 5)) for c in cands}
     known = {key(a, B) for a, B in base_classes(6, "known", workers=1)}
-    assert len(known) == 22 and known <= found
+    assert len(known) == 24 and known <= found
