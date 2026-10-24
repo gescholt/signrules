@@ -1,0 +1,69 @@
+"""
+One palette for every drawing of the package.
+
+Colour carries exactly two meanings:
+
+* **sign** — red is positive, blue is negative — for entries of B (competition / mutualism in the
+  interaction graphs), for Plücker coordinates in derivation graphs, and for the branch taken in a
+  search tree;
+* **status** of a node that has no sign: a branch choice (dashed border), a contradiction
+  (black ⊥), a completion (green), an unexplored subtree (grey);
+* **rule** — one hue per rule (``RULE_COLORS``): the headline of a rule box in a derivation
+  graph, the ⊥ leaf that a rule closes in a search tree, the rule's box in the overview diagram.
+  None of these hues is a red or a blue.
+
+Everything else (matrices, arrows, hulls) is greyscale or a pale tint, so that the sign colours
+are the only thing that jumps out.  Where a figure needs to point at a *subset* (chosen columns
+of a matrix, a group of species, copies of a repeated subtree) it uses pale tints, never the
+sign colours.
+"""
+
+import matplotlib
+
+# sign colours: ink (text / lines) and tint (fills)
+POS, NEG = "#b8321e", "#1f4fa3"
+POS_TINT, NEG_TINT = "#f6d3cd", "#d2ddf5"
+POS_LINE, NEG_LINE = "#d0503a", "#3a6bd0"
+
+# status colours
+CHOICE = "#222222"                 # a branch choice: dashed border in this colour
+BOTTOM = "#222222"                 # contradiction
+COMPLETION = "#2e7d32"
+STOPPED = "#b5b5b5"
+RULE_INK, RULE_EDGE = "#333333", "#9a9a9a"
+INK, GREY, LIGHT = "#222222", "#777777", "#dddddd"
+
+# highlight tints for subsets (not signs)
+HILITE_A, HILITE_B = "#fbe7bd", "#d9ead3"
+QUADRANT = "#fff4d6"
+# pale tints for hulls of repeated subtrees (categorical, in order of use)
+HULLS = ["#f3e6c8", "#dcefd8", "#e6dff2", "#d9eef3", "#f6e2ea", "#ececec"]
+
+# one hue per rule; GP = the 3-term Grassmann–Plücker relations
+RULE_COLORS = {"GP": "#6f6f6f", "R1": "#c98a00", "R2": "#3aa89a", "R3": "#8c6d1f", "R4": "#7b3fa0",
+               "R5": "#d9662b", "R6": "#b8336a", "R7": "#006d77",
+               "R8": "#4a6fa5"}
+
+
+def rule_color(rule: str) -> str:
+    return RULE_COLORS.get(rule, INK)
+
+
+def sign_ink(sign) -> str:
+    return POS if sign > 0 else NEG
+
+
+def sign_tint(sign) -> str:
+    return POS_TINT if sign > 0 else NEG_TINT
+
+
+def sign_line(sign) -> str:
+    return POS_LINE if sign > 0 else NEG_LINE
+
+
+def use_math_fonts() -> None:
+    """Computer Modern mathtext (LaTeX look) with a plain sans text font; call once before drawing."""
+    matplotlib.rcParams["mathtext.fontset"] = "cm"
+    matplotlib.rcParams["mathtext.rm"] = "serif"
+    matplotlib.rcParams["font.family"] = "DejaVu Sans"
+    matplotlib.rcParams["axes.unicode_minus"] = True

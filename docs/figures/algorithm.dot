@@ -1,0 +1,29 @@
+digraph G {
+  graph [rankdir=TB, nodesep=0.35, ranksep=0.45, fontname="Helvetica", fontsize=11, dpi=72, compound=true];
+  node [fontname="Helvetica", fontsize=11, style="rounded,filled"];
+  edge [arrowsize=0.6];
+  subgraph "cluster_fix" {
+    style="rounded"; color="#aaaaaa"; margin=8.0; label="propagate to a fixed point"; fontsize=10.45; labeljust=l;
+    "gp" [label="Grassmann–Plücker\n3-term relations", shape=box, fillcolor="#e6f3df", color="#8fbf7a"];
+    "rules" [label="sign rules\nR1 stability · R2 Cramer · R3 balanced · R4 Z-blocks\nR5 Laplace · R6 Schur blocks · R7 tope", shape=box, fillcolor="#e6f3df", color="#8fbf7a"];
+  }
+  "input" [label="sign pattern  (sign a, sign B)", shape=box, fillcolor="#e3eaf8", color="#9db0d6"];
+  "dict" [label="minors of B  =  Plücker coordinates p_S of [ diag(a) \mid B ] \in Gr(n, 2n)", shape=box, fillcolor="#e3eaf8", color="#9db0d6"];
+  "init" [label="initial signs\nthe p_S determined by the entries", shape=box, fillcolor="#f4f4f4", color="#777777"];
+  "conflict" [label="contradiction?", shape=box, fillcolor="#f4f4f4", color="#777777"];
+  "bottom" [label="⊥\nimpossible ecology\ncertificate: the forced signs and their rules", shape=box, fillcolor="#222222", color="#222222"];
+  "done" [label="all p_S known?", shape=box, fillcolor="#f4f4f4", color="#777777"];
+  "completion" [label="completion\na consistent sign table, not a proof of possibility", shape=box, fillcolor="#fbe7bd", color="#d8b96a"];
+  "branch" [label="branch on one open p_S:  + / -", shape=box, fillcolor="#f4f4f4", color="#777777"];
+  "input" -> "dict" [color="#777777"];
+  "dict" -> "init" [color="#777777"];
+  "init" -> "gp" [color="#777777"];
+  "gp" -> "rules" [color="#777777"];
+  "rules" -> "gp" [constraint=false, color="#777777"];
+  "rules" -> "conflict" [color="#777777"];
+  "conflict" -> "bottom" [label="yes", fontsize=9.35, color="#777777"];
+  "conflict" -> "done" [label="no", fontsize=9.35, color="#777777"];
+  "done" -> "completion" [label="yes", fontsize=9.35, color="#777777"];
+  "done" -> "branch" [label="no", fontsize=9.35, color="#777777"];
+  "branch" -> "gp" [constraint=false, color="#777777"];
+}

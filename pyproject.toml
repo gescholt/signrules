@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "signrules"
+version = "0.1.0"
+description = "Sign completion on the ecological Grassmannian: rules that prove Lotka-Volterra sign patterns impossible, with machine certificates and an independent replay checker"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{name = "Georgy Scholten", email = "scholtengeorgy@gmail.com"}]
+requires-python = ">=3.10"
+keywords = ["Lotka-Volterra", "sign pattern", "oriented matroid", "Grassmannian", "chirotope", "mathematical ecology"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+dependencies = [
+    "numpy>=1.24",
+    "matplotlib>=3.7",     # certificate and completion drawings (gvrender, treeplot); the palette of style.py
+    "networkx>=3.0",       # tree layout in treeplot
+]
+
+[project.optional-dependencies]
+live = ["rich>=13.0", "questionary>=2.0"]     # the terminal dashboard and its menus (signrules-live)
+html = ["plotly>=5.0"]                        # interactive search-tree page (save_search_tree_html)
+all = ["signrules[live,html]"]
+dev = ["pytest>=7.0", "pytest-timeout>=2.0"]
+
+[project.scripts]
+signrules-live = "signrules.livesearch:main"
+signrules-tree = "signrules.treeview:main"
+signrules-screen = "signrules.screen:main"
+
+[project.urls]
+Repository = "https://github.com/gescholt/signrules"
+
+[tool.setuptools.packages.find]
+include = ["signrules*"]
+
+[tool.setuptools.package-data]
+signrules = ["data/**/*.jsonl", "data/**/*.json", "data/**/*.md"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--strict-config", "--timeout=120"]
+filterwarnings = ["error", "ignore::UserWarning", "ignore::DeprecationWarning"]

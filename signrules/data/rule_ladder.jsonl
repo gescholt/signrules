@@ -1,0 +1,380 @@
+{"n": 4, "rules": "R1,R2n", "name": "A-a Lemma 3.8", "open_at_root": 31, "verdict": "open", "info": "completion after 31 nodes", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2n", "name": "A-b Lemma 3.9", "open_at_root": 28, "verdict": "open", "info": "completion after 35 nodes", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2n", "name": "A-c Lemma 3.10", "open_at_root": 31, "verdict": "open", "info": "completion after 15 nodes", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2n", "name": "A-d obligate 4-cycle (Thm 3.4)", "open_at_root": 28, "verdict": "open", "info": "completion after 23 nodes", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2n", "name": "A-e competitor + 3-cycle (Thm 3.5)", "open_at_root": 31, "verdict": "open", "info": "completion after 14 nodes", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2n", "name": "A-f super-predator + 3-cycle (Thm 3.6)", "open_at_root": 28, "verdict": "open", "info": "completion after 28 nodes", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2n", "name": "S-a obligate mutualism", "open_at_root": 28, "verdict": "search", "info": "4 nodes, 5 pruned", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2n", "name": "S-b {0}|{1,2,3}, triple obligate", "open_at_root": 28, "verdict": "search", "info": "4 nodes, 5 pruned", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2n", "name": "S-c {0,1}|{2,3}, {2,3} obligate, a01=(+,+)", "open_at_root": 28, "verdict": "search", "info": "4 nodes, 5 pruned", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2n", "name": "S-d {0,1}|{2,3}, {2,3} obligate, a01=(+,-)", "open_at_root": 28, "verdict": "open", "info": "completion after 15 nodes", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2n", "name": "S-e {0,1}|{2,3}, both obligate", "open_at_root": 28, "verdict": "open", "info": "completion after 17 nodes", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2", "name": "A-a Lemma 3.8", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.01}
+{"n": 4, "rules": "R1,R2", "name": "A-b Lemma 3.9", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2", "name": "A-c Lemma 3.10", "open_at_root": 26, "verdict": "open", "info": "completion after 15 nodes", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2", "name": "A-d obligate 4-cycle (Thm 3.4)", "open_at_root": 28, "verdict": "open", "info": "completion after 25 nodes", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2", "name": "A-e competitor + 3-cycle (Thm 3.5)", "open_at_root": 31, "verdict": "open", "info": "completion after 18 nodes", "seconds": 0.0}
+{"n": 4, "rules": "R1,R2", "name": "A-f super-predator + 3-cycle (Thm 3.6)", "open_at_root": 28, "verdict": "open", "info": "completion after 26 nodes", "seconds": 0.0}
+{"n": 4, "rules": "R1,R2", "name": "S-a obligate mutualism", "open_at_root": 28, "verdict": "search", "info": "5 nodes, 6 pruned", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2", "name": "S-b {0}|{1,2,3}, triple obligate", "open_at_root": 28, "verdict": "search", "info": "3 nodes, 4 pruned", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2", "name": "S-c {0,1}|{2,3}, {2,3} obligate, a01=(+,+)", "open_at_root": 25, "verdict": "search", "info": "1 nodes, 2 pruned", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2", "name": "S-d {0,1}|{2,3}, {2,3} obligate, a01=(+,-)", "open_at_root": 25, "verdict": "search", "info": "1 nodes, 2 pruned", "seconds": 0.01}
+{"n": 4, "rules": "R1,R2", "name": "S-e {0,1}|{2,3}, both obligate", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 3-minors) > 0", "open_at_root": 0, "seconds": 0.01}
+{"n": 4, "rules": "R1,R7", "name": "A-a Lemma 3.8", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R7", "name": "A-b Lemma 3.9", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R7", "name": "A-c Lemma 3.10", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R7", "name": "A-d obligate 4-cycle (Thm 3.4)", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R7", "name": "A-e competitor + 3-cycle (Thm 3.5)", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R7", "name": "A-f super-predator + 3-cycle (Thm 3.6)", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R7", "name": "S-a obligate mutualism", "open_at_root": 28, "verdict": "search", "info": "5 nodes, 6 pruned", "seconds": 0.0}
+{"n": 4, "rules": "R1,R7", "name": "S-b {0}|{1,2,3}, triple obligate", "open_at_root": 28, "verdict": "search", "info": "3 nodes, 4 pruned", "seconds": 0.0}
+{"n": 4, "rules": "R1,R7", "name": "S-c {0,1}|{2,3}, {2,3} obligate, a01=(+,+)", "open_at_root": 25, "verdict": "search", "info": "1 nodes, 2 pruned", "seconds": 0.0}
+{"n": 4, "rules": "R1,R7", "name": "S-d {0,1}|{2,3}, {2,3} obligate, a01=(+,-)", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 3-minors) > 0", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R7", "name": "S-e {0,1}|{2,3}, both obligate", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 3-minors) > 0", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7", "name": "A-a Lemma 3.8", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7", "name": "A-b Lemma 3.9", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7", "name": "A-c Lemma 3.10", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7", "name": "A-d obligate 4-cycle (Thm 3.4)", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7", "name": "A-e competitor + 3-cycle (Thm 3.5)", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7", "name": "A-f super-predator + 3-cycle (Thm 3.6)", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7", "name": "S-a obligate mutualism", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7", "name": "S-b {0}|{1,2,3}, triple obligate", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7", "name": "S-c {0,1}|{2,3}, {2,3} obligate, a01=(+,+)", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7", "name": "S-d {0,1}|{2,3}, {2,3} obligate, a01=(+,-)", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 3-minors) > 0", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7", "name": "S-e {0,1}|{2,3}, both obligate", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 3-minors) > 0", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7,R8", "name": "A-a Lemma 3.8", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7,R8", "name": "A-b Lemma 3.9", "verdict": "root", "info": "R8 real eigenvalue s=(1, 1, -1, -1) \u03c3=(0, 1, 3, 2)", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7,R8", "name": "A-c Lemma 3.10", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7,R8", "name": "A-d obligate 4-cycle (Thm 3.4)", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1) \u03c3=(1, 2, 3, 0)", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7,R8", "name": "A-e competitor + 3-cycle (Thm 3.5)", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7,R8", "name": "A-f super-predator + 3-cycle (Thm 3.6)", "verdict": "root", "info": "R8 real eigenvalue s=(1, -1, -1, -1) \u03c3=(0, 2, 3, 1)", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7,R8", "name": "S-a obligate mutualism", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7,R8", "name": "S-b {0}|{1,2,3}, triple obligate", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7,R8", "name": "S-c {0,1}|{2,3}, {2,3} obligate, a01=(+,+)", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7,R8", "name": "S-d {0,1}|{2,3}, {2,3} obligate, a01=(+,-)", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1) \u03c3=(1, 0, 3, 2)", "open_at_root": 0, "seconds": 0.0}
+{"n": 4, "rules": "R1,R2,R3,R5,R7,R8", "name": "S-e {0,1}|{2,3}, both obligate", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1) \u03c3=(1, 0, 3, 2)", "open_at_root": 0, "seconds": 0.0}
+{"n": 5, "rules": "R1,R2n", "name": "0", "open_at_root": 165, "verdict": "open", "info": "completion after 59 nodes", "seconds": 0.13}
+{"n": 5, "rules": "R1,R2n", "name": "113657", "open_at_root": 173, "verdict": "open", "info": "completion after 64 nodes", "seconds": 0.1}
+{"n": 5, "rules": "R1,R2n", "name": "114104", "open_at_root": 165, "verdict": "open", "info": "completion after 53 nodes", "seconds": 0.12}
+{"n": 5, "rules": "R1,R2n", "name": "1539520", "open_at_root": 165, "verdict": "open", "info": "completion after 66 nodes", "seconds": 0.09}
+{"n": 5, "rules": "R1,R2n", "name": "1539536", "open_at_root": 165, "verdict": "open", "info": "completion after 71 nodes", "seconds": 0.12}
+{"n": 5, "rules": "R1,R2n", "name": "1539537", "open_at_root": 165, "verdict": "open", "info": "completion after 55 nodes", "seconds": 0.09}
+{"n": 5, "rules": "R1,R2n", "name": "1539569", "open_at_root": 173, "verdict": "open", "info": "completion after 64 nodes", "seconds": 0.12}
+{"n": 5, "rules": "R1,R2n", "name": "1554417", "open_at_root": 173, "verdict": "open", "info": "completion after 51 nodes", "seconds": 0.12}
+{"n": 5, "rules": "R1,R2n", "name": "1555824", "open_at_root": 165, "verdict": "open", "info": "completion after 67 nodes", "seconds": 0.12}
+{"n": 5, "rules": "R1,R2n", "name": "15711648", "open_at_root": 165, "verdict": "open", "info": "completion after 52 nodes", "seconds": 0.11}
+{"n": 5, "rules": "R1,R2n", "name": "15711649", "open_at_root": 165, "verdict": "open", "info": "completion after 79 nodes", "seconds": 0.12}
+{"n": 5, "rules": "R1,R2n", "name": "15711656", "open_at_root": 165, "verdict": "open", "info": "completion after 76 nodes", "seconds": 0.12}
+{"n": 5, "rules": "R1,R2n", "name": "15711713", "open_at_root": 173, "verdict": "open", "info": "completion after 61 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R2n", "name": "16186849", "open_at_root": 173, "verdict": "open", "info": "completion after 70 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R2n", "name": "16232417", "open_at_root": 173, "verdict": "open", "info": "completion after 51 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R2n", "name": "16235744", "open_at_root": 165, "verdict": "open", "info": "completion after 76 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R2n", "name": "2237409", "open_at_root": 165, "verdict": "open", "info": "completion after 47 nodes", "seconds": 0.12}
+{"n": 5, "rules": "R1,R2n", "name": "6716864", "open_at_root": 165, "verdict": "open", "info": "completion after 56 nodes", "seconds": 0.12}
+{"n": 5, "rules": "R1,R2n", "name": "6716865", "open_at_root": 165, "verdict": "open", "info": "completion after 47 nodes", "seconds": 0.12}
+{"n": 5, "rules": "R1,R2n", "name": "6716867", "open_at_root": 165, "verdict": "open", "info": "completion after 73 nodes", "seconds": 0.12}
+{"n": 5, "rules": "R1,R2n", "name": "6716868", "open_at_root": 165, "verdict": "open", "info": "completion after 61 nodes", "seconds": 0.13}
+{"n": 5, "rules": "R1,R2n", "name": "6716876", "open_at_root": 165, "verdict": "open", "info": "completion after 69 nodes", "seconds": 0.12}
+{"n": 5, "rules": "R1,R2n", "name": "6716892", "open_at_root": 165, "verdict": "open", "info": "completion after 62 nodes", "seconds": 0.1}
+{"n": 5, "rules": "R1,R2n", "name": "7644", "open_at_root": 165, "verdict": "open", "info": "completion after 68 nodes", "seconds": 0.12}
+{"n": 5, "rules": "R1,R2", "name": "0", "open_at_root": 165, "verdict": "open", "info": "completion after 67 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R2", "name": "113657", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.0}
+{"n": 5, "rules": "R1,R2", "name": "114104", "open_at_root": 158, "verdict": "open", "info": "completion after 71 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R2", "name": "1539520", "open_at_root": 151, "verdict": "open", "info": "completion after 56 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R2", "name": "1539536", "open_at_root": 116, "verdict": "open", "info": "completion after 59 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R2", "name": "1539537", "open_at_root": 141, "verdict": "open", "info": "completion after 73 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R2", "name": "1539569", "open_at_root": 144, "verdict": "open", "info": "completion after 71 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R2", "name": "1554417", "open_at_root": 173, "verdict": "open", "info": "completion after 72 nodes", "seconds": 0.03}
+{"n": 5, "rules": "R1,R2", "name": "1555824", "open_at_root": 165, "verdict": "open", "info": "completion after 71 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R2", "name": "15711648", "open_at_root": 158, "verdict": "open", "info": "completion after 56 nodes", "seconds": 0.04}
+{"n": 5, "rules": "R1,R2", "name": "15711649", "open_at_root": 158, "verdict": "open", "info": "completion after 65 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R2", "name": "15711656", "open_at_root": 165, "verdict": "open", "info": "completion after 75 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R2", "name": "15711713", "open_at_root": 165, "verdict": "open", "info": "completion after 79 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R2", "name": "16186849", "open_at_root": 173, "verdict": "open", "info": "completion after 65 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R2", "name": "16232417", "open_at_root": 173, "verdict": "open", "info": "completion after 66 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R2", "name": "16235744", "open_at_root": 165, "verdict": "open", "info": "completion after 69 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R2", "name": "2237409", "open_at_root": 165, "verdict": "open", "info": "completion after 84 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R2", "name": "6716864", "open_at_root": 161, "verdict": "open", "info": "completion after 81 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R2", "name": "6716865", "open_at_root": 165, "verdict": "open", "info": "completion after 72 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R2", "name": "6716867", "open_at_root": 165, "verdict": "open", "info": "completion after 84 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R2", "name": "6716868", "open_at_root": 161, "verdict": "open", "info": "completion after 70 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R2", "name": "6716876", "open_at_root": 161, "verdict": "open", "info": "completion after 75 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R2", "name": "6716892", "open_at_root": 161, "verdict": "open", "info": "completion after 64 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R2", "name": "7644", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.0}
+{"n": 5, "rules": "R1,R7", "name": "0", "open_at_root": 165, "verdict": "open", "info": "completion after 67 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R7", "name": "113657", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R7", "name": "114104", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R7", "name": "1539520", "open_at_root": 60, "verdict": "open", "info": "completion after 40 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R7", "name": "1539536", "open_at_root": 60, "verdict": "open", "info": "completion after 57 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R7", "name": "1539537", "open_at_root": 60, "verdict": "open", "info": "completion after 67 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R7", "name": "1539569", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R7", "name": "1554417", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R7", "name": "1555824", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R7", "name": "15711648", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 4-minors) > 0", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R7", "name": "15711649", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 4-minors) > 0", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R7", "name": "15711656", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 4-minors) > 0", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R7", "name": "15711713", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R7", "name": "16186849", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R7", "name": "16232417", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R7", "name": "16235744", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R7", "name": "2237409", "open_at_root": 165, "verdict": "open", "info": "completion after 64 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R7", "name": "6716864", "open_at_root": 161, "verdict": "open", "info": "completion after 67 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R7", "name": "6716865", "open_at_root": 165, "verdict": "open", "info": "completion after 72 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R7", "name": "6716867", "open_at_root": 165, "verdict": "open", "info": "completion after 62 nodes", "seconds": 0.01}
+{"n": 5, "rules": "R1,R7", "name": "6716868", "open_at_root": 161, "verdict": "open", "info": "completion after 58 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R7", "name": "6716876", "open_at_root": 161, "verdict": "open", "info": "completion after 53 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R7", "name": "6716892", "open_at_root": 161, "verdict": "open", "info": "completion after 58 nodes", "seconds": 0.02}
+{"n": 5, "rules": "R1,R7", "name": "7644", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "0", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "113657", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "114104", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "1539520", "open_at_root": 60, "verdict": "open", "info": "completion after 51 nodes", "seconds": 0.05}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "1539536", "open_at_root": 60, "verdict": "open", "info": "completion after 49 nodes", "seconds": 0.05}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "1539537", "open_at_root": 60, "verdict": "open", "info": "completion after 71 nodes", "seconds": 0.03}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "1539569", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "1554417", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "1555824", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "15711648", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 4-minors) > 0", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "15711649", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 4-minors) > 0", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "15711656", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 4-minors) > 0", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "15711713", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "16186849", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "16232417", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "16235744", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "2237409", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "6716864", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "6716865", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "6716867", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "6716868", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "6716876", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "6716892", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7", "name": "7644", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "0", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "113657", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "114104", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, 1, 1) \u03c3=(2, 0, 1, 3, 4)", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "1539520", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, 1) \u03c3=(1, 0, 3, 2, 4)", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "1539536", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, 1) \u03c3=(1, 0, 3, 2, 4)", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "1539537", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, 1) \u03c3=(1, 0, 3, 2, 4)", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "1539569", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "1554417", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "1555824", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, 1) \u03c3=(3, 0, 1, 2, 4)", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "15711648", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1) \u03c3=(2, 0, 1, 4, 3)", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "15711649", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1) \u03c3=(2, 0, 1, 4, 3)", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "15711656", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1) \u03c3=(2, 0, 1, 4, 3)", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "15711713", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "16186849", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "16232417", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.02}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "16235744", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1) \u03c3=(4, 0, 1, 2, 3)", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "2237409", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "6716864", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "6716865", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "6716867", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "6716868", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "6716876", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "6716892", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.01}
+{"n": 5, "rules": "R1,R2,R3,R5,R7,R8", "name": "7644", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, 1, 1, 1) \u03c3=(1, 0, 2, 3, 4)", "open_at_root": 0, "seconds": 0.01}
+{"n": 6, "rules": "R1,R2n", "name": "0", "open_at_root": 766, "verdict": "open", "info": "completion after 190 nodes", "seconds": 1.16}
+{"n": 6, "rules": "R1,R2n", "name": "15518721792", "open_at_root": 766, "verdict": "open", "info": "completion after 190 nodes", "seconds": 0.35}
+{"n": 6, "rules": "R1,R2n", "name": "15518721793", "open_at_root": 766, "verdict": "open", "info": "completion after 222 nodes", "seconds": 0.34}
+{"n": 6, "rules": "R1,R2n", "name": "15518721795", "open_at_root": 766, "verdict": "open", "info": "completion after 203 nodes", "seconds": 0.63}
+{"n": 6, "rules": "R1,R2n", "name": "15518721799", "open_at_root": 766, "verdict": "open", "info": "completion after 203 nodes", "seconds": 0.42}
+{"n": 6, "rules": "R1,R2n", "name": "1593702208", "open_at_root": 766, "verdict": "open", "info": "completion after 207 nodes", "seconds": 1.21}
+{"n": 6, "rules": "R1,R2n", "name": "1593702240", "open_at_root": 766, "verdict": "open", "info": "completion after 217 nodes", "seconds": 1.39}
+{"n": 6, "rules": "R1,R2n", "name": "1593702241", "open_at_root": 766, "verdict": "open", "info": "completion after 273 nodes", "seconds": 0.99}
+{"n": 6, "rules": "R1,R2n", "name": "1593702248", "open_at_root": 766, "verdict": "open", "info": "completion after 180 nodes", "seconds": 0.92}
+{"n": 6, "rules": "R1,R2n", "name": "1593702369", "open_at_root": 781, "verdict": "open", "info": "completion after 223 nodes", "seconds": 1.7}
+{"n": 6, "rules": "R1,R2n", "name": "1601697761", "open_at_root": 781, "verdict": "open", "info": "completion after 350 nodes", "seconds": 3.47}
+{"n": 6, "rules": "R1,R2n", "name": "1602076641", "open_at_root": 781, "verdict": "open", "info": "completion after 186 nodes", "seconds": 1.05}
+{"n": 6, "rules": "R1,R2n", "name": "1602090464", "open_at_root": 766, "verdict": "open", "info": "completion after 196 nodes", "seconds": 1.14}
+{"n": 6, "rules": "R1,R2n", "name": "1961977", "open_at_root": 781, "verdict": "open", "info": "completion after 189 nodes", "seconds": 0.84}
+{"n": 6, "rules": "R1,R2n", "name": "1963896", "open_at_root": 766, "verdict": "open", "info": "completion after 207 nodes", "seconds": 1.22}
+{"n": 6, "rules": "R1,R2n", "name": "2216759233", "open_at_root": 766, "verdict": "open", "info": "completion after 239 nodes", "seconds": 1.21}
+{"n": 6, "rules": "R1,R2n", "name": "33277343616", "open_at_root": 766, "verdict": "open", "info": "completion after 269 nodes", "seconds": 0.68}
+{"n": 6, "rules": "R1,R2n", "name": "33277474496", "open_at_root": 766, "verdict": "open", "info": "completion after 156 nodes", "seconds": 0.25}
+{"n": 6, "rules": "R1,R2n", "name": "33277474497", "open_at_root": 766, "verdict": "open", "info": "completion after 148 nodes", "seconds": 0.23}
+{"n": 6, "rules": "R1,R2n", "name": "33277474512", "open_at_root": 766, "verdict": "open", "info": "completion after 189 nodes", "seconds": 0.46}
+{"n": 6, "rules": "R1,R2n", "name": "33277474753", "open_at_root": 781, "verdict": "open", "info": "completion after 169 nodes", "seconds": 0.28}
+{"n": 6, "rules": "R1,R2n", "name": "33789179712", "open_at_root": 766, "verdict": "open", "info": "completion after 155 nodes", "seconds": 0.2}
+{"n": 6, "rules": "R1,R2n", "name": "33789179713", "open_at_root": 766, "verdict": "open", "info": "completion after 155 nodes", "seconds": 0.27}
+{"n": 6, "rules": "R1,R2n", "name": "33789179841", "open_at_root": 781, "verdict": "open", "info": "completion after 180 nodes", "seconds": 0.47}
+{"n": 6, "rules": "R1,R2n", "name": "33813428161", "open_at_root": 781, "verdict": "open", "info": "completion after 165 nodes", "seconds": 0.2}
+{"n": 6, "rules": "R1,R2n", "name": "33814314945", "open_at_root": 781, "verdict": "open", "info": "completion after 211 nodes", "seconds": 0.46}
+{"n": 6, "rules": "R1,R2n", "name": "33814344640", "open_at_root": 766, "verdict": "open", "info": "completion after 242 nodes", "seconds": 1.0}
+{"n": 6, "rules": "R1,R2n", "name": "58455952", "open_at_root": 766, "verdict": "open", "info": "completion after 208 nodes", "seconds": 0.71}
+{"n": 6, "rules": "R1,R2n", "name": "58455984", "open_at_root": 766, "verdict": "open", "info": "completion after 354 nodes", "seconds": 1.63}
+{"n": 6, "rules": "R1,R2n", "name": "58455985", "open_at_root": 766, "verdict": "open", "info": "completion after 194 nodes", "seconds": 1.45}
+{"n": 6, "rules": "R1,R2n", "name": "58456049", "open_at_root": 781, "verdict": "open", "info": "completion after 238 nodes", "seconds": 1.7}
+{"n": 6, "rules": "R1,R2n", "name": "58580977", "open_at_root": 781, "verdict": "open", "info": "completion after 188 nodes", "seconds": 1.18}
+{"n": 6, "rules": "R1,R2n", "name": "58586864", "open_at_root": 766, "verdict": "open", "info": "completion after 198 nodes", "seconds": 1.14}
+{"n": 6, "rules": "R1,R2n", "name": "63420", "open_at_root": 766, "verdict": "open", "info": "completion after 222 nodes", "seconds": 0.9}
+{"n": 6, "rules": "R1,R2n", "name": "6650328960", "open_at_root": 766, "verdict": "open", "info": "completion after 182 nodes", "seconds": 1.15}
+{"n": 6, "rules": "R1,R2n", "name": "6650328961", "open_at_root": 766, "verdict": "open", "info": "completion after 215 nodes", "seconds": 0.48}
+{"n": 6, "rules": "R1,R2n", "name": "6650328963", "open_at_root": 766, "verdict": "open", "info": "completion after 190 nodes", "seconds": 0.28}
+{"n": 6, "rules": "R1,R2n", "name": "6650328964", "open_at_root": 766, "verdict": "open", "info": "completion after 227 nodes", "seconds": 0.34}
+{"n": 6, "rules": "R1,R2n", "name": "6650328972", "open_at_root": 766, "verdict": "open", "info": "completion after 144 nodes", "seconds": 0.27}
+{"n": 6, "rules": "R1,R2n", "name": "6650328988", "open_at_root": 766, "verdict": "open", "info": "completion after 210 nodes", "seconds": 0.29}
+{"n": 6, "rules": "R1,R2n", "name": "6650329020", "open_at_root": 766, "verdict": "open", "info": "completion after 201 nodes", "seconds": 0.29}
+{"n": 6, "rules": "R1,R2", "name": "0", "open_at_root": 766, "verdict": "open", "info": "completion after 204 nodes", "seconds": 0.3}
+{"n": 6, "rules": "R1,R2", "name": "15518721792", "open_at_root": 766, "verdict": "open", "info": "completion after 210 nodes", "seconds": 0.31}
+{"n": 6, "rules": "R1,R2", "name": "15518721793", "open_at_root": 766, "verdict": "open", "info": "completion after 216 nodes", "seconds": 0.57}
+{"n": 6, "rules": "R1,R2", "name": "15518721795", "open_at_root": 766, "verdict": "open", "info": "completion after 154 nodes", "seconds": 0.23}
+{"n": 6, "rules": "R1,R2", "name": "15518721799", "open_at_root": 766, "verdict": "open", "info": "completion after 209 nodes", "seconds": 0.35}
+{"n": 6, "rules": "R1,R2", "name": "1593702208", "open_at_root": 753, "verdict": "open", "info": "completion after 144 nodes", "seconds": 0.36}
+{"n": 6, "rules": "R1,R2", "name": "1593702240", "open_at_root": 720, "verdict": "open", "info": "completion after 233 nodes", "seconds": 0.74}
+{"n": 6, "rules": "R1,R2", "name": "1593702241", "open_at_root": 720, "verdict": "open", "info": "completion after 202 nodes", "seconds": 0.27}
+{"n": 6, "rules": "R1,R2", "name": "1593702248", "open_at_root": 766, "verdict": "open", "info": "completion after 200 nodes", "seconds": 0.33}
+{"n": 6, "rules": "R1,R2", "name": "1593702369", "open_at_root": 731, "verdict": "open", "info": "completion after 172 nodes", "seconds": 0.37}
+{"n": 6, "rules": "R1,R2", "name": "1601697761", "open_at_root": 781, "verdict": "open", "info": "completion after 188 nodes", "seconds": 0.73}
+{"n": 6, "rules": "R1,R2", "name": "1602076641", "open_at_root": 781, "verdict": "open", "info": "completion after 175 nodes", "seconds": 0.33}
+{"n": 6, "rules": "R1,R2", "name": "1602090464", "open_at_root": 766, "verdict": "open", "info": "completion after 149 nodes", "seconds": 0.27}
+{"n": 6, "rules": "R1,R2", "name": "1961977", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.06}
+{"n": 6, "rules": "R1,R2", "name": "1963896", "open_at_root": 720, "verdict": "open", "info": "completion after 208 nodes", "seconds": 0.52}
+{"n": 6, "rules": "R1,R2", "name": "2216759233", "open_at_root": 766, "verdict": "open", "info": "completion after 201 nodes", "seconds": 0.35}
+{"n": 6, "rules": "R1,R2", "name": "33277343616", "open_at_root": 727, "verdict": "open", "info": "completion after 213 nodes", "seconds": 0.81}
+{"n": 6, "rules": "R1,R2", "name": "33277474496", "open_at_root": 753, "verdict": "open", "info": "completion after 167 nodes", "seconds": 0.27}
+{"n": 6, "rules": "R1,R2", "name": "33277474497", "open_at_root": 753, "verdict": "open", "info": "completion after 211 nodes", "seconds": 0.84}
+{"n": 6, "rules": "R1,R2", "name": "33277474512", "open_at_root": 766, "verdict": "open", "info": "completion after 220 nodes", "seconds": 0.61}
+{"n": 6, "rules": "R1,R2", "name": "33277474753", "open_at_root": 767, "verdict": "open", "info": "completion after 209 nodes", "seconds": 0.59}
+{"n": 6, "rules": "R1,R2", "name": "33789179712", "open_at_root": 766, "verdict": "open", "info": "completion after 159 nodes", "seconds": 0.24}
+{"n": 6, "rules": "R1,R2", "name": "33789179713", "open_at_root": 766, "verdict": "open", "info": "completion after 169 nodes", "seconds": 0.26}
+{"n": 6, "rules": "R1,R2", "name": "33789179841", "open_at_root": 781, "verdict": "open", "info": "completion after 164 nodes", "seconds": 0.28}
+{"n": 6, "rules": "R1,R2", "name": "33813428161", "open_at_root": 781, "verdict": "open", "info": "completion after 167 nodes", "seconds": 0.22}
+{"n": 6, "rules": "R1,R2", "name": "33814314945", "open_at_root": 781, "verdict": "open", "info": "completion after 155 nodes", "seconds": 0.28}
+{"n": 6, "rules": "R1,R2", "name": "33814344640", "open_at_root": 766, "verdict": "open", "info": "completion after 180 nodes", "seconds": 0.33}
+{"n": 6, "rules": "R1,R2", "name": "58455952", "open_at_root": 674, "verdict": "open", "info": "completion after 158 nodes", "seconds": 0.36}
+{"n": 6, "rules": "R1,R2", "name": "58455984", "open_at_root": 561, "verdict": "open", "info": "completion after 147 nodes", "seconds": 0.31}
+{"n": 6, "rules": "R1,R2", "name": "58455985", "open_at_root": 657, "verdict": "open", "info": "completion after 160 nodes", "seconds": 0.26}
+{"n": 6, "rules": "R1,R2", "name": "58456049", "open_at_root": 660, "verdict": "open", "info": "completion after 126 nodes", "seconds": 0.27}
+{"n": 6, "rules": "R1,R2", "name": "58580977", "open_at_root": 767, "verdict": "open", "info": "completion after 154 nodes", "seconds": 0.29}
+{"n": 6, "rules": "R1,R2", "name": "58586864", "open_at_root": 753, "verdict": "open", "info": "completion after 274 nodes", "seconds": 0.81}
+{"n": 6, "rules": "R1,R2", "name": "63420", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.09}
+{"n": 6, "rules": "R1,R2", "name": "6650328960", "open_at_root": 761, "verdict": "open", "info": "completion after 230 nodes", "seconds": 0.37}
+{"n": 6, "rules": "R1,R2", "name": "6650328961", "open_at_root": 766, "verdict": "open", "info": "completion after 189 nodes", "seconds": 0.35}
+{"n": 6, "rules": "R1,R2", "name": "6650328963", "open_at_root": 766, "verdict": "open", "info": "completion after 153 nodes", "seconds": 0.26}
+{"n": 6, "rules": "R1,R2", "name": "6650328964", "open_at_root": 761, "verdict": "open", "info": "completion after 201 nodes", "seconds": 0.46}
+{"n": 6, "rules": "R1,R2", "name": "6650328972", "open_at_root": 761, "verdict": "open", "info": "completion after 200 nodes", "seconds": 0.25}
+{"n": 6, "rules": "R1,R2", "name": "6650328988", "open_at_root": 761, "verdict": "open", "info": "completion after 185 nodes", "seconds": 0.33}
+{"n": 6, "rules": "R1,R2", "name": "6650329020", "open_at_root": 761, "verdict": "open", "info": "completion after 170 nodes", "seconds": 0.22}
+{"n": 6, "rules": "R1,R7", "name": "0", "open_at_root": 766, "verdict": "open", "info": "completion after 234 nodes", "seconds": 0.34}
+{"n": 6, "rules": "R1,R7", "name": "15518721792", "open_at_root": 766, "verdict": "open", "info": "completion after 182 nodes", "seconds": 0.32}
+{"n": 6, "rules": "R1,R7", "name": "15518721793", "open_at_root": 766, "verdict": "open", "info": "completion after 212 nodes", "seconds": 0.34}
+{"n": 6, "rules": "R1,R7", "name": "15518721795", "open_at_root": 766, "verdict": "open", "info": "completion after 174 nodes", "seconds": 0.22}
+{"n": 6, "rules": "R1,R7", "name": "15518721799", "open_at_root": 766, "verdict": "open", "info": "completion after 192 nodes", "seconds": 0.45}
+{"n": 6, "rules": "R1,R7", "name": "1593702208", "open_at_root": 380, "verdict": "open", "info": "completion after 105 nodes", "seconds": 0.31}
+{"n": 6, "rules": "R1,R7", "name": "1593702240", "open_at_root": 380, "verdict": "open", "info": "completion after 131 nodes", "seconds": 0.36}
+{"n": 6, "rules": "R1,R7", "name": "1593702241", "open_at_root": 380, "verdict": "open", "info": "completion after 131 nodes", "seconds": 0.37}
+{"n": 6, "rules": "R1,R7", "name": "1593702248", "open_at_root": 380, "verdict": "open", "info": "completion after 169 nodes", "seconds": 0.32}
+{"n": 6, "rules": "R1,R7", "name": "1593702369", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.07}
+{"n": 6, "rules": "R1,R7", "name": "1601697761", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R7", "name": "1602076641", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.05}
+{"n": 6, "rules": "R1,R7", "name": "1602090464", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.11}
+{"n": 6, "rules": "R1,R7", "name": "1961977", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R7", "name": "1963896", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.1}
+{"n": 6, "rules": "R1,R7", "name": "2216759233", "open_at_root": 766, "verdict": "open", "info": "completion after 209 nodes", "seconds": 0.4}
+{"n": 6, "rules": "R1,R7", "name": "33277343616", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.09}
+{"n": 6, "rules": "R1,R7", "name": "33277474496", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 5-minors) > 0", "open_at_root": 0, "seconds": 0.09}
+{"n": 6, "rules": "R1,R7", "name": "33277474497", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 5-minors) > 0", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R7", "name": "33277474512", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 5-minors) > 0", "open_at_root": 0, "seconds": 0.06}
+{"n": 6, "rules": "R1,R7", "name": "33277474753", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.07}
+{"n": 6, "rules": "R1,R7", "name": "33789179712", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 5-minors) > 0", "open_at_root": 0, "seconds": 0.09}
+{"n": 6, "rules": "R1,R7", "name": "33789179713", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 5-minors) > 0", "open_at_root": 0, "seconds": 0.09}
+{"n": 6, "rules": "R1,R7", "name": "33789179841", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.05}
+{"n": 6, "rules": "R1,R7", "name": "33813428161", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R7", "name": "33814314945", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R7", "name": "33814344640", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.1}
+{"n": 6, "rules": "R1,R7", "name": "58455952", "open_at_root": 380, "verdict": "open", "info": "completion after 166 nodes", "seconds": 0.37}
+{"n": 6, "rules": "R1,R7", "name": "58455984", "open_at_root": 380, "verdict": "open", "info": "completion after 149 nodes", "seconds": 0.27}
+{"n": 6, "rules": "R1,R7", "name": "58455985", "open_at_root": 380, "verdict": "open", "info": "completion after 157 nodes", "seconds": 0.24}
+{"n": 6, "rules": "R1,R7", "name": "58456049", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.07}
+{"n": 6, "rules": "R1,R7", "name": "58580977", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.07}
+{"n": 6, "rules": "R1,R7", "name": "58586864", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R7", "name": "63420", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.07}
+{"n": 6, "rules": "R1,R7", "name": "6650328960", "open_at_root": 761, "verdict": "open", "info": "completion after 144 nodes", "seconds": 0.41}
+{"n": 6, "rules": "R1,R7", "name": "6650328961", "open_at_root": 766, "verdict": "open", "info": "completion after 212 nodes", "seconds": 0.43}
+{"n": 6, "rules": "R1,R7", "name": "6650328963", "open_at_root": 766, "verdict": "open", "info": "completion after 158 nodes", "seconds": 0.37}
+{"n": 6, "rules": "R1,R7", "name": "6650328964", "open_at_root": 761, "verdict": "open", "info": "completion after 204 nodes", "seconds": 0.49}
+{"n": 6, "rules": "R1,R7", "name": "6650328972", "open_at_root": 761, "verdict": "open", "info": "completion after 188 nodes", "seconds": 0.35}
+{"n": 6, "rules": "R1,R7", "name": "6650328988", "open_at_root": 761, "verdict": "open", "info": "completion after 186 nodes", "seconds": 0.4}
+{"n": 6, "rules": "R1,R7", "name": "6650329020", "open_at_root": 761, "verdict": "open", "info": "completion after 220 nodes", "seconds": 0.42}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "0", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "15518721792", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.41}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "15518721793", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.13}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "15518721795", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.38}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "15518721799", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.35}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "1593702208", "open_at_root": 380, "verdict": "open", "info": "completion after 165 nodes", "seconds": 0.71}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "1593702240", "open_at_root": 380, "verdict": "open", "info": "completion after 181 nodes", "seconds": 0.52}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "1593702241", "open_at_root": 380, "verdict": "open", "info": "completion after 127 nodes", "seconds": 0.56}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "1593702248", "open_at_root": 380, "verdict": "open", "info": "completion after 209 nodes", "seconds": 0.81}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "1593702369", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.15}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "1601697761", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.16}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "1602076641", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.15}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "1602090464", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.36}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "1961977", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.13}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "1963896", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.16}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "2216759233", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.12}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "33277343616", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.15}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "33277474496", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 5-minors) > 0", "open_at_root": 0, "seconds": 0.15}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "33277474497", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 5-minors) > 0", "open_at_root": 0, "seconds": 0.41}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "33277474512", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 5-minors) > 0", "open_at_root": 0, "seconds": 0.4}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "33277474753", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.15}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "33789179712", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 5-minors) > 0", "open_at_root": 0, "seconds": 0.1}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "33789179713", "verdict": "root", "info": "R1 coefficient of \u03bb^1 (sum of principal 5-minors) > 0", "open_at_root": 0, "seconds": 0.14}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "33789179841", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.14}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "33813428161", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.14}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "33814314945", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.14}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "33814344640", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.12}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "58455952", "open_at_root": 380, "verdict": "open", "info": "completion after 181 nodes", "seconds": 0.89}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "58455984", "open_at_root": 380, "verdict": "open", "info": "completion after 155 nodes", "seconds": 0.83}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "58455985", "open_at_root": 380, "verdict": "open", "info": "completion after 177 nodes", "seconds": 0.9}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "58456049", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.14}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "58580977", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.15}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "58586864", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.16}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "63420", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.12}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "6650328960", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.1}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "6650328961", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.4}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "6650328963", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.36}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "6650328964", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.1}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "6650328972", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "6650328988", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.35}
+{"n": 6, "rules": "R1,R2,R3,R5,R7", "name": "6650329020", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.09}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "0", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.45}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "15518721792", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.33}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "15518721793", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.31}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "15518721795", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.09}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "15518721799", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.11}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "1593702208", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1, 1) \u03c3=(2, 0, 1, 4, 3, 5)", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "1593702240", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1, 1) \u03c3=(2, 0, 1, 4, 3, 5)", "open_at_root": 0, "seconds": 0.09}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "1593702241", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1, 1) \u03c3=(2, 0, 1, 4, 3, 5)", "open_at_root": 0, "seconds": 0.09}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "1593702248", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1, 1) \u03c3=(2, 0, 1, 4, 3, 5)", "open_at_root": 0, "seconds": 0.07}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "1593702369", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.1}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "1601697761", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.15}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "1602076641", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.15}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "1602090464", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1, 1) \u03c3=(4, 0, 1, 2, 3, 5)", "open_at_root": 0, "seconds": 0.34}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "1961977", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.14}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "1963896", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, 1, 1, 1) \u03c3=(2, 0, 1, 3, 4, 5)", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "2216759233", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.35}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "33277343616", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1, -1) \u03c3=(1, 0, 3, 2, 5, 4)", "open_at_root": 0, "seconds": 0.26}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "33277474496", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1, -1) \u03c3=(3, 0, 1, 2, 5, 4)", "open_at_root": 0, "seconds": 0.27}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "33277474497", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1, -1) \u03c3=(3, 0, 1, 2, 5, 4)", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "33277474512", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1, -1) \u03c3=(3, 0, 1, 2, 5, 4)", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "33277474753", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.28}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "33789179712", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1, -1) \u03c3=(2, 0, 1, 5, 3, 4)", "open_at_root": 0, "seconds": 0.24}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "33789179713", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1, -1) \u03c3=(2, 0, 1, 5, 3, 4)", "open_at_root": 0, "seconds": 0.26}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "33789179841", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.09}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "33813428161", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.25}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "33814314945", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.25}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "33814344640", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, -1, -1) \u03c3=(5, 0, 1, 2, 3, 4)", "open_at_root": 0, "seconds": 0.05}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "58455952", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, 1, 1) \u03c3=(1, 0, 3, 2, 4, 5)", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "58455984", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, 1, 1) \u03c3=(1, 0, 3, 2, 4, 5)", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "58455985", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, 1, 1) \u03c3=(1, 0, 3, 2, 4, 5)", "open_at_root": 0, "seconds": 0.08}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "58456049", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.38}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "58580977", "verdict": "root", "info": "R7 tope", "open_at_root": 0, "seconds": 0.15}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "58586864", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, -1, -1, 1, 1) \u03c3=(3, 0, 1, 2, 4, 5)", "open_at_root": 0, "seconds": 0.09}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "63420", "verdict": "root", "info": "R8 real eigenvalue s=(-1, -1, 1, 1, 1, 1) \u03c3=(1, 0, 2, 3, 4, 5)", "open_at_root": 0, "seconds": 0.05}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "6650328960", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.34}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "6650328961", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.13}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "6650328963", "verdict": "root", "info": "R2 Cramer", "open_at_root": 0, "seconds": 0.12}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "6650328964", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.3}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "6650328972", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.33}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "6650328988", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.33}
+{"n": 6, "rules": "R1,R2,R3,R5,R7,R8", "name": "6650329020", "verdict": "root", "info": "R3 balanced", "open_at_root": 0, "seconds": 0.09}

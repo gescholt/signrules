@@ -1,0 +1,89 @@
+digraph G {
+  graph [rankdir=TB, nodesep=0.16, ranksep=0.3, fontname="Helvetica", fontsize=10, dpi=72, compound=true];
+  node [fontname="Helvetica", fontsize=10, style="rounded,filled"];
+  edge [arrowsize=0.6];
+  subgraph "cluster_band0" {
+    style="rounded"; color="#dddddd"; margin=8.0; label="root propagation (1 forced)"; fontsize=9.5; labeljust=l;
+    "s4_5_6_7" [label="p_4567 > 0\nR1 · stability", shape=box, fillcolor="#f6d3cd", color="#222222"];
+  }
+  subgraph "cluster_band1" {
+    style="rounded"; color="#dddddd"; margin=8.0; label="branch 1: p_0145 > 0 (2 forced)"; fontsize=9.5; labeljust=l;
+    "s0_1_4_5" [label="p_0145 > 0\nbranch 1", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s0_4_5_7" [label="p_0457 < 0\nGP · 3-term relation · with p_0124, p_0247, p_0147, p_0245", shape=box, fillcolor="#d2ddf5", color="#222222"];
+    "s1_4_5_6" [label="p_1456 < 0\nGP · 3-term relation · with p_0124, p_1246, p_0146, p_1245", shape=box, fillcolor="#d2ddf5", color="#222222"];
+  }
+  subgraph "cluster_band2" {
+    style="rounded"; color="#dddddd"; margin=8.0; label="branch 2: p_0167 < 0 (2 forced)"; fontsize=9.5; labeljust=l;
+    "s0_1_6_7" [label="p_0167 < 0\nbranch 2", shape=box, fillcolor="#d2ddf5", color="#222222"];
+    "s0_4_6_7" [label="p_0467 < 0\nGP · 3-term relation · with p_0136, p_0146, p_0367, p_0346", shape=box, fillcolor="#d2ddf5", color="#222222"];
+    "s1_5_6_7" [label="p_1567 < 0\nGP · 3-term relation · with p_0136, p_0156, p_1367, p_1356", shape=box, fillcolor="#d2ddf5", color="#222222"];
+  }
+  subgraph "cluster_band3" {
+    style="rounded"; color="#dddddd"; margin=8.0; label="branch 3: p_0246 > 0 (17 forced)"; fontsize=9.5; labeljust=l;
+    "s0_2_4_6" [label="p_0246 > 0\nbranch 3", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s0_4_5_6" [label="p_0456 > 0\nGP · 3-term relation · with p_0124, p_0146, p_0245, p_0145 [band 1]", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s2_4_6_7" [label="p_2467 < 0\nGP · 3-term relation · with p_0234, p_2347, p_0247, p_2346", shape=box, fillcolor="#d2ddf5", color="#222222"];
+    "s1_4_5_7" [label="p_1457 > 0\nGP · 3-term relation · with p_0145 [band 1], p_4567 [band 0], p_0457 [band 1], p_1456 [band 1]", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s1_4_6_7" [label="p_1467 > 0\nGP · 3-term relation · with p_0146, p_4567 [band 0], p_0467 [band 2], p_1456 [band 1]", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s2_4_5_6" [label="p_2456 > 0\nGP · 3-term relation · with p_4567 [band 0], p_0467 [band 2]", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s1_2_4_7" [label="p_1247 > 0\nGP · 3-term relation · with p_0147, p_0247, p_0467 [band 2]", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s2_4_5_7" [label="p_2457 < 0\nGP · 3-term relation · with p_0247, p_4567 [band 0], p_0457 [band 1], p_0467 [band 2]", shape=box, fillcolor="#d2ddf5", color="#222222"];
+    "s3_4_5_7" [label="p_3457 < 0\nGP · 3-term relation · with p_1347, p_2347", shape=box, fillcolor="#d2ddf5", color="#222222"];
+    "s3_4_6_7" [label="p_3467 < 0\nGP · 3-term relation · with p_1347, p_2347", shape=box, fillcolor="#d2ddf5", color="#222222"];
+    "s0_5_6_7" [label="p_0567 > 0\nGP · 3-term relation · with p_0156, p_4567 [band 0], p_1567 [band 2], p_1456 [band 1]", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s0_2_5_7" [label="p_0257 > 0\nGP · 3-term relation · with p_0157, p_1257, p_0457 [band 1]", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s2_5_6_7" [label="p_2567 > 0\nGP · 3-term relation · with p_0267, p_1267, p_0167 [band 2], p_1567 [band 2]", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s3_5_6_7" [label="p_3567 > 0\nGP · 3-term relation · with p_0367, p_1367, p_0167 [band 2], p_1567 [band 2]", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s0_3_5_6" [label="p_0356 < 0\nGP · 3-term relation · with p_0135, p_0156, p_0357, p_0157", shape=box, fillcolor="#d2ddf5", color="#222222"];
+    "s1_3_4_6" [label="p_1346 < 0\nGP · 3-term relation · with p_0134, p_0146, p_1347, p_0147", shape=box, fillcolor="#d2ddf5", color="#222222"];
+    "s2_3_4_5" [label="p_2345 > 0\nGP · 3-term relation · with p_0234, p_0245, p_2347, p_0247", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s3_4_5_6" [label="p_3456 > 0\nGP · 3-term relation · with p_0345, p_4567 [band 0], p_0457 [band 1]", shape=box, fillcolor="#f6d3cd", color="#222222"];
+  }
+  subgraph "cluster_band4" {
+    style="rounded"; color="#dddddd"; margin=8.0; label="branches 4–7: p_0347 > 0, p_1256 > 0, p_1357 > 0, p_2367 > 0 (nothing forced)"; fontsize=9.5; labeljust=l;
+    "s0_3_4_7" [label="p_0347 > 0\nbranch 4", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s1_2_5_6" [label="p_1256 > 0\nbranch 5", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s1_3_5_7" [label="p_1357 > 0\nbranch 6", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    "s2_3_6_7" [label="p_2367 > 0\nbranch 7", shape=box, fillcolor="#f6d3cd", color="#222222"];
+    { rank=same; "s0_3_4_7"; "s1_2_5_6"; "s1_3_5_7"; "s2_3_6_7"; }
+  }
+  "s0_1_4_5" -> "s0_4_5_7" [color="#777777"];
+  "s0_1_4_5" -> "s1_4_5_6" [color="#777777"];
+  "s4_5_6_7" -> "s0_1_4_5" [style=invis, color="#777777"];
+  "s0_1_6_7" -> "s0_4_6_7" [color="#777777"];
+  "s0_1_6_7" -> "s1_5_6_7" [color="#777777"];
+  "s0_4_5_7" -> "s0_1_6_7" [style=invis, color="#777777"];
+  "s1_4_5_6" -> "s0_1_6_7" [style=invis, color="#777777"];
+  "s0_2_4_6" -> "s0_4_5_6" [color="#777777"];
+  "s0_2_4_6" -> "s2_4_6_7" [color="#777777"];
+  "s0_4_5_6" -> "s1_4_5_7" [color="#777777"];
+  "s0_4_5_6" -> "s1_4_6_7" [color="#777777"];
+  "s0_2_4_6" -> "s2_4_5_6" [color="#777777"];
+  "s0_4_5_6" -> "s2_4_5_6" [color="#777777"];
+  "s2_4_6_7" -> "s2_4_5_6" [color="#777777"];
+  "s2_4_6_7" -> "s1_2_4_7" [color="#777777"];
+  "s1_4_6_7" -> "s1_2_4_7" [color="#777777"];
+  "s2_4_6_7" -> "s2_4_5_7" [color="#777777"];
+  "s1_2_4_7" -> "s3_4_5_7" [color="#777777"];
+  "s2_4_5_7" -> "s3_4_5_7" [color="#777777"];
+  "s1_4_5_7" -> "s3_4_5_7" [color="#777777"];
+  "s1_2_4_7" -> "s3_4_6_7" [color="#777777"];
+  "s2_4_6_7" -> "s3_4_6_7" [color="#777777"];
+  "s1_4_6_7" -> "s3_4_6_7" [color="#777777"];
+  "s0_4_5_6" -> "s0_5_6_7" [color="#777777"];
+  "s2_4_5_7" -> "s0_2_5_7" [color="#777777"];
+  "s1_4_5_7" -> "s0_2_5_7" [color="#777777"];
+  "s0_5_6_7" -> "s2_5_6_7" [color="#777777"];
+  "s0_5_6_7" -> "s3_5_6_7" [color="#777777"];
+  "s0_5_6_7" -> "s0_3_5_6" [color="#777777"];
+  "s1_4_6_7" -> "s1_3_4_6" [color="#777777"];
+  "s2_4_5_7" -> "s2_3_4_5" [color="#777777"];
+  "s0_4_5_6" -> "s3_4_5_6" [color="#777777"];
+  "s3_4_5_7" -> "s3_4_5_6" [color="#777777"];
+  "s0_4_6_7" -> "s0_2_4_6" [style=invis, color="#777777"];
+  "s1_5_6_7" -> "s0_2_4_6" [style=invis, color="#777777"];
+  "s3_4_5_6" -> "s0_3_4_7" [style=invis, color="#777777"];
+  "s3_4_5_6" -> "s1_2_5_6" [style=invis, color="#777777"];
+  "s3_4_5_6" -> "s1_3_5_7" [style=invis, color="#777777"];
+  "s3_4_5_6" -> "s2_3_6_7" [style=invis, color="#777777"];
+}

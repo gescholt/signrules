@@ -1,0 +1,1 @@
+{"n": 4, "rules": ["GP", "R1", "R7"], "wlog": true, "counts": {"ok": 359, "no premises": 1192, "ok by probe": 4, "inconsistent under the others": 109}, "failures": [], "still_failing": 0}

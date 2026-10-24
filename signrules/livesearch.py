@@ -1,0 +1,421 @@
+"""
+Live terminal dashboard of one sign-completion search.
+
+    python -m signrules.livesearch --a=-1,-1,-1,-1,1 --B=1,-1,1,1,1/-1,1,1,1,1/1,1,1,-1,1/1,1,-1,1,1/-1,-1,-1,-1,1
+    python -m signrules.livesearch --preset parity_k2 --rules R1,R2n --html tree.html
+    python -m signrules.livesearch --random 5 --max-nodes 5000 --html tree.html   # a random pattern (--seed S to repeat one)
+    python -m signrules.livesearch                    # prompts
+
+    from signrules.livesearch import LiveSearch
+    with LiveSearch(eco, use) as live:
+        result = complete(eco, use=use, progress=live)
+
+What it shows, refreshed several times a second:
+
+* **progress** — how far the depth-first sweep has got: every finished leaf at depth d closes 2^-d
+  of the binary search space. The estimate of the time left extrapolates that fraction; it is
+  reliable for bushy trees and pessimistic early in deep, thin ones (a long first branch sweeps
+  almost nothing until it closes). Subtrees cut off by a node limit are shown grey;
+* **counters** — nodes, nodes per second, completions, contradictions, current and maximal depth,
+  open signs at the current node;
+* **rules** — for each rule (GP, R1–R8, in the package's rule colours) how many signs it forced
+  and how many branches it closed with a contradiction;
+* **current path** — the branch choices from the root to the node being searched (red +, blue −);
+* **leaves by depth** — where the tree ends: completions and contradictions per depth;
+* **events** — the latest completions, contradictions (with their rule) and new depth records.
+"""
+
+import argparse
+import time
+from collections import Counter, deque
+from typing import Optional, Sequence
+
+from rich.console import Group
+from rich.live import Live
+from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text
+
+from . import labels as L
+from . import style
+from .rules import Ecology
+from .search import complete
+
+RULES = ["GP", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8"]
+POS, NEG = style.POS_LINE, style.NEG_LINE
+BLOCKS = " ▁▂▃▄▅▆▇█"
+
+
+def _rule_of(why: str) -> str:
+    return why[:2] if why[:1] == "R" and why[1:2].isdigit() else ("GP" if "Grassmann" in why else why[:2])
+
+
+def _milestone(k: int) -> bool:
+    """1, 2, 5, 10, 20, 50, 100, ...: which occurrences of a repeated event get logged."""
+    while k >= 10 and k % 10 == 0:
+        k //= 10
+    return k in (1, 2, 5)
+
+
+def _coord(S) -> str:
+    return "".join(map(str, S))
+
+
+class LiveSearch:
+    """Progress callback for ``complete`` that keeps statistics and renders them with rich."""
+
+    def __init__(self, eco: Ecology, use: Optional[Sequence[str]] = None, events: int = 8,
+                 refresh_per_second: float = 8.0):
+        self.eco, self.use = eco, list(use) if use else list(Ecology.ALL_RULES)
+        self.t0 = time.time()
+        self.nodes = self.completions = self.conflicts = self.stopped = 0
+        self.depth = self.max_depth = 0
+        self.unknown = self.root_unknown = None
+        self.path = []
+        self.covered = 0.0                     # share of the search space closed (completions, ⊥)
+        self.abandoned = 0.0                   # share left unsearched because a limit stopped the search
+        self.forced = Counter()
+        self.closed = Counter()
+        self.leaves = {}                       # depth -> Counter(kind)
+        self.events = deque(maxlen=events)
+        self.finished = False
+        self._live = Live(self, refresh_per_second=refresh_per_second, transient=False)
+
+    # ------------------------------------------------------------------ callback
+    def __call__(self, ev):
+        kind, d = ev["kind"], ev["depth"]
+        for _ in ev.get("gp_log") or ():
+            self.forced["GP"] += 1
+        for entry in ev.get("log") or ():
+            self.forced[_rule_of(entry[0])] += 1
+        if kind == "root":
+            self.root_unknown = self.unknown = ev["unknown"]
+            self._event("root", f"root propagation leaves {ev['unknown']} signs open")
+            return
+        if kind == "forced":
+            return
+        self.path = ev["path"]
+        self.depth = d
+        if d > self.max_depth:
+            self.max_depth = d
+            if kind == "node":
+                self._event("depth", f"new depth record {d}")
+        if kind == "node":
+            self.nodes += 1
+            self.unknown = ev["unknown"]
+            return
+        # a leaf
+        if kind == "stopped":
+            self.abandoned += 2.0 ** -d
+        else:
+            self.covered += 2.0 ** -d
+        self.leaves.setdefault(d, Counter())[kind] += 1
+        if kind == "completion":
+            self.nodes += 1
+            self.completions += 1
+            if _milestone(self.completions):
+                self._event("completion", f"completion {self.completions:,} at depth {d}")
+        elif kind == "conflict":
+            self.conflicts += 1
+            lab = L.rule(ev.get("reason", ""), self.eco.n)
+            self.closed[lab.rule] += 1
+            if _milestone(self.closed[lab.rule]):
+                nth = "first" if self.closed[lab.rule] == 1 else f"{self.closed[lab.rule]:,}th"
+                self._event("conflict", f"{nth} ⊥ by {lab.headline('plain')} at depth {d}")
+        elif kind == "stopped":
+            self.stopped += 1
+            if self.stopped == 1:
+                self._event("stopped", f"limit reached at depth {d}: the rest of the tree is not searched")
+
+    def _event(self, kind, text):
+        self.events.appendleft((time.time() - self.t0, kind, text))
+
+    # ------------------------------------------------------------------ rendering
+    def _header(self):
+        t = Text()
+        t.append(self.eco.name or "pattern", style="bold")
+        t.append("   sign a ")
+        for v in self.eco.a:
+            t.append("+ " if v > 0 else "− ", style=style.POS if v > 0 else style.NEG)
+        t.append("  rules " + ", ".join(self.use), style="dim")
+        B = Text()
+        for row in self.eco.B:
+            for v in row:
+                B.append(" + " if v > 0 else " − ", style=f"bold white on {style.POS if v > 0 else style.NEG}")
+            B.append("\n")
+        grid = Table.grid(padding=(0, 2))
+        grid.add_row(t, B)
+        return grid
+
+    def _progress(self):
+        el = time.time() - self.t0
+        f = min(self.covered, 1.0)
+        g = min(self.abandoned, 1.0 - f)
+        width = 40
+        full, skip = int(f * width), int(g * width)
+        bar = (Text("█" * full, style=style.COMPLETION) + Text("▒" * skip, style=style.STOPPED)
+               + Text("░" * (width - full - skip), style="dim"))
+        if self.finished:
+            eta = "stopped by a limit" if self.stopped else "done"
+        elif f > 0:
+            eta = f"~{el * (1 - f) / f:,.0f}s left"
+        else:
+            eta = "estimating…"
+        tail = f" · {100 * g:.2f}% not searched" if g else ""
+        return Group(Text.assemble(bar, f"  {100 * f:6.2f}% swept{tail}   ",
+                                   (f"{el:,.1f}s elapsed · {eta}", "dim")))
+
+    def _counters(self):
+        el = max(time.time() - self.t0, 1e-9)
+        tb = Table.grid(padding=(0, 1))
+        tb.add_column(justify="right", style="dim"); tb.add_column(justify="left")
+        tb.add_row("nodes", f"{self.nodes:,}  ({self.nodes / el:,.0f}/s)")
+        tb.add_row("completions", Text(f"{self.completions:,}", style=style.COMPLETION))
+        tb.add_row("contradictions", f"{self.conflicts:,}")
+        if self.stopped:
+            tb.add_row("not searched", Text(f"{self.stopped:,}", style="dim"))
+        tb.add_row("depth", f"{self.depth}  (max {self.max_depth})")
+        if self.root_unknown is not None:
+            tb.add_row("open signs", f"{self.unknown}  (root {self.root_unknown})")
+        return Panel(tb, title="counters", border_style="dim")
+
+    def _rules(self):
+        tb = Table(box=None, padding=(0, 1), show_header=True, header_style="dim")
+        tb.add_column("rule"); tb.add_column("signs forced", justify="right"); tb.add_column("")
+        tb.add_column("⊥ closed", justify="right")
+        top = max(self.forced.values(), default=1) or 1
+        for r in RULES:
+            if not (self.forced[r] or self.closed[r]):
+                continue
+            col = style.rule_color(r)
+            bar = Text("█" * max(1, round(16 * self.forced[r] / top)) if self.forced[r] else "", style=col)
+            tb.add_row(Text(r, style=f"bold {col}"), f"{self.forced[r]:,}", bar,
+                       f"{self.closed[r]:,}" if self.closed[r] else "")
+        return Panel(tb, title="rules", border_style="dim")
+
+    def _path(self):
+        t = Text()
+        shown = self.path[-14:]
+        if len(self.path) > len(shown):
+            t.append(f"… {len(self.path) - len(shown)} more  ", style="dim")
+        for S, sign in shown:
+            t.append(f"p{_coord(S)}{'+' if sign > 0 else '−'} ", style=POS if sign > 0 else NEG)
+        if not self.path:
+            t.append("the root", style="dim")
+        return Panel(t, title=f"current path · depth {len(self.path)}", border_style="dim")
+
+    def _leaves(self):
+        if not self.leaves:
+            return Panel(Text("no leaves yet", style="dim"), title="leaves by depth", border_style="dim")
+        depths = range(0, max(self.leaves) + 1)
+        top = max(sum(c.values()) for c in self.leaves.values())
+        comp = Text(); conf = Text(); axis = Text()
+        for d in depths:
+            c = self.leaves.get(d, Counter())
+            comp.append(BLOCKS[round(8 * c["completion"] / top)] if c["completion"] else " ", style=style.COMPLETION)
+            conf.append(BLOCKS[round(8 * c["conflict"] / top)] if c["conflict"] else " ", style="bold")
+            axis.append(str(d % 10), style="dim")
+        g = Table.grid(padding=(0, 1))
+        g.add_row(Text("completions", style="dim"), comp)
+        g.add_row(Text("contradictions", style="dim"), conf)
+        g.add_row(Text("depth", style="dim"), axis)
+        return Panel(g, title="leaves by depth", border_style="dim")
+
+    def _events(self):
+        tb = Table.grid(padding=(0, 1))
+        colors = {"completion": style.COMPLETION, "conflict": "bold", "depth": "yellow", "root": "dim",
+                  "stopped": style.STOPPED}
+        for t, kind, text in self.events:
+            tb.add_row(Text(f"{t:7.2f}s", style="dim"), Text(text, style=colors.get(kind, "")))
+        return Panel(tb, title="events", border_style="dim")
+
+    def __rich__(self):
+        mid = Table.grid(expand=True, padding=(0, 1))
+        mid.add_column(ratio=1); mid.add_column(ratio=1)
+        mid.add_row(self._counters(), self._rules())
+        return Group(self._header(), self._progress(), mid, self._path(), self._leaves(), self._events())
+
+    # ------------------------------------------------------------------ context manager
+    def __enter__(self):
+        self.t0 = time.time()
+        self._live.__enter__()
+        return self
+
+    def __exit__(self, *exc):
+        self.finished = True
+        self._live.refresh()
+        return self._live.__exit__(*exc)
+
+
+# --------------------------------------------------------------------------- command line
+
+def _presets():
+    from .patterns import ELEVEN, PATTERNS
+    out = {k: (list(map(int, a)), [list(map(int, r)) for r in B]) for k, (a, B) in PATTERNS.items()}
+    out.update({k: (list(map(int, a)), [list(map(int, r)) for r in B]) for k, (a, B) in ELEVEN.items()})
+    return out
+
+
+from .patterns import random_pattern  # noqa: E402  (kept here for compatibility)
+
+
+# ------------------------------------------------------------------ the interactive picker (questionary)
+
+RULE_NOTES = {
+    "R1": "stability: det B > 0, some principal k-minor positive for every k",
+    "R2": "Cramer on every subsystem: x*_j det B_JJ as a signed sum of minors",
+    "R2n": "Cramer on the full system only (with R1: the Grassmannian paper's algorithm)",
+    "R3": "balanced patterns: S B S a Z-matrix forces its principal minors",
+    "R4": "Z-blocks: M-matrix blocks under a signature and a permutation (subsumed by R2,R3,R5,R7,R8: idle by default)",
+    "R5": "Laplace expansions of every minor",
+    "R6": "Schur blocks: minors of the Schur complement (subsumed by GP and R5,R7: idle by default)",
+    "R7": "tope: circuit orthogonality (subsumes R2)",
+    "R8": "real eigenvalue of benefactor-permutation patterns",
+}
+STOP_CHOICES = [("after 5 completions", (5, None)), ("after 20 completions", (20, None)),
+                ("after 200 completions", (200, None)), ("after 2,000 nodes", (None, 2000)),
+                ("after 20,000 nodes", (None, 20000)), ("after 200,000 nodes", (None, 200000)),
+                ("run to the end (can be very long)", (None, None))]
+
+
+def _signs(a) -> str:
+    return " ".join("+" if v > 0 else "−" for v in a)
+
+
+def _group(name: str) -> str:
+    if name.startswith("r8_"):
+        return "killed by R8 alone, open under R1–R7"
+    if name.startswith("n6_hard_"):
+        return "six species, possible: witnesses found late (MILP time limit), slow for the optimiser"
+    if name[:2] in ("S-", "A-"):
+        return "four species, proved impossible"
+    return "five species, open patterns near the kills"
+
+
+def _pick(presets: dict):
+    """Arrow-key menus for the pattern, the rules and the stopping rule; None when the user quits."""
+    try:
+        import questionary
+        from questionary import Choice, Separator, Style
+    except ImportError:                                   # pragma: no cover
+        print("the interactive menu needs questionary:  python -m pip install questionary")
+        return None
+    style = Style([("qmark", "fg:#5f87ff bold"), ("question", "bold"), ("pointer", "fg:#5f87ff bold"),
+                   ("highlighted", "fg:#5f87ff bold"), ("selected", "fg:#5faf5f"), ("separator", "fg:#8a8a8a"),
+                   ("instruction", "fg:#8a8a8a italic"), ("answer", "fg:#5faf5f bold")])
+    kw = dict(style=style, qmark="◆", pointer="▶")          # menus
+    kt = dict(style=style, qmark="◆")                       # text and yes/no prompts
+    groups: dict = {}
+    for name in presets:
+        groups.setdefault(_group(name), []).append(name)
+    width = max(len(n) for n in presets) if presets else 10
+    choices = []
+    for g, names in groups.items():
+        choices.append(Separator(f"  {g}"))
+        for n in names:
+            a, _ = presets[n]
+            choices.append(Choice(f"{n:<{width}}   n = {len(a)}   a = {_signs(a)}", value=n))
+    choices += [Separator("  other"), Choice(f"{'custom':<{width}}   type a and B", value="custom"),
+                Choice(f"{'random':<{width}}   a random pattern", value="random")]
+    pattern = questionary.select("Pattern", choices=choices, use_shortcuts=False, use_indicator=False,
+                                 instruction="(↑↓ to move, enter to choose)", **kw).ask()
+    if pattern is None:
+        return None
+    out = {"preset": None, "a": None, "B": None, "random": None}
+    if pattern == "random":
+        n = questionary.select("Species", choices=[str(k) for k in range(3, 8)], default="5",
+                               use_shortcuts=False, use_indicator=False, **kw).ask()
+        if n is None:
+            return None
+        out["random"] = int(n)
+    elif pattern == "custom":
+        out["a"] = questionary.text("Growth-rate signs a (comma separated)", default="-1,-1,-1", **kt).ask()
+        out["B"] = questionary.text("Signs of B (rows separated by /)", default="1,1,1/-1,1,1/-1,-1,1", **kt).ask()
+        if out["a"] is None or out["B"] is None:
+            return None
+    else:
+        out["preset"] = pattern
+    rule_choices = [Choice(f"{r:<4} {RULE_NOTES[r]}", value=r, checked=r in Ecology.ALL_RULES)
+                    for r in ("R1", "R2", "R2n", "R3", "R4", "R5", "R6", "R7", "R8")]
+    rules = questionary.checkbox("Rules", choices=rule_choices, instruction="(space to toggle, enter to confirm)",
+                                 **kw).ask()
+    if rules is None:
+        return None
+    out["rules"] = tuple(rules)
+    stop = questionary.select("Stop", choices=[Choice(t, value=v) for t, v in STOP_CHOICES], use_shortcuts=False,
+                              use_indicator=False, instruction="(↑↓ to move, enter to choose)", **kw).ask()
+    if stop is None:
+        return None
+    out["max_completions"], out["max_nodes"] = stop
+    html = questionary.confirm("Write the interactive tree viewer (HTML) at the end?", default=False, **kt).ask()
+    if html is None:
+        return None
+    out["html"] = questionary.text("File", default="tree.html", **kt).ask() if html else None
+    return out
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description="Run one sign-completion search with a live terminal dashboard.")
+    ap.add_argument("--a", help="growth-rate signs, e.g. -1,-1,-1")
+    ap.add_argument("--B", help="signs of B, rows separated by /")
+    ap.add_argument("--preset", help="a named pattern of signrules.patterns: the n = 5, 6 presets (PATTERNS) or the eleven n = 4 candidates (ELEVEN)")
+    ap.add_argument("--random", type=int, metavar="N", help="a random sign pattern on N species")
+    ap.add_argument("--seed", type=int, default=None, help="seed for --random (printed when omitted)")
+    ap.add_argument("--rules", default="all", help="'all' (default) or a list such as R1,R2n")
+    ap.add_argument("--root-only", default="", help="rules among --rules to run at the root only, such as R4,R6")
+    ap.add_argument("--idle", default="auto",
+                    help="rules among --rules that are registered but never run: 'auto' (default: R4 and R6 "
+                         "when the rules that subsume them are on), a list such as R4,R6, or '' to run everything")
+    ap.add_argument("--max-nodes", type=int, default=None)
+    ap.add_argument("--max-completions", type=int, default=None)
+    ap.add_argument("--html", default=None, help="also write the interactive tree viewer to this file")
+    ap.add_argument("--name", default="")
+    args = ap.parse_args(argv)
+    presets = _presets()
+    use = None
+    if not (args.a and args.B) and not args.preset and not args.random:
+        picked = _pick(presets)
+        if picked is None:
+            return
+        args.preset, args.a, args.B, args.random = picked["preset"], picked["a"], picked["B"], picked["random"]
+        use = picked["rules"]
+        args.max_completions = args.max_completions or picked["max_completions"]
+        args.max_nodes = args.max_nodes or picked["max_nodes"]
+        args.html = args.html or picked["html"]
+    if args.random:
+        if args.seed is None:
+            import random
+            args.seed = random.randrange(10 ** 6)
+        a, B = random_pattern(args.random, args.seed)
+        name = args.name or f"random n={args.random}, seed {args.seed}"
+        print(f"random pattern (seed {args.seed}):  --a {','.join(map(str, a))} "
+              f"--B \"{'/'.join(','.join(map(str, r)) for r in B)}\"")
+    elif args.preset:
+        a, B = presets[args.preset]
+        name = args.name or args.preset
+    else:
+        a = [int(x) for x in args.a.split(",")]
+        B = [[int(x) for x in row.split(",")] for row in args.B.split("/")]
+        name = args.name
+    if use is None:
+        use = Ecology.ALL_RULES if args.rules == "all" else tuple(r for r in args.rules.split(",") if r)
+    eco = Ecology(a, B, name)
+    try:
+        with LiveSearch(eco, use) as live:
+            res = complete(eco, use=use, progress=live, record_tree=bool(args.html),
+                           keep_derivations=False, max_nodes=args.max_nodes, max_completions=args.max_completions,
+                           root_only=tuple(r for r in args.root_only.split(",") if r),
+                           idle="auto" if args.idle == "auto" else tuple(r for r in args.idle.split(",") if r))
+    except KeyboardInterrupt:
+        print(f"interrupted after {live.nodes:,} nodes: {live.completions:,} completions, "
+              f"{live.conflicts:,} contradictions, {100 * live.covered:.2f}% swept")
+        return
+    print(res.summary())
+    if args.html:
+        from .treeview import save_tree_viewer
+        save_tree_viewer(eco, res, args.html, use=use)
+        print(f"tree viewer written to {args.html}")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the two papers below."
+title: "signrules: sign completion on the ecological Grassmannian"
+type: software
+authors:
+  - family-names: Scholten
+    given-names: Georgy
+repository-code: "https://github.com/gescholt/signrules"
+license: MIT
+references:
+  - type: article
+    title: "Strata of ecological coexistence via Grassmannians"
+    authors:
+      - family-names: Çelik
+        given-names: Türkü Özlüm
+      - family-names: Haas
+        given-names: Pierre A.
+      - family-names: Scholten
+        given-names: Georgy
+      - family-names: Wang
+        given-names: Kexin
+      - family-names: Zucal
+        given-names: Giulio
+    journal: "Annals of Combinatorics"
+    year: 2026
+    doi: "10.1007/s00026-026-00837-7"
+  - type: article
+    title: "Tropical certificates of coexistence for Lotka-Volterra sign patterns"
+    authors:
+      - family-names: Scholten
+        given-names: Georgy
+    year: 2026
+    notes: "draft; the companion repository feasible_ecologies holds the certificates of possibility"
