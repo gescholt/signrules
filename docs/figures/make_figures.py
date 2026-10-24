@@ -17,7 +17,6 @@ Colour follows docs/figures/README.md: red = positive entry / coordinate, blue =
 highlight tints mark subsets (chosen columns, a group of species) and never a sign.
 """
 
-import sys
 from pathlib import Path
 
 import numpy as np
@@ -26,9 +25,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle, Circle, Polygon
 
-from signrules import Ecology                       # noqa: E402
-from signrules import labels as L                   # noqa: E402
-from signrules import style                         # noqa: E402
+from signrules import Ecology
+from signrules import labels as L
+from signrules import style
 
 OUT = Path(__file__).resolve().parent
 style.use_math_fonts()
@@ -183,8 +182,8 @@ def fig_tope(B, name="tope", L_box=3.0):
     ax.set_title(r"cells of the arrangement carry $(\mathrm{sign}\,x \mid \mathrm{sign}\,Bx)$;"
                  "\n" + r"$\mathrm{sign}\,a$ is feasible iff $(+\,+ \mid \mathrm{sign}\,a)$ is a cell with $x>0$",
                  fontsize=10.5)
-    feas = ",\ ".join(L.tex_signs(f) for f in feasible)
-    offdiag = ",\ ".join(rf"b_{{{L._i(i)}{L._i(j)}}} {'>' if B[i, j] > 0 else '<'} 0"
+    feas = r",\ ".join(L.tex_signs(f) for f in feasible)
+    offdiag = r",\ ".join(rf"b_{{{L._i(i)}{L._i(j)}}} {'>' if B[i, j] > 0 else '<'} 0"
                           for i in range(2) for j in range(2) if i != j)
     fig.text(0.5, 0.005, rf"${offdiag}$:   feasible $\mathrm{{sign}}\,a \in \{{{feas}\}}$",
              ha="center", fontsize=10.5, color=style.INK)

@@ -3,20 +3,18 @@ Derivation graphs and search trees for docs/SIGNRULES.md.
 
     python docs/figures/make_graphs.py         # writes docs/figures/certificate_*, search_tree_*, completion_*
 
-The examples are the four-species patterns of the Grassmannian paper (scripts/impossible_eleven.py)
+The examples are the eleven four-species patterns of Meng et al. (2025), proved impossible in
+Çelik–Isoldi–Portakal–Zucal (``signrules.patterns.ELEVEN``),
 and one open three-species pattern; every label on the drawings is generated from the run
 (signrules/certificate.py, labels.py).
 """
 
-import sys
 from pathlib import Path
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parents[1]
-
-from signrules.patterns import ELEVEN                                                     # noqa: E402
-from signrules import Ecology, complete, write_certificate, write_search_tree, write_completion  # noqa: E402
+from signrules.patterns import ELEVEN
+from signrules import Ecology, complete, write_certificate, write_search_tree, write_completion
 
 OUT = Path(__file__).resolve().parent
 CLASSICAL = ("R1", "R2n")
@@ -30,7 +28,7 @@ def pattern(key_start, name):
 
 # the figures were drawn with the sweep engine and first-open branching (the certificates follow the
 # paper's proofs rule by rule, the trees branch in table order); the default engine finds shorter kills.
-# R4 and R6 are idle (subsumed, bead Python-7d3): the Z-block step of the paper's proofs appears as
+# R4 and R6 are idle (subsumed): the Z-block step of the paper's proofs appears as
 # three circuits (R7) and Cramer's rule (R2) in certificate_thm35.
 ORIGINAL = dict(engine="sweep", branching="first")
 

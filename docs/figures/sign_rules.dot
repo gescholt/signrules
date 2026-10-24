@@ -6,7 +6,7 @@ digraph G {
     style="rounded"; color="#bbbbbb"; margin=8.0; label="determinant identities"; fontsize=10.45; labeljust=l;
     "GP" [label="Grassmann–Plücker\n3-term relations between the p_S", shape=box, fillcolor="#e6e6e6", color="#6f6f6f"];
     "R5" [label="R5 · Laplace\nexpand a minor along a row or column", shape=box, fillcolor="#fff0c8", color="#d9662b"];
-    "R6" [label="R6 · Schur blocks\nminors of B / B_PP from their entries", shape=box, fillcolor="#fff0c8", color="#b8336a"];
+    "R6" [label="R6 · Schur blocks\nminors of B / B_PP from their entries   (retired: GP + R5 + R7)", shape=box, fillcolor="#f7f7f7", color="#b8336a"];
   }
   subgraph "cluster_feas" {
     style="rounded"; color="#bbbbbb"; margin=8.0; label="feasibility   x^* > 0"; fontsize=10.45; labeljust=l;
@@ -20,7 +20,11 @@ digraph G {
   subgraph "cluster_z" {
     style="rounded"; color="#bbbbbb"; margin=8.0; label="feasibility + stability + a Z-twist  ⇒  M-matrix"; fontsize=10.45; labeljust=l;
     "R3" [label="R3 · balanced patterns\nS B S is a Z-matrix: principal minors > 0, almost-principal \sim b_ij", shape=box, fillcolor="#fff0c8", color="#8c6d1f"];
-    "R4" [label="R4 · Z-blocks\na Schur block twisted to a Z-matrix: M-matrix minor signs, or a leading minor ≤ 0", shape=box, fillcolor="#fff0c8", color="#7b3fa0"];
+    "R4" [label="R4 · Z-blocks\na Schur block twisted to a Z-matrix: M-matrix minor signs, or a leading minor ≤ 0   (retired)", shape=box, fillcolor="#f7f7f7", color="#7b3fa0"];
+  }
+  subgraph "cluster_eig" {
+    style="rounded"; color="#bbbbbb"; margin=8.0; label="feasibility + stability + a Z-twist of the whole matrix"; fontsize=10.45; labeljust=l;
+    "R8" [label="R8 · real eigenvalue\nS B P_σ a Z-matrix, σ ≠q id: −diag(x^*) B has a positive real eigenvalue   ⇒ ⊥", shape=box, fillcolor="#fff0c8", color="#4a6fa5"];
   }
   "table" [label="sign table\nsigns of all minors of B = all p_S", shape=box, fillcolor="#e6f3df", color="#8fbf7a"];
   "out" [label="⊥\nimpossible ecology + certificate", shape=box, fillcolor="#222222", color="#222222"];
@@ -29,4 +33,5 @@ digraph G {
   "R1" -> "table" [ltail="cluster_stab", color="#777777"];
   "R3" -> "table" [ltail="cluster_z", color="#777777"];
   "table" -> "out" [color="#777777"];
+  "R8" -> "out" [ltail="cluster_eig", color="#777777"];
 }

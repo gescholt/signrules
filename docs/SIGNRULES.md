@@ -1,23 +1,26 @@
 # Sign rules on the ecological Grassmannian (`signrules`)
 
-This module combines the oriented-matroid sign completion of *Strata of Ecological
+This package combines the oriented-matroid sign completion of *Strata of Ecological
 Coexistence via Grassmannians* (Çelik, Haas, Scholten, Wang, Zucal, Ann. Comb. 2026) with the
 Z-/M-matrix and Schur-complement arguments of *Stable Coexistence in Ecologies and Games*
 (Çelik, Isoldi, Portakal, Zucal, arXiv:2609.09286). It implements the refinement suggested at the
 end of Section 3 of the latter: supplement the Grassmann–Plücker, feasibility and weak-stability
 constraints with determinant and minor-sign constraints coming from Schur complements.
 
-A LaTeX version with precise statements, soundness proofs and pseudocode for the rules is in the
-repository `feasible_ecologies` (`docs/tex/sign_rules.pdf`; the article `docs/tex/article.pdf` there states
-the rules with their proofs in Section 4).
+Citations below: Theorem, Lemma and Figure numbers 2.x–3.x refer to Çelik–Isoldi–Portakal–Zucal
+(arXiv:2609.09286, "CIPZ" for short); "the Annals paper" is Çelik–Haas–Scholten–Wang–Zucal, Ann. Comb. 2026
+(arXiv:2509.00165), whose Maple implementation is "the Maple algorithm"; Meng et al. is Y. Meng, S. Horvát,
+C. D. Modes, P. A. Haas, *Impossible ecologies*, Cell Systems 16 (2025) 101297. A LaTeX version of the rules
+with precise statements and soundness proofs is in the repository
+[feasible_ecologies](https://github.com/gescholt/feasible_ecologies) (`docs/tex/sign_rules.pdf` and the article there).
 
 Everything below is at the level of signs. A pattern that the rules *kill* is a proved impossible
 ecology (the rules are sound, see §5). A pattern that survives is merely not decided by sign
-propagation. The converse tool, a constructive certificate that a surviving pattern *is* possible,
-is the tropical witness of the repository `feasible_ecologies` (`src/tropical` there): an integer valuation
-matrix U (min convention) such that C(ε) = (sgn b_ij · ε^{u_ij}) is positive stable with row-sum signs sgn a
-for all small ε > 0, found by a small MILP and verified exactly over Q. For n = 3 the two tools together decide every
-pattern (178 killed, 334 witnessed), and for n ≤ 6 every pattern the rules leave open has a witness.
+propagation. The converse tool, a constructive certificate that a surviving pattern *is* possible, is the
+tropical witness of the repository `feasible_ecologies` (`src/tropical` there): an integer matrix of orders
+of magnitude whose one-parameter family of communities is feasible and stable for all small ε, found by an
+integer program and verified exactly over Q. For n = 3 the two tools together decide every pattern (178
+killed, 334 witnessed); for n ≤ 6 the rules, the witnesses and the deletion lemma (§6) decide every pattern.
 
 ![How one run of complete() works](figures/algorithm.png)
 
@@ -29,7 +32,7 @@ $[\operatorname{diag}(\mathbf a)\,|\,\mathbf B]\in\mathrm{Gr}(n,2n)$, written $p
 (the minor of $\mathbf B$ behind it appears only inside the rule that is stated in terms of it).
 Red means positive and blue negative, everywhere: entries of $\mathbf B$ (competition / mutualism),
 coordinates, and the sign chosen on a branch of a search tree. The border of a coordinate says where
-its sign came from — thin grey: read off the entries; black: forced by a rule; dashed violet: a
+its sign came from — thin grey: read off the entries; black: forced by a rule; dashed black: a
 branch choice — and a contradiction is a black $\bot$. Each rule has a hue of its own (the title
 of its box in a certificate, its box in the overview below, the $\bot$ leaves it closes in a search
 tree); nothing else is coloured. All labels are generated from the run, so the same code draws the
@@ -65,8 +68,7 @@ the sign: the quotient formula and the "Schur complement of an M-matrix is an M-
 refer to the order $(P, i)$, and the code converts to sorted order with `merge_sign`.
 
 The initial table of `Ecology.initial_table()` is the sign of every minor whose permutation
-expansion has monomials of a single sign (the same information as
-`EcologyCore.process_determinants`, computed without sympy). For $n=4$ this fixes 38–41 of the 70
+expansion has monomials of a single sign. For $n=4$ this fixes 38–41 of the 70
 coordinates; the partial assignment $\chi(\sigma)$ of the Annals paper is the subset of size
 $n^2+1$.
 
@@ -85,8 +87,9 @@ inequality information (Perron–Frobenius, positivity of $\mathbf x^\star$).
 
 ![The sign rules: what each one uses and what it forces](figures/sign_rules.png)
 
-*Hypotheses (left) → rules (middle) → the shared sign table (right). Grey: already in the
-Grassmannian paper's algorithm; yellow: new. Source `docs/figures/make_diagrams.py`.*
+*Hypotheses (left) → rules (middle) → the shared sign table (right). Grey: already in the Annals
+paper's algorithm; yellow: new; dotted: R4 and R6, retired because the other rules subsume them (below).
+Source `docs/figures/make_diagrams.py`.*
 
 Standing hypotheses: $\mathbf x^\star = \mathbf B^{-1}\mathbf a > 0$, $J = -\operatorname{diag}
 (\mathbf x^\star)\mathbf B$ Hurwitz, no vanishing Plücker coordinate. Throughout,
@@ -97,13 +100,13 @@ is known whenever $a_k$ and all $-b_{kr}$, $r\notin J$, agree.
 **R1 — stability.** $\det\mathbf B > 0$ (coefficient $c_0$), and for each size $k$ the coefficient
 $c_{n-k} = \sum_{|I|=k} x^\star_I \det\mathbf B_{II}$ is positive, so some principal $k$-minor is
 positive (weak stability in the sense of the Annals paper). This is exactly the stability content
-of the original Maple algorithm.
+of the Maple algorithm.
 
 **R2 — subsystem Cramer rule.** $\mathbf B_{JJ}\mathbf x^\star_J = \mathbf w_J$, hence
 $x_j^\star\det\mathbf B_{JJ} = \sum_{k\in J}\operatorname{cof}_{kj}(\mathbf B_{JJ})\,w_k$ must have
 the sign of $\det\mathbf B_{JJ}$. $J=[n]$ is plain feasibility; smaller $J$ is the mechanism of
 Theorem 3.2 ($\mathbf B_{JJ}\mathbf x_J < 0$ for the obligate group). `R2n` restricts to $J = [n]$
-and reproduces the original algorithm.
+and reproduces the Maple algorithm.
 
 **R3 — balanced patterns.** If the interaction graph is balanced (a signature
 $\mathbf s\in\{\pm1\}^n$ with $s_is_jb_{ij}<0$ for $i\ne j$, e.g. two competing mutualistic groups),
@@ -168,11 +171,11 @@ off the diagonal on the species $\sigma$ moves, where $s=-1$, and $+t$ on the di
 It is a nonsingular M-matrix at $t=0$, and $D_t\mathbf 1_N\le0$ for large $t$, where $\mathbf 1_N$ is the
 indicator of the moved species. So its least real eigenvalue crosses $0$ at some $t_1>0$, where
 $\mathbf BX+t_1I$ is singular, and $t_1$ is an eigenvalue of $-X\mathbf B$. This is a statement about
-eigenvalues, not coefficients: R1 cannot see it, and no tropical witness exists for these patterns.
+eigenvalues, not coefficients: R1 cannot see it.
 With one wrong growth sign, $D_0$ is still a nonsingular M-matrix: its block off that species has
 positive row sums, hence positive principal minors, and $\det D_0=(-1)^k\det\mathbf B\det X>0$ for
 $k$ even under R1; so all leading principal minors are positive when the wrong species comes last
-(Prop. 6.6(d) of the note). This decides the last two five-species and five six-species patterns.
+(case (d) of §7). This decides the last two five-species and five six-species patterns.
 
 Each rule either raises `Conflict`, forces some signs (`set_minor`, logged with the rule name so a
 kill comes with a certificate), or does nothing. `Ecology.apply_rules` iterates them to a fixed point
@@ -194,6 +197,8 @@ under `R1,R2n,R5,R6` that prunes about seven times fewer nodes than taking the f
 Because cheap rules run first, the certificates differ: under all rules every root kill of the $n=4$
 census has R2 or R7 as its last step and none uses R4 or R6 (`scripts/rule_usage.py`).
 
+### The engine, and why R4 and R6 are idle
+
 Under the full rule set the Schur-block rules are in fact idle: `complete(stats=True)` counts the
 runs, forced signs and conflicts of every rule at the root and below it, and on the eleven $n=4$
 patterns and all 226 patterns of the $n=5,6$ extension screens R4 and R6 run 112k and 97k times at
@@ -212,10 +217,10 @@ hence the trees (160 of the 161 open patterns, and 15–21 % more nodes on the $
 watchers are part of the most-constrained heuristic), while keeping every verdict. Since the
 subsumption below, `complete()` *idles* them by default (`idle="auto"`): their propagators are
 registered, so the branching order, the trees and the certificates are exactly those of the full
-rule set, but they are never run, root included; `idle=()` (and `livesearch --idle ''`) runs them,
+rule set, but they are never run, root included; `idle=()` (and `signrules-live --idle ''`) runs them,
 and a reduced rule set that lacks the subsuming rules (say `R1,R2n,R5,R6`) runs them as before.
 
-#### R4 and R6 are subsumed
+### R4 and R6 are subsumed
 
 *R6.* Part (a) can only fire on a $2\times2$ minor of $D$: a $k\times k$ matrix without zero entries
 has permutation terms of both signs when $k\ge3$ (if all agreed, comparing a permutation with its
@@ -257,14 +262,14 @@ trees: on every table closed under the other rules in the search trees of all 51
 relabelling classes at $n=4$ (3000 nodes each: 6.9 M nodes, 3.4 M completions), 19,995 random patterns
 at $n=5$ (2000 nodes each, 34.6 M nodes) and 2000 at $n=6$ (1000 nodes each, 2.0 M nodes), R4 ran 169 M
 times and R6 106 M times without setting a sign or raising a conflict
-(`scripts/rule_ablation.py --census`, records `signrules/data/rule_ablation/census*.jsonl`; the $n=3,4$
-censuses reproduce the 178/334 and 715/2329 root kills/open patterns); and on 2800 tables built so that
+(`scripts/rule_ablation.py --census`; the records `census3.jsonl`, `census4.jsonl` are in
+`signrules/data/rule_ablation/`, the random $n=5,6$ ones are regenerated by `--census --random 20000` and
+`--random 2000`; the $n=3,4$ censuses reproduce the 178/334 and 715/2329 root kills/open patterns); and on 2800 tables built so that
 R4 applies on a Schur block with $P\ne\emptyset$ and $|Q|\in\{3,4\}$ (both cases, $\sigma$ the identity or
 not, $n=4,5,6$; R4 does fire on them after the 3-term relations alone), R4 is silent once the other
 rules have run (`tests/test_subsumption.py` keeps a small version of each experiment).
 
-Second, at the level of propagation, exhaustively per $n$ (`scripts/r4_subsumption.py`, bead
-Python-jr9). The propagators are monotone, so the closure of any table on which R4 applies contains
+Second, at the level of propagation, exhaustively per $n$ (`scripts/r4_subsumption.py`). The propagators are monotone, so the closure of any table on which R4 applies contains
 the closure of R4's *premises*: the minimal table with $\det\mathbf B_{PP}$, the entries of $D$ along
 the twist, the minors of the reduced right-hand side and $b_{rt}=-a_r$ ($t\in R$) set. It suffices to
 close the premises under the other rules and compare with R4's conclusions. A configuration is a block
@@ -298,10 +303,14 @@ used, and the final contradiction records its premises. `signrules/certificate.p
 backward slice of that record — only the steps the contradiction depends on — as a DAG
 (`write_certificate(eco, result, "cert")` writes `cert.png`, `cert.pdf` and a plain-text `cert.dot`;
 the layout is Graphviz's, the typesetting matplotlib's, see `gvrender.py`). Below, the machine proof
-of Theorem 3.5 for a competitor plus an obligate 3-cycle: the Z-block on the cycle is an M-matrix,
-which fixes $p_{0567}$ (the principal minor on the cycle) and three almost-principal minors; the
-Laplace expansion of $\det\mathbf B = p_{4567}$ along the competitor's row then has every term
-negative, contradicting $p_{4567}>0$ (R1).
+of Theorem 3.5 for a competitor plus an obligate 3-cycle (drawn with `engine="sweep"`): three circuits
+(R7), each eliminating one species of the cycle between two of its rows, fix three almost-principal
+$2$-minors of the cycle; Cramer's rule on the cycle's subsystem (R2), with the competitor moved to the
+right-hand side, makes $p_{0567}$ (the principal minor on the cycle) negative; three Laplace expansions
+(R5) fix the minors $\det\mathbf B_{234,[4]\setminus j}$, and the expansion of
+$\det\mathbf B = p_{4567}$ along the competitor's row then has every term negative, contradicting
+$p_{4567}>0$ (R1). (CIPZ read the first four signs off the M-matrix of the Z-block, rule R4, which the
+engine idles.)
 
 ![certificate for Theorem 3.5](figures/certificate_thm35.png)
 
@@ -331,7 +340,8 @@ more signs the propagation forced after that choice, leaves are completions (gre
 contradictions ($\bot$ in the colour of the rule) or unexplored subtrees (grey, when the search
 was stopped). Subtrees that the search visits several times — same coordinates, same choices,
 same propagation, same outcome — are boxed in one pale tint with their multiplicity. Below the
-same Figure 2(d) run under `R1,R2n`: 137 nodes, 64 completions, 10 contradictions (9 by
+same Figure 2(d) run under `R1,R2n` with `engine="sweep", branching="first"` (the default conflict-driven
+branching gives 131 nodes and 4 contradictions): 137 nodes, 64 completions, 10 contradictions (9 by
 coefficient positivity, 1 by a 3-term relation); the search does the same 15-node subtree on
 $p_{1256}, p_{1357}, p_{2367}$ eight times, i.e. those three coordinates are free whatever was
 chosen before, and the 31-node subtree below $p_{0347}$ three times.
@@ -342,8 +352,8 @@ chosen before, and the 31-node subtree below $p_{0347}$ three times.
 set to each value on a copy of the table and propagated; a conflict on one side forces the other, a
 conflict on both kills the node. It is sound, so the completions do not change; it only moves kills
 up the tree. Under `R1,R2n` it turns the S-a search kill into a root kill. With all rules it adds
-nothing at the root on the n=4 census, the n=5 kills or the 7 undecided n=5/6 extension candidates
-(every open sign there survives both values). At every node (`"all"`) it removes all dead branches
+nothing at the root on the n=4 census, the n=5 kills or the 7 extension candidates that R1–R7 leave open
+(every open sign there survives both values; R8 kills them). At every node (`"all"`) it removes all dead branches
 of the hardest n=6 candidate (117 nodes, 0 conflicts, against 20,000 nodes of which 19,964 were
 conflicts without probing), but each node then costs about 2 × (open signs) fixpoints.
 
@@ -367,8 +377,8 @@ completions; S-e ($|G|=8$) 131 → 37 nodes, 64 → 15 orbits. Over the 24 exhau
 not root kills) of the symmetric patterns among the eleven and 400 random n=4 patterns, under three rule
 sets, nodes halve (38,542 → 18,813), and a branching kill (random seed 176, `R1,R2n,R5,R6`, $|G|=6$) shrinks from 305 to 112
 nodes. The gain needs finished left subtrees, so a search stopped at the first completion barely changes
-(n=3/n=4 census: same 38/715 verdicts, 57,993 → 57,931 nodes), and neither does a capped enumeration
-of the two undecided n=5 patterns ($|G| = 8, 2$): at 150,000 nodes about half the nodes are
+(n=3/n=4 census: same verdicts, 57,993 → 57,931 nodes), and neither does a capped enumeration
+of the two n=5 patterns that R1–R7 leave open ($|G| = 8, 2$; R8 kills them): at 150,000 nodes about half the nodes are
 completions and no subtree near the root is finished, so the full sets are far out of reach and
 symmetry divides them by at most $|G|$. Off by default; the SBDS check costs up to 20% per node.
 
@@ -378,11 +388,12 @@ The figures in this section are produced by `docs/figures/make_figures.py` (rule
 ## 4. Results
 
 `python scripts/impossible_eleven.py` (all rules) proves the eleven four-species candidates of
-Meng et al. impossible at the root, without branching, in milliseconds each. With `--engine sweep`
-the kill logs name the argument used and follow the paper's proofs closely (R3 for the symmetric patterns, R4 with the
-prey permutation for the cycle patterns, R4/R6 Schur steps for Lemmas 3.8–3.10).
+Meng et al. impossible at the root, without branching, in milliseconds each. With `--engine sweep --idle ""`
+(the sweep engine with the retired R4 and R6 running) the kill logs name the argument used and follow the
+proofs of CIPZ closely (R3 for the symmetric patterns, R4 with the prey permutation for the cycle patterns,
+R4/R6 Schur steps for Lemmas 3.8–3.10); with the default rules the kills go through R7 and R2 instead.
 
-Ablation (`--rules ...`), reproducing the numbers quoted in the paper's closing remark of §3:
+Ablation (`--rules ...`), reproducing the numbers quoted in the closing remark of §3 of CIPZ:
 
 | rules | S-a | S-b | S-c | S-d | S-e | A-a | A-b | A-c | A-d | A-e | A-f |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -393,7 +404,7 @@ Ablation (`--rules ...`), reproducing the numbers quoted in the paper's closing 
 
 (S-a … S-e: Figure 2 (a)–(e); A-a … A-f: Figure 3 (a)–(f).) In the `R1,R2n` row every completion of
 S-d has $\chi_{1278}=-$, of S-e $\chi_{1278}=+$, of A-a $\chi_{1678}=+$, of A-c $\chi_{1567}=-$,
-exactly as stated in the paper. The same code kills the $n=5$ members of the infinite families
+exactly as stated in CIPZ. The same code kills the $n=5$ members of the infinite families
 (Theorems 3.1–3.6) in about 0.1 s each.
 
 An exhaustive run over all $n=2$ and $n=3$ sign patterns kills exactly the trivial ecologies plus the
@@ -405,56 +416,70 @@ realizes, and leaves the six rare irreducible $n=3$ ecologies of Table 2 of the 
 
 * `check_conventions`: the Plücker/minor dictionary on random matrices.
 * The initial table never disagrees with the numeric chirotope of a random system.
-* For thousands of random feasible-stable systems (including balanced ones): the rules never reject
-  the true complete table, and on the partial initial table they never force a sign different from
-  the truth.
+* For random feasible-stable systems with $n=3,4$ (75 per test run, balanced ones included;
+  `tests/test_soundness.py`): the rules never reject the true complete table, and on the partial initial
+  table they never force a sign different from the truth.
+* `tests/test_r8.py`: R8 never fires on an $n\le4$ class that R1–R7 leave open (all of those are possible).
+* The replay checker (below) re-derives every certificate of the $n=4,5,6$ kills and rejects every
+  certificate with a single flipped step (`scripts/replay_certificates.py --tamper`).
+
+### Independent replay
+
+A kill is accepted only if its certificate replays: `replay.py` starts from the signs read off the entries
+and re-derives each step from the identity or inequality the step names — a three-term relation, a Cramer
+or Laplace expansion (R2, R5), a coefficient of the characteristic polynomial (R1), a minor of a balanced
+pattern (R3), a circuit (R7), the Z-twist of R8, or a minor of a twisted Schur block (the retired R4, R6) —
+applied to the explicit minors involved, and then checks that the final conflict is one.
+`replay_kill(eco, result)` does this for one pattern; `scripts/replay_certificates.py n --tamper` for the
+whole lists.
 
 ## 6. Five species
 
 `scripts/screen_all.py` enumerates all 248,436 non-trivial five-species ecologies up to relabeling
-(the count matches Meng et al.) and runs root propagation on each (about 100 CPU-minutes; resumable).
-**21 ecologies are proved impossible at the root by R1–R6, 22 with R8** (unchanged when R7 is added: it determines
-extra signs in 12,002 survivors but closes none), listed with their certificates in
+(the count matches Meng et al.) and runs root propagation on each (the run of 2026-09 with `--rules
+R1,R2,R3,R4,R5,R6`: about 100 CPU-minutes; resumable). **21 ecologies are proved impossible at the root by
+R1–R6, 24 with R8** (`parity_k2` and the two `r8_pairs_benefactor_*` presets; R7 determines extra signs in
+12,002 survivors but closes none), listed with their certificates in
 `signrules/data/n5/killed_patterns.json`, summarized in `signrules/data/n5/screen_summary.md`, and drawn in
 `examples/n5/impossible_n5.png` of the repository `feasible_ecologies` (`draw_graphs.py` there, with the conventions of the papers' Figure 1):
 
 * 8 symmetric ones — exactly the $n=5$ content of Theorems 3.1–3.2 (obligate mutualism; the $1|4$
   and the six $2|3$ competing-groups patterns with an obligate group);
 * 3 covered by Theorems 3.4–3.6 (obligate 5-cycle; competitor + 4-cycle; super-predator + 4-cycle);
-* 10 not covered by any theorem in the paper: obligate pair or 3-cycle plus growing universal
+* 10 not covered by any theorem of CIPZ: obligate pair or 3-cycle plus growing universal
   predators (the parity family), an obligate 3-cycle plus an obligate pair (and two variants with one
   growth rate flipped), and a growing competitor attached to a pair, a 3-cycle or a chain.
 
-`out/n5_trees/ (scripts/search_trees_n5.py)` holds, for the ten new kills, the certificate DAG and the search tree of the
+`python scripts/search_trees_n5.py` writes to `out/n5_trees/`, for the ten new kills, the certificate DAG and the search tree of the
 classical R1+R2n algorithm (which leaves 158–173 signs open at the root and never closes), together
 with a table of which rule subsets kill each pattern at the root; notably R1+R7, weak stability with the
 tope rule, kills all ten at the root, while R1+R2 kills only two.
 
 Every killed pattern has each species benefiting from none, exactly one, or all of the others (or
 exactly its own group in the balanced cases). Direct equilibrium sampling finds no Hurwitz instance for
-any of the 21; the 59 survivors with the fewest undetermined signs all admit sign-consistent completions
-under branching. Meng et al. report an upper bound of 30 candidates (their Fig. S3); the extension
+any of the 21; the 59 root-screen survivors with the fewest undetermined signs (unrelated to the 59 possible
+candidates below) all admit sign-consistent completions under branching. Meng et al. report an upper bound of 30 candidates (their Fig. S3); the extension
 screen below sharpens it to 24.
 
 ### Extension screens (`scripts/extension_screen.py`)
 
-Deletion lemma (`signrules/screen.py`; Lemma 2.4 of the article): if a one-species deletion of a
+Deletion lemma (`signrules/screen.py`): if a one-species deletion of a
 non-trivial pattern is possible, so is the pattern. So a non-trivial impossible n-species pattern is a
 one-species extension of a non-trivial impossible (n−1)-class, or all its deletions are trivial (the
 obligate derangement family). The script generates both, keeps the classes whose deletions are all
 impossible or trivial, and runs the rules; the tropical witnesses of `feasible_ecologies` (`examples/extension_screen.py --witness` there,
 exact over Q) decide the rest.
 
-| n | base | candidates | killed (rules) | possible (real-rooted witness) | undecided |
+| n | base | candidates | killed (rules) | possible (witness in `feasible_ecologies`) | undecided |
 |---|---|---|---|---|---|
 | 5 | 11 impossible n=4 classes (census, complete) | 83 | 24 | 59 | 0 |
-| 6 | the 24 impossible n=5 classes | 143 | 41 | 102 (91 optimal, 11 time-limit incumbents) | 0 |
+| 6 | the 24 impossible n=5 classes (`--base known`) | 143 | 41 | 102 | 0 |
 
 Both lists are complete, so exactly 24 five-species and 41 six-species ecologies are impossible. The
-last seven kills (two at n=5, five at n=6) are R8 with one wrong growth sign (Prop. 6.6(d)): two
+last seven kills (two at n=5, five at n=6) are R8 with one wrong growth sign (case (d) of §7): two
 mutualistic pairs plus universal beneficiaries (`parity_k2` with one growth sign flipped, and their n=6
-extensions) and an obligate 3-cycle + mutualistic pair + universal beneficiary. Under R1–R7 and the
-witnesses they were undecided; see `signrules/data/n5/screen_summary.md`.
+extensions) and an obligate 3-cycle + mutualistic pair + universal beneficiary. Under R1–R7 they were open
+and no witness was found; see `signrules/data/n5/screen_summary.md`.
 
 ## 7. Infinite families (`scripts/families.py`)
 
@@ -478,7 +503,7 @@ nonsingular M-matrix.
 
 * **(d) one wrong growth sign, $k$ even**: the conclusion of (c) persists (proof under R8 above).
 
-`R1 + R4` kill the instances of (a) and (b) for $n\le7$ at the root, and R8 kills every instance.
+`R1 + R4` kill the instances of (a) and (b) for $n\le7$ at the root (`python scripts/families.py --nmax 7`), and R8 kills every instance.
 The hypothesis of R8 is exactly this family: at $n=5$, ten of the 248,436 ecologies satisfy it — six
 with $s\cdot\mathbf a>0$ (the screen kills #2, #4, #7, #17, #21 and `parity_k2`) and four under (d):
 #15, #16 (already killed by R1) and the two `r8_pairs_benefactor_*` presets of `signrules.patterns` that R1–R7 leave open.
@@ -486,7 +511,7 @@ with $s\cdot\mathbf a>0$ (the screen kills #2, #4, #7, #17, #21 and `parity_k2`)
 ## 8. Limitations and next steps
 
 * Uniform chirotopes only: a vanishing Plücker coordinate (e.g. a zero almost-principal minor) is
-  outside the search, as in the original algorithm.
+  outside the search, as in the Maple algorithm.
 * Sign level only: a surviving completion is not a certificate of possibility; the tropical witnesses of
   the repository `feasible_ecologies` supply exact certificates (for n ≤ 6, for every survivor).
 * R4 requires all entries of the Schur block and of $\mathbf A_Q$ to be sign-determined; a natural

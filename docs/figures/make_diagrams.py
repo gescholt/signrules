@@ -8,14 +8,13 @@ their labels are mathematics:
     python docs/figures/make_diagrams.py
 """
 
-import sys
 from pathlib import Path
 
-from signrules import Diagram, style          # noqa: E402
+from signrules import Diagram, style
 
 OUT = Path(__file__).resolve().parent
 BLUE, GREEN, AMBER = "#e3eaf8", "#e6f3df", style.HILITE_A
-OLD, NEW = "#e6e6e6", "#fff0c8"
+OLD, NEW, RETIRED = "#e6e6e6", "#fff0c8", "#f7f7f7"
 
 
 def algorithm():
@@ -28,8 +27,8 @@ def algorithm():
     d.cluster("fix", label="propagate to a fixed point", color="#aaaaaa")
     d.node("gp", ["Grassmann–Plücker", small("3-term relations")], fill=GREEN, edge="#8fbf7a", cluster="fix")
     d.node("rules", ["sign rules",
-                     small("R1 stability · R2 Cramer · R3 balanced · R4 Z-blocks"),
-                     small("R5 Laplace · R6 Schur blocks · R7 tope")], fill=GREEN, edge="#8fbf7a", cluster="fix")
+                     small("R1 stability · R2 Cramer · R3 balanced · R5 Laplace"),
+                     small("R7 tope · R8 real eigenvalue   (R4, R6: retired, subsumed)")], fill=GREEN, edge="#8fbf7a", cluster="fix")
     d.node("conflict", ["contradiction?"], fill="#f4f4f4", shape="round")
     d.node("bottom", [(r"$\bot$", 14, "white"), ("impossible ecology", 10, "white"), ("certificate: the forced signs and their rules", 8.5, "#dddddd")],
            fill=style.BOTTOM, edge=style.BOTTOM)
@@ -55,14 +54,14 @@ def sign_rules():
     d = Diagram(rankdir="LR", nodesep=0.25, ranksep=0.9, fontsize=11)
     small = lambda t: (t, 9, style.GREY)
 
-    def rule(nid, cluster, head, detail, new=True):
-        d.node(nid, [(head, 11, style.rule_color(nid)), small(detail)], fill=NEW if new else OLD,
-               edge=style.rule_color(nid), lw=1.3, cluster=cluster)
+    def rule(nid, cluster, head, detail, new=True, retired=False):
+        d.node(nid, [(head, 11, style.rule_color(nid)), small(detail)], fill=RETIRED if retired else (NEW if new else OLD),
+               edge=style.rule_color(nid), lw=1.3, cluster=cluster, **({"ls": ":"} if retired else {}))
 
     d.cluster("id", label="determinant identities", color="#bbbbbb")
     rule("GP", "id", "Grassmann–Plücker", "3-term relations between the $p_S$", new=False)
     rule("R5", "id", "R5 · Laplace", "expand a minor along a row or column")
-    rule("R6", "id", "R6 · Schur blocks", r"minors of $B / B_{PP}$ from their entries")
+    rule("R6", "id", "R6 · Schur blocks", r"minors of $B / B_{PP}$ from their entries   (retired: GP + R5 + R7)", retired=True)
     d.cluster("feas", label=r"feasibility   $x^* > 0$", color="#bbbbbb")
     rule("R7", "feas", "R7 · tope", r"$(+, \mathrm{sign}\,a)$ is a tope of $[\,I \mid B^{T}\,]$   (oriented-matroid Farkas)")
     rule("R2", "feas", "R2 · Cramer on subsystems", r"$x^*_j \det B_{JJ}$ is a signed sum of minors   ($\subset$ R7)")
@@ -70,14 +69,18 @@ def sign_rules():
     rule("R1", "stab", "R1 · stability", r"$\det B > 0$;  some principal $k$-minor $> 0$ for each $k$", new=False)
     d.cluster("z", label=r"feasibility + stability + a Z-twist  $\Rightarrow$  M-matrix", color="#bbbbbb")
     rule("R3", "z", "R3 · balanced patterns", r"$S B S$ is a Z-matrix: principal minors $> 0$, almost-principal $\sim b_{ij}$")
-    rule("R4", "z", "R4 · Z-blocks", r"a Schur block twisted to a Z-matrix: M-matrix minor signs, or a leading minor $\leq 0$")
+    rule("R4", "z", "R4 · Z-blocks", r"a Schur block twisted to a Z-matrix: M-matrix minor signs, or a leading minor $\leq 0$   (retired)", retired=True)
+    d.cluster("eig", label=r"feasibility + stability + a Z-twist of the whole matrix", color="#bbbbbb")
+    rule("R8", "eig", "R8 · real eigenvalue", r"$S B P_\sigma$ a Z-matrix, $\sigma \neq \mathrm{id}$: $-\mathrm{diag}(x^*) B$ has a positive real eigenvalue   $\Rightarrow \bot$")
     d.node("table", ["sign table", small(r"signs of all minors of $B$ = all $p_S$")], fill=GREEN, edge="#8fbf7a", pad=(12, 8))
     d.node("out", [(r"$\bot$", 14, "white"), ("impossible ecology + certificate", 10, "white")], fill=style.BOTTOM, edge=style.BOTTOM)
     for nid, cl in (("R5", "id"), ("R7", "feas"), ("R1", "stab"), ("R3", "z")):
         d.edge(nid, "table", ltail=cl)
     d.edge("table", "out")
-    d.legend_item("in the Grassmannian paper", fill=OLD, edge="#999999")
+    d.edge("R8", "out", ltail="eig")
+    d.legend_item("in the Annals paper (Çelik–Haas–Scholten–Wang–Zucal)", fill=OLD, edge="#999999")
     d.legend_item("new", fill=NEW, edge="#c99a2e")
+    d.legend_item("retired: subsumed by the other rules, idle by default", fill=RETIRED, edge="#999999", ls=":")
     d.legend_item("border and title: the rule's colour, used for its ⊥ in every other figure", fill="white", edge=style.rule_color("R4"), lw=1.3)
     d.save(str(OUT / "sign_rules"))
     print("wrote sign_rules")

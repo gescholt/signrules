@@ -1,7 +1,9 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite the two papers below."
+message: "If you use this software, please cite the first two papers below (the algorithm and the arguments it encodes)."
 title: "signrules: sign completion on the ecological Grassmannian"
 type: software
+version: 0.1.1
+date-released: 2026-10-24
 authors:
   - family-names: Scholten
     given-names: Georgy
@@ -24,10 +26,24 @@ references:
     journal: "Annals of Combinatorics"
     year: 2026
     doi: "10.1007/s00026-026-00837-7"
+    url: "https://arxiv.org/abs/2509.00165"
+  - type: article
+    title: "Stable coexistence in ecologies and games"
+    authors:
+      - family-names: Çelik
+        given-names: Türkü Özlüm
+      - family-names: Isoldi
+        given-names: Vincenzo Antonio
+      - family-names: Portakal
+        given-names: Irem
+      - family-names: Zucal
+        given-names: Giulio
+    year: 2026
+    url: "https://arxiv.org/abs/2609.09286"
   - type: article
     title: "Tropical certificates of coexistence for Lotka-Volterra sign patterns"
     authors:
       - family-names: Scholten
         given-names: Georgy
     year: 2026
-    notes: "draft; the companion repository feasible_ecologies holds the certificates of possibility"
+    notes: "draft; the companion repository feasible_ecologies holds the certificates of possibility (tropical witnesses) that complete the classification for n <= 6"

@@ -5,7 +5,7 @@ digraph G {
   subgraph "cluster_fix" {
     style="rounded"; color="#aaaaaa"; margin=8.0; label="propagate to a fixed point"; fontsize=10.45; labeljust=l;
     "gp" [label="Grassmann–Plücker\n3-term relations", shape=box, fillcolor="#e6f3df", color="#8fbf7a"];
-    "rules" [label="sign rules\nR1 stability · R2 Cramer · R3 balanced · R4 Z-blocks\nR5 Laplace · R6 Schur blocks · R7 tope", shape=box, fillcolor="#e6f3df", color="#8fbf7a"];
+    "rules" [label="sign rules\nR1 stability · R2 Cramer · R3 balanced · R5 Laplace\nR7 tope · R8 real eigenvalue   (R4, R6: retired, subsumed)", shape=box, fillcolor="#e6f3df", color="#8fbf7a"];
   }
   "input" [label="sign pattern  (sign a, sign B)", shape=box, fillcolor="#e3eaf8", color="#9db0d6"];
   "dict" [label="minors of B  =  Plücker coordinates p_S of [ diag(a) \mid B ] \in Gr(n, 2n)", shape=box, fillcolor="#e3eaf8", color="#9db0d6"];
