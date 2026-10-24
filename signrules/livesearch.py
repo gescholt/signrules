@@ -1,14 +1,15 @@
 """
 Live terminal dashboard of one sign-completion search.
 
-    python -m signrules.livesearch --a=-1,-1,-1,-1,1 --B=1,-1,1,1,1/-1,1,1,1,1/1,1,1,-1,1/1,1,-1,1,1/-1,-1,-1,-1,1
-    python -m signrules.livesearch --preset parity_k2 --rules R1,R2n --html tree.html
-    python -m signrules.livesearch --random 5 --max-nodes 5000 --html tree.html   # a random pattern (--seed S to repeat one)
-    python -m signrules.livesearch                    # prompts
+    signrules run --a=-1,-1,-1,-1,1 --B=1,-1,1,1,1/-1,1,1,1,1/1,1,1,-1,1/1,1,-1,1,1/-1,-1,-1,-1,1
+    signrules run --preset parity_k2 --rules R1,R2n --html tree.html
+    signrules run --random 5 --max-nodes 5000 --html tree.html   # a random pattern (--seed S to repeat one)
+    signrules run                    # menus
 
-The console script ``signrules-live`` is the same program.  It needs the ``live`` extra
-(``pip install -e ".[live]"``: rich for the dashboard, questionary for the menus).  Write ``--a=-1,...``
-with ``=``: a value starting with ``-`` is otherwise read as an option.
+``signrules-live`` is the same command.  The menus need questionary (the ``live`` extra,
+``pip install -e ".[live]"``).  Write ``--a=-1,...`` with ``=``: a value starting with ``-`` is otherwise read
+as an option (or write the signs as ``+--``).  ``signrules.cli`` holds the command line, ``signrules.report``
+the verdict printed at the end.
 
     from signrules.livesearch import LiveSearch
     with LiveSearch(eco, use) as live:
@@ -255,10 +256,8 @@ class LiveSearch:
 # --------------------------------------------------------------------------- command line
 
 def _presets():
-    from .patterns import ELEVEN, PATTERNS
-    out = {k: (list(map(int, a)), [list(map(int, r)) for r in B]) for k, (a, B) in PATTERNS.items()}
-    out.update({k: (list(map(int, a)), [list(map(int, r)) for r in B]) for k, (a, B) in ELEVEN.items()})
-    return out
+    from .patterns import presets
+    return presets()
 
 
 # ------------------------------------------------------------------ the interactive picker (questionary)
@@ -295,19 +294,29 @@ def _group(name: str) -> str:
     return "five species, open patterns near the kills"
 
 
-def _pick(presets: dict):
-    """Arrow-key menus for the pattern, the rules and the stopping rule; None when the user quits."""
+def questionary_kit():
+    """(questionary, Choice, Separator, menu kwargs, prompt kwargs), or None when questionary is missing."""
     try:
         import questionary
         from questionary import Choice, Separator, Style
     except ImportError:                                   # pragma: no cover
-        print("the interactive menu needs questionary:  python -m pip install questionary")
+        print("the interactive menus need questionary:  python -m pip install questionary  (or the [live] extra)")
         return None
-    style = Style([("qmark", "fg:#5f87ff bold"), ("question", "bold"), ("pointer", "fg:#5f87ff bold"),
-                   ("highlighted", "fg:#5f87ff bold"), ("selected", "fg:#5faf5f"), ("separator", "fg:#8a8a8a"),
-                   ("instruction", "fg:#8a8a8a italic"), ("answer", "fg:#5faf5f bold")])
-    kw = dict(style=style, qmark="◆", pointer="▶")          # menus
-    kt = dict(style=style, qmark="◆")                       # text and yes/no prompts
+    st = Style([("qmark", "fg:#5f87ff bold"), ("question", "bold"), ("pointer", "fg:#5f87ff bold"),
+                ("highlighted", "fg:#5f87ff bold"), ("selected", "fg:#5faf5f"), ("separator", "fg:#8a8a8a"),
+                ("instruction", "fg:#8a8a8a italic"), ("answer", "fg:#5faf5f bold")])
+    kw = dict(style=st, qmark="◆", pointer="▶", use_shortcuts=False, use_indicator=False,
+              instruction="(↑↓ to move, enter to choose)")   # menus
+    kt = dict(style=st, qmark="◆")                            # text and yes/no prompts
+    return questionary, Choice, Separator, kw, kt
+
+
+def _pick_pattern(presets: dict):
+    """Arrow-key menu for the pattern: {"preset", "a", "B", "random"}, or None when the user quits."""
+    kit = questionary_kit()
+    if kit is None:
+        return None
+    questionary, Choice, Separator, kw, kt = kit
     groups: dict = {}
     for name in presets:
         groups.setdefault(_group(name), []).append(name)
@@ -320,33 +329,40 @@ def _pick(presets: dict):
             choices.append(Choice(f"{n:<{width}}   n = {len(a)}   a = {_signs(a)}", value=n))
     choices += [Separator("  other"), Choice(f"{'custom':<{width}}   type a and B", value="custom"),
                 Choice(f"{'random':<{width}}   a random pattern", value="random")]
-    pattern = questionary.select("Pattern", choices=choices, use_shortcuts=False, use_indicator=False,
-                                 instruction="(↑↓ to move, enter to choose)", **kw).ask()
+    pattern = questionary.select("Pattern", choices=choices, **kw).ask()
     if pattern is None:
         return None
     out = {"preset": None, "a": None, "B": None, "random": None}
     if pattern == "random":
-        n = questionary.select("Species", choices=[str(k) for k in range(3, 8)], default="5",
-                               use_shortcuts=False, use_indicator=False, **kw).ask()
+        n = questionary.select("Species", choices=[str(k) for k in range(3, 8)], default="5", **kw).ask()
         if n is None:
             return None
         out["random"] = int(n)
     elif pattern == "custom":
-        out["a"] = questionary.text("Growth-rate signs a (comma separated)", default="-1,-1,-1", **kt).ask()
+        out["a"] = questionary.text("Growth-rate signs a (1,-1,... or +-...)", default="-1,-1,-1", **kt).ask()
         out["B"] = questionary.text("Signs of B (rows separated by /)", default="1,1,1/-1,1,1/-1,-1,1", **kt).ask()
         if out["a"] is None or out["B"] is None:
             return None
     else:
         out["preset"] = pattern
+    return out
+
+
+def _pick(presets: dict):
+    """Arrow-key menus for the pattern, the rules and the stopping rule; None when the user quits."""
+    out = _pick_pattern(presets)
+    if out is None:
+        return None
+    questionary, Choice, Separator, kw, kt = questionary_kit()
     rule_choices = [Choice(f"{r:<4} {RULE_NOTES[r]}", value=r, checked=r in Ecology.ALL_RULES)
                     for r in ("R1", "R2", "R2n", "R3", "R4", "R5", "R6", "R7", "R8")]
+    menu = {k: v for k, v in kw.items() if k not in ("use_shortcuts", "use_indicator", "instruction")}
     rules = questionary.checkbox("Rules", choices=rule_choices, instruction="(space to toggle, enter to confirm)",
-                                 **kw).ask()
+                                 **menu).ask()
     if rules is None:
         return None
     out["rules"] = tuple(rules)
-    stop = questionary.select("Stop", choices=[Choice(t, value=v) for t, v in STOP_CHOICES], use_shortcuts=False,
-                              use_indicator=False, instruction="(↑↓ to move, enter to choose)", **kw).ask()
+    stop = questionary.select("Stop", choices=[Choice(t, value=v) for t, v in STOP_CHOICES], **kw).ask()
     if stop is None:
         return None
     out["max_completions"], out["max_nodes"] = stop
@@ -358,67 +374,9 @@ def _pick(presets: dict):
 
 
 def main(argv=None):
-    """Command line of the dashboard (``signrules-live``)."""
-    ap = argparse.ArgumentParser(description="Run one sign-completion search with a live terminal dashboard.")
-    ap.add_argument("--a", help="growth-rate signs, e.g. -1,-1,-1")
-    ap.add_argument("--B", help="signs of B, rows separated by /")
-    ap.add_argument("--preset", help="a named pattern of signrules.patterns: the n = 5, 6 presets (PATTERNS) or the eleven proved-impossible n = 4 patterns (ELEVEN)")
-    ap.add_argument("--random", type=int, metavar="N", help="a random sign pattern on N species")
-    ap.add_argument("--seed", type=int, default=None, help="seed for --random (printed when omitted)")
-    ap.add_argument("--rules", default="all", help="'all' (default) or a list such as R1,R2n")
-    ap.add_argument("--root-only", default="", help="rules among --rules to run at the root only, such as R4,R6")
-    ap.add_argument("--idle", default="auto",
-                    help="rules among --rules that are registered but never run: 'auto' (default: R4 and R6 "
-                         "when the rules that subsume them are on), a list such as R4,R6, or '' to run everything")
-    ap.add_argument("--max-nodes", type=int, default=None)
-    ap.add_argument("--max-completions", type=int, default=None)
-    ap.add_argument("--html", default=None, help="also write the interactive tree viewer to this file")
-    ap.add_argument("--name", default="")
-    args = ap.parse_args(argv)
-    presets = _presets()
-    use = None
-    if not (args.a and args.B) and not args.preset and not args.random:
-        picked = _pick(presets)
-        if picked is None:
-            return
-        args.preset, args.a, args.B, args.random = picked["preset"], picked["a"], picked["B"], picked["random"]
-        use = picked["rules"]
-        args.max_completions = args.max_completions or picked["max_completions"]
-        args.max_nodes = args.max_nodes or picked["max_nodes"]
-        args.html = args.html or picked["html"]
-    if args.random:
-        if args.seed is None:
-            import random
-            args.seed = random.randrange(10 ** 6)
-        a, B = random_pattern(args.random, args.seed)
-        name = args.name or f"random n={args.random}, seed {args.seed}"
-        print(f"random pattern (seed {args.seed}):  --a={','.join(map(str, a))} "
-              f"--B \"{'/'.join(','.join(map(str, r)) for r in B)}\"")
-    elif args.preset:
-        a, B = presets[args.preset]
-        name = args.name or args.preset
-    else:
-        a = [int(x) for x in args.a.split(",")]
-        B = [[int(x) for x in row.split(",")] for row in args.B.split("/")]
-        name = args.name
-    if use is None:
-        use = Ecology.ALL_RULES if args.rules == "all" else tuple(r for r in args.rules.split(",") if r)
-    eco = Ecology(a, B, name)
-    try:
-        with LiveSearch(eco, use) as live:
-            res = complete(eco, use=use, progress=live, record_tree=bool(args.html),
-                           keep_derivations=False, max_nodes=args.max_nodes, max_completions=args.max_completions,
-                           root_only=tuple(r for r in args.root_only.split(",") if r),
-                           idle="auto" if args.idle == "auto" else tuple(r for r in args.idle.split(",") if r))
-    except KeyboardInterrupt:
-        print(f"interrupted after {live.nodes:,} nodes: {live.completions:,} completions, "
-              f"{live.conflicts:,} contradictions, {100 * live.covered:.2f}% swept")
-        return
-    print(res.summary())
-    if args.html:
-        from .treeview import save_tree_viewer
-        save_tree_viewer(eco, res, args.html, use=use)
-        print(f"tree viewer written to {args.html}")
+    """``signrules-live``: the same as ``signrules run``."""
+    from .cli import run_alias
+    return run_alias(argv)
 
 
 if __name__ == "__main__":

@@ -26,9 +26,9 @@ The (n-1)-species impossible classes (``base``):
           decided every candidate
   FILE    a JSON-lines file with fields a, B (e.g. the impossible classes of a previous run)
 
-    signrules-screen 5 --workers 12                  # from the n=4 census
-    signrules-screen 6 --base known --workers 12
-    signrules-screen 6 --candidates-only             # count candidates only
+    signrules screen 5 --workers 12                  # from the n=4 census
+    signrules screen 6 --base known --workers 12
+    signrules screen 6 --candidates-only             # count candidates only
 
 The output goes to signrules/data/n<n>/extension_screen.jsonl (``--out`` for another file): one record
 per candidate with ``code``, ``a``, ``B``, ``status`` (killed_root / killed_search / open / undecided),
@@ -160,18 +160,29 @@ def run(n: int, base: Optional[str] = None, workers: int = 4, max_nodes: int = 2
     return recs
 
 
-def main(argv: Optional[Sequence[str]] = None):
-    """Command line of the screen (``signrules-screen``)."""
-    from pathlib import Path
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("n", type=int)
+def add_arguments(ap: argparse.ArgumentParser) -> None:
+    """The options of the screen (shared by ``signrules screen`` and ``signrules-screen``)."""
+    ap.add_argument("n", type=int, help="number of species of the candidates (5 or 6)")
     ap.add_argument("--base", default=None, help="census | known | FILE (default: census for n <= 5, known for n = 6)")
-    ap.add_argument("--workers", type=int, default=4)
-    ap.add_argument("--max-nodes", type=int, default=20000)
-    ap.add_argument("--candidates-only", action="store_true")
-    ap.add_argument("--out", default=None, help="output JSONL (default: signrules/data/n<n>/extension_screen.jsonl)")
-    args = ap.parse_args(argv)
+    ap.add_argument("--workers", type=int, default=4, help="parallel processes (default 4)")
+    ap.add_argument("--max-nodes", type=int, default=20000, help="node limit of the search on each candidate (default 20000)")
+    ap.add_argument("--candidates-only", action="store_true", help="count the candidates, do not run the rules")
+    ap.add_argument("--out", default=None, help="output JSONL (default: signrules/data/n<n>/extension_screen.jsonl, "
+                                                 "which overwrites the shipped list)")
+
+
+def run_args(args) -> None:
+    """Run the screen for parsed ``args`` (see ``add_arguments``)."""
+    from pathlib import Path
     run(args.n, args.base, args.workers, args.max_nodes, Path(args.out) if args.out else None, args.candidates_only)
+
+
+def main(argv: Optional[Sequence[str]] = None):
+    """Command line of the screen (``signrules-screen``, the same as ``signrules screen``)."""
+    ap = argparse.ArgumentParser(prog="signrules-screen", description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    add_arguments(ap)
+    run_args(ap.parse_args(argv))
 
 
 if __name__ == "__main__":

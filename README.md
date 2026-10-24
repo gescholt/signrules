@@ -50,8 +50,8 @@ Not on PyPI; Python 3.10 or later.
 
 ```bash
 git clone git@github.com:gescholt/signrules.git && cd signrules
-pip install -e .                 # the package: numpy, matplotlib, networkx
-pip install -e ".[all,dev]"      # + rich and questionary (signrules-live), plotly (HTML trees), pytest
+pip install -e .                 # the package and the signrules command: numpy, matplotlib, networkx, rich
+pip install -e ".[all,dev]"      # + questionary (menus), plotly (HTML trees), pytest
 pytest -q                        # about a minute
 ```
 
@@ -69,7 +69,67 @@ interactions (it cannot have a positive equilibrium at all). In the matrix `[dia
 sign table is a flat list indexed by basis id with `+1`, `-1`, `UNKNOWN = 0`; `eco._minor_key[(P, Q)] =
 (S, c)` gives `sign(det B_PQ) = c · chi[S]`.
 
-## Use
+## Run
+
+One command, `signrules`, with five subcommands (`signrules --help` lists them, `signrules <command> --help`
+gives the options and examples of each; `python -m signrules` is the same):
+
+| command | what it does |
+|---|---|
+| `run` | complete one pattern with a live dashboard; prints the verdict and, for a kill, the certificate |
+| `tree` | complete one pattern and write an interactive HTML viewer of the search tree |
+| `replay` | kill one pattern at the root and check its certificate with the independent replayer |
+| `presets` | list the named patterns (the eleven n = 4 patterns, the n = 5, 6 presets) with short ids |
+| `screen` | list the candidates for impossible n-species patterns (deletion lemma) and run the rules on each |
+
+```bash
+signrules                                          # in a terminal: menus for everything
+signrules presets                                  # the named patterns: S-a … S-e, A-a … A-f, parity_k2, ...
+signrules run --preset A-e                         # dashboard, then the verdict and the certificate
+signrules run --preset S-d --rules R1,R2n          # 64 completions: not decided by R1, R2n alone
+signrules run --a +--- --B "+-++/-+++/+++-/++-+"   # your own pattern (or --a=1,-1,-1,-1 --B=1,-1,1,1/...)
+signrules run --random 5 --max-nodes 3000 --html random.html   # a random pattern, then the tree viewer
+signrules replay --preset A-d --cert out/          # root kill, independent replay, certificate as png/pdf/dot
+signrules tree --preset S-d --rules R1,R2n --out s-d.html      # only the HTML viewer
+```
+
+Signs are written `1,-1,...`, `+,-,...` or `+-...`; rows of `B` are separated by `/`. A value that starts
+with `-` needs an equals sign (`--a=-+--`), as argparse otherwise reads it as an option. A preset is named
+by its short id or any unambiguous prefix of its name. Mistakes (an unknown preset, a rule name, a wrong
+size of `B`) are reported in one line.
+
+During a search the terminal shows a live dashboard: the share of the tree already swept, the signs forced
+and the branches closed by each rule, the current path, completions and contradictions by depth. At the end
+comes the verdict:
+
+```
+╭─ verdict ────────────────────────────────────────────────────────────────────────────────────╮
+│ IMPOSSIBLE  ·  killed at the root by R7 · tope                                               │
+│ A-e competitor + 3-cycle (Thm 3.5) · n = 4, sign a = (+,−,−,−) · rules R1–R8                 │
+│                                                                                              │
+│   #  sign        minor                      rule                     uses                    │
+│   1  p_4567 > 0  det B > 0                  R1 · stability           —                       │
+│   2  p_0367 < 0  det B_{1,2},{2,3} > 0      R7 · tope                4 entries               │
+│    …                                                                                         │
+│  14  p_0256 > 0  det B_{1,3},{1,2} > 0      GP · 3-term relation     #12 #13 + 3 entries     │
+│      ⊥           contradiction              R7 · tope                #14 + 4 entries         │
+│                                                                                              │
+│ replay OK  14 steps and the contradiction re-derived by the independent checker              │
+╰──────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+The other verdicts are *impossible, every branch closed* (killed by the search), *not decided by the
+rules* (completions exist: sign tables consistent with every rule used, so the rules cannot kill the
+pattern) and *undecided* (a node or completion limit stopped the search first). `--plain`, or output to a
+file or pipe, prints only the verdict. The tree viewer (`--html`, or `signrules tree`) is one
+self-contained HTML file: click a node to see the signs it forced with their rules, what the known signs
+say about stability and feasibility, and every minor of `B`; at a contradiction it names the violated rule
+and its premises. The old names `signrules-live`, `signrules-tree`, `signrules-screen` still work.
+
+The scripts under `scripts/` are not needed to run the method: they reproduce the numbers of the papers
+(see *Results and how to reproduce them* below).
+
+## Use from Python
 
 ```python
 from signrules import Ecology, complete, ELEVEN, write_certificate, replay_kill
@@ -79,7 +139,7 @@ from signrules.certificate import certificate_steps
 a, B = ELEVEN["A-e competitor + 3-cycle (Thm 3.5)"]
 eco = Ecology(a, B)
 result = complete(eco)
-print(result.summary())                      # impossible at the root (R5 laplace ...)
+print(result.summary())                      # impossible at the root (R7 tope: circuit ...)
 result.root_log                              # every sign a rule forced at the root, with the rule and its premises
 result.root_gp_log                           # the signs forced by the 3-term relations
 for step in certificate_steps(eco, result)[0]:
@@ -112,36 +172,19 @@ in `signrules.data`: `root_kills(5)` returns the 24 minimal impossible five-spec
 `screen_records(6)` the 143 six-species candidates with their verdicts (the `open` rows are certified
 possible only in `feasible_ecologies`).
 
-### Exploring one pattern
-
-```bash
-signrules-live --preset parity_k2 --max-nodes 3000 --html parity_k2.html    # live terminal dashboard, then the tree viewer
-signrules-live --a=-1,-1,-1,-1,1 --B=1,-1,1,1,1/-1,1,1,1,1/1,1,1,-1,1/1,1,-1,1,1/-1,-1,-1,-1,1 --max-nodes 3000 --html mine.html
-signrules-live --random 5 --max-nodes 3000 --html random.html              # a random pattern (--seed S repeats it)
-signrules-live                                                             # arrow-key menus for everything
-signrules-tree --a=1,-1,-1 --B=1,1,1/-1,1,1/-1,-1,1 --rules R1,R2n --out tree.html   # only the HTML viewer
-```
-
-Write `--a=...` with an equals sign: a value starting with `-` is otherwise read as an option. The dashboard
-(needs the `live` extra) shows the share of the tree already swept, the signs forced and the branches closed
-by each rule, the current path, completions and contradictions by depth. The tree viewer is one
-self-contained HTML file: click a node to see the signs it forced with their rules, what the known signs say
-about stability and feasibility, and every minor of `B`; at a contradiction it names the violated rule and
-its premises.
-
 ## Results and how to reproduce them
 
 | case | result | command |
 |---|---|---|
 | **n = 4** | all eleven candidate impossible ecologies of Meng et al. are killed at the root; with `--rules R1,R2n` the search reproduces the completion counts of the Maple algorithm quoted in CIPZ (S-d, S-e, A-a, A-c: 64, 64, 1996, 1528) | `python scripts/impossible_eleven.py [--rules R1,R2n]` |
 | **n = 5** | exhaustive root screen of all 248,436 non-trivial ecologies up to relabelling: 21 kills under R1–R6 (10 of them new), 24 with R8 | `python scripts/screen_all.py --rules R1,R2,R3,R4,R5,R6` (100 CPU-minutes); `signrules/data/n5/killed_patterns.json` |
-| **n = 5, 6** | extension screens by the deletion lemma: **83** candidates at n = 5, **24** killed; **143** at n = 6, **41** killed; the rest are certified possible in `feasible_ecologies`, so these are exactly the minimal impossible patterns | `signrules-screen 5 --out out/n5.jsonl`, `signrules-screen 6 --out out/n6.jsonl`; the shipped lists are `signrules/data/n{5,6}/extension_screen.jsonl` |
+| **n = 5, 6** | extension screens by the deletion lemma: **83** candidates at n = 5, **24** killed; **143** at n = 6, **41** killed; the rest are certified possible in `feasible_ecologies`, so these are exactly the minimal impossible patterns | `signrules screen 5 --out out/n5.jsonl`, `signrules screen 6 --out out/n6.jsonl`; the shipped lists are `signrules/data/n{5,6}/extension_screen.jsonl` |
 | **all n** | benefactor-permutation families: every species obligate with a single benefactor is impossible for any benefactor permutation; with free species benefiting from everyone, impossible for any non-trivial permutation | `python scripts/families.py` |
 | **certificates** | the 11 + 24 + 41 root kills replay in the independent checker; flipping any single step makes the replay fail | `for n in 4 5 6; do python scripts/replay_certificates.py $n --tamper; done` |
 | **rule ladder** | what each rule buys on the minimal impossible patterns | `python scripts/rule_ladder.py 4 5 6 --out out/ladder.jsonl --tex out/ladder.tex` |
 | **ablations** | R4 and R6 never fire under the other rules; R4 subsumed up to one branching, exhaustively per block configuration | `python scripts/rule_ablation.py 3 4 --census`, `python scripts/r4_subsumption.py 3 4 --rules R1,R7 --others` |
 
-Without `--out`, `signrules-screen` and `rule_ladder.py` overwrite the shipped data files.
+Without `--out`, `signrules screen` and `rule_ladder.py` overwrite the shipped data files.
 [docs/SIGNRULES.md](docs/SIGNRULES.md) is the full account: the Plücker/minor dictionary, each rule and the
 theorem it encodes, certificates and their replay, the search, soundness checks, the screens and the families.
 
@@ -158,13 +201,15 @@ signrules/
   replay.py           independent replay of a certificate: every step re-derived from the identity it names
   symmetry.py         the pattern's relabelling stabilizer, used inside the search
   labels.py, style.py, gvrender.py, treeplot.py   the drawings (one vocabulary, one palette)
-  treeview.py         self-contained HTML viewer of a search tree          (signrules-tree)
-  livesearch.py       live terminal dashboard of one search               (signrules-live)
-  screen.py           extension screen: candidates by the deletion lemma  (signrules-screen)
+  cli.py              the signrules command: subcommands, pattern input, menus
+  report.py           the verdict printed after a search: certificate table and replay
+  treeview.py         self-contained HTML viewer of a search tree          (signrules tree)
+  livesearch.py       live terminal dashboard of one search               (signrules run)
+  screen.py           extension screen: candidates by the deletion lemma  (signrules screen)
   patterns.py         ELEVEN, parity_pattern, PATTERNS, random_pattern, canonical_classes, encode/decode
   data/               n5/, n6/: candidate lists and kills; n3/, n4/: sign-correlation census;
                       rule_ablation/, r4_subsumption/, rule_ladder.jsonl: records of the ablations
-scripts/              the drivers of the table above
+scripts/              reproduce the numbers of the table above
 tests/                conventions, soundness against random feasible-stable systems, golden search trees, replay
 docs/                 SIGNRULES.md, its figures (docs/figures, with their generators), rule_ladder_table.tex
 .github/workflows/    pytest on Python 3.10 and 3.13

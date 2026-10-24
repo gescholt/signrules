@@ -4,11 +4,11 @@ Interactive viewer of a sign-completion search tree: one self-contained HTML fil
     result = complete(eco, use=("R1", "R2n"), record_tree=True)
     save_tree_viewer(eco, result, "tree.html", use=("R1", "R2n"))
 
-    python -m signrules.treeview --a=1,-1,-1 --B=1,1,1/-1,1,1/-1,-1,1 --rules R1,R2n --out tree.html
-    python -m signrules.treeview                     # prompts for the pattern (needs the ``live`` extra)
+    signrules tree --a=1,-1,-1 --B=1,1,1/-1,1,1/-1,-1,1 --rules R1,R2n --out tree.html
+    signrules tree                                   # menu for the pattern (needs the ``live`` extra)
 
-The console script ``signrules-tree`` is the same program; ``signrules-live --html FILE`` writes the
-same page after the dashboard.
+``signrules-tree`` is the same command; ``signrules run --html FILE`` writes the same page after the
+dashboard.
 
 The page shows the binary search tree (edges red when the branch chose +, blue when it chose −;
 completions green, contradictions black squares framed in the colour of the rule that closed them,
@@ -33,7 +33,6 @@ No external scripts: the data is embedded as JSON and drawn as SVG by plain Java
 file works offline and can be shared as it is.
 """
 
-import argparse
 import html
 import itertools
 import json
@@ -145,34 +144,10 @@ def save_tree_viewer(eco: Ecology, result: SearchResult, path: str, use: Optiona
 
 # --------------------------------------------------------------------------- command line
 
-def _parse(a_str: str, B_str: str):
-    a = [int(x) for x in a_str.split(",")]
-    B = [[int(x) for x in row.split(",")] for row in B_str.split("/")]
-    return a, B
-
-
 def main(argv=None):
-    """Command line of the viewer (``signrules-tree``)."""
-    ap = argparse.ArgumentParser(description="Write an interactive HTML viewer of a sign-completion search tree.")
-    ap.add_argument("--a", help="growth-rate signs, e.g. 1,-1,-1")
-    ap.add_argument("--B", help="signs of B, rows separated by /, e.g. 1,1,1/-1,1,1/-1,-1,1")
-    ap.add_argument("--rules", default="R1,R2n", help="rules to use (default R1,R2n; 'all' for every rule)")
-    ap.add_argument("--max-nodes", type=int, default=20000, help="stop the search after this many nodes")
-    ap.add_argument("--name", default="")
-    ap.add_argument("--out", default="tree.html")
-    args = ap.parse_args(argv)
-    if not (args.a and args.B):
-        from rich.prompt import Prompt
-        args.a = Prompt.ask("growth-rate signs a", default="1,-1,-1")
-        args.B = Prompt.ask("signs of B, rows separated by /", default="1,1,1/-1,1,1/-1,-1,1")
-        args.rules = Prompt.ask("rules ('all' or a list such as R1,R2n)", default=args.rules)
-        args.out = Prompt.ask("output file", default=args.out)
-    a, B = _parse(args.a, args.B)
-    use = Ecology.ALL_RULES if args.rules == "all" else tuple(r for r in args.rules.split(",") if r)
-    eco = Ecology(a, B, args.name)
-    res = complete(eco, use=use, record_tree=True, max_nodes=args.max_nodes)
-    save_tree_viewer(eco, res, args.out, use=use)
-    print(f"{res.summary()}  ->  {args.out}")
+    """``signrules-tree``: the same as ``signrules tree``."""
+    from .cli import tree_alias
+    return tree_alias(argv)
 
 
 _TEMPLATE = r"""<!doctype html>

@@ -6,7 +6,8 @@ Sign patterns used across the package.
   A-a … A-f Figure 3 (a)–(f).
 * ``parity_pattern``: the benefactor-permutation family (rule R8; every species of a cycle is obligate and
   benefits only from the next one, the fixed species are free and benefit from everyone).
-* ``PATTERNS``: five- and six-species presets of the live search (``signrules-live --preset``).
+* ``PATTERNS``: five- and six-species presets of the live search (``signrules run --preset``);
+  ``presets()`` is both tables, ``resolve_preset`` finds one by its short id (``S-d``) or a prefix.
 * ``all_patterns``, ``canonical_classes``, ``trivial``: enumeration of the patterns on n species and of
   their classes up to relabelling; ``encode`` / ``decode`` / ``canonical`` / ``key``: the integer code of a
   pattern used by the extension screen (``signrules.screen``) and in the data files.
@@ -176,11 +177,68 @@ PATTERNS: Dict[str, Pattern] = {
 }
 
 
+_SIGN = {"+": 1, "1": 1, "+1": 1, "-": -1, "−": -1, "-1": -1}
+
+
+def parse_signs(text: str) -> List[int]:
+    """``"1,-1,-1"``, ``"+,-,-"`` or the compact ``"+--"`` (``−`` is read as ``-``) -> [1, -1, -1]."""
+    text = text.strip()
+    if "," in text or text in _SIGN:
+        parts = [t.strip() for t in text.split(",")]
+    else:
+        parts = list(text)
+    try:
+        return [_SIGN[t] for t in parts]
+    except KeyError as e:
+        raise ValueError(f"{text!r}: signs are written 1,-1,... or +,-,... or +-...; {e.args[0]!r} is none of these") from None
+
+
 def parse_pattern(a_str: str, B_str: str) -> Pattern:
-    """``"-1,-1,1"`` and ``"1,-1,1/1,1,-1/-1,1,1"`` (rows separated by ``/``) -> (a, B)."""
-    a = [int(x) for x in a_str.split(",")]
-    B = np.array([[int(x) for x in row.split(",")] for row in B_str.split("/")], dtype=int)
+    """``"-1,-1,1"`` and ``"1,-1,1/1,1,-1/-1,1,1"`` (rows separated by ``/``; every row may also be written
+    ``"+-+"``) -> (a, B).  Raises ValueError when B is not n×n for n = len(a) or a diagonal entry is not +."""
+    a = parse_signs(a_str)
+    rows = [parse_signs(row) for row in B_str.split("/")] if B_str.strip() else []
+    n = len(a)
+    if len(rows) != n or any(len(r) != n for r in rows):
+        raise ValueError(f"a has {n} signs, so B needs {n} rows of {n} signs; "
+                         f"got {len(rows)} rows of lengths {[len(r) for r in rows]}")
+    B = np.array(rows, dtype=int)
+    bad = [i for i in range(n) if B[i, i] <= 0]
+    if bad:
+        raise ValueError(f"the diagonal of B is positive (self-regulation); entries {', '.join(f'b_{i}{i}' for i in bad)} are not")
     return a, B
+
+
+def short_id(name: str) -> str:
+    """The short name of a preset: ``"S-d"`` for ``"S-d {0,1}|{2,3}, ..."``, the name itself for the others."""
+    return name.split()[0]
+
+
+def presets() -> Dict[str, Pattern]:
+    """Every named pattern: the eleven four-species patterns (``ELEVEN``), then the five- and six-species
+    presets (``PATTERNS``), as plain lists."""
+    out = {}
+    for table in (ELEVEN, PATTERNS):
+        for k, (a, B) in table.items():
+            out[k] = (list(map(int, a)), [list(map(int, r)) for r in B])
+    return out
+
+
+def resolve_preset(name: str) -> str:
+    """The full preset name for ``name``: the full name, a short id (``S-d``, ``A-e``) or an unambiguous
+    prefix of either, ignoring case.  Raises ValueError, naming the candidates, otherwise."""
+    names = list(presets())
+    low = name.lower()
+    for test in (lambda k: k == name, lambda k: short_id(k).lower() == low, lambda k: k.lower().startswith(low)):
+        hits = [k for k in names if test(k)]
+        if len(hits) == 1:
+            return hits[0]
+        if len(hits) > 1:
+            raise ValueError(f"preset {name!r} is ambiguous: " + ", ".join(short_id(k) for k in hits))
+    import difflib
+    close = difflib.get_close_matches(name, [short_id(k) for k in names], n=5, cutoff=0.4)
+    hint = f"; did you mean {', '.join(close)}?" if close else ""
+    raise ValueError(f"no preset {name!r}{hint} ('signrules presets' lists them)")
 
 
 # ----------------------------------------------------------------------------- random and exhaustive
@@ -280,5 +338,5 @@ def canonical(codes: Sequence[int], n: int) -> np.ndarray:
 
 
 __all__ = ["Pattern", "ELEVEN", "PATTERNS", "sym", "cycle_pattern", "parity_pattern", "cycle_types", "cycle",
-           "parse_pattern", "random_pattern", "all_patterns", "trivial", "canonical_classes",
+           "parse_signs", "parse_pattern", "short_id", "presets", "resolve_preset", "random_pattern", "all_patterns", "trivial", "canonical_classes",
            "off", "perms", "key", "encode", "decode", "canonical"]

@@ -217,7 +217,7 @@ hence the trees (160 of the 161 open patterns, and 15–21 % more nodes on the $
 watchers are part of the most-constrained heuristic), while keeping every verdict. Since the
 subsumption below, `complete()` *idles* them by default (`idle="auto"`): their propagators are
 registered, so the branching order, the trees and the certificates are exactly those of the full
-rule set, but they are never run, root included; `idle=()` (and `signrules-live --idle ''`) runs them,
+rule set, but they are never run, root included; `idle=()` (and `signrules run --idle ''`) runs them,
 and a reduced rule set that lacks the subsuming rules (say `R1,R2n,R5,R6`) runs them as before.
 
 ### R4 and R6 are subsumed

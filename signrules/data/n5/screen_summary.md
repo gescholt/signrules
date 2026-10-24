@@ -11,7 +11,7 @@ sign-consistent completion under branching, so no further kills come from the ch
 Meng et al. report an upper bound of 30 candidate impossible five-species ecologies (Fig. S3). All 21 kills
 here are theorems (the rules are sound). Rule R8, added later, kills a 22nd (`parity_k2`) and, with
 one wrong growth sign admitted (rule R8, docs/SIGNRULES.md §3 and §7 (d)), two more; the extension screen
-(`signrules-screen 5`) shows that every other five-species ecology
+(`signrules screen 5`) shows that every other five-species ecology
 is possible: exactly 24 are impossible.
 
 ## The 21 proved impossible ecologies

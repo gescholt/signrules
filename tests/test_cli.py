@@ -1,0 +1,127 @@
+"""The command ``signrules``: help, pattern input, errors and the verdicts it prints."""
+import argparse
+import subprocess
+import sys
+
+import pytest
+
+from signrules import cli
+from signrules.patterns import ELEVEN, PATTERNS, parse_pattern, resolve_preset
+
+
+def run(capsys, *argv):
+    code = cli.main(list(argv))
+    return code, capsys.readouterr()
+
+
+def test_top_level_help_lists_every_command(capsys):
+    with pytest.raises(SystemExit):
+        cli.main(["--help"])
+    out = capsys.readouterr().out
+    for name, (summary, _, _) in cli.COMMANDS.items():
+        assert name in out and summary.split(";")[0][:40] in " ".join(out.split())
+
+
+def test_no_command_without_terminal_prints_help(capsys):
+    code, cap = run(capsys)
+    assert code == 0 and "commands:" in cap.out
+
+
+def test_every_subcommand_and_option_is_described():
+    ap = cli.build_parser()
+    sub = next(a for a in ap._actions if isinstance(a, argparse._SubParsersAction))
+    assert set(sub.choices) == set(cli.COMMANDS) == set(cli.HANDLERS)
+    for name, sp in sub.choices.items():
+        assert sp.description, name
+        assert "examples:" in sp.epilog, name
+        for action in sp._actions:
+            assert action.help, f"signrules {name} {action.option_strings or action.dest}: no help"
+
+
+def test_run_kill_prints_certificate_and_replay(capsys):
+    code, cap = run(capsys, "run", "--preset", "A-e", "--plain")
+    assert code == 0
+    assert "IMPOSSIBLE" in cap.out and "killed at the root by R7" in cap.out
+    assert "contradiction" in cap.out and "p_4567 > 0" in cap.out
+    assert "replay OK" in cap.out
+
+
+def test_run_completions(capsys):
+    code, cap = run(capsys, "run", "--preset", "S-d", "--rules", "R1,R2n", "--plain")
+    assert code == 0 and "NOT DECIDED BY THE RULES" in cap.out and "64 completions" in cap.out
+
+
+def test_run_exhausted_and_undecided(capsys):
+    # S-a under R1,R2n survives the root and dies in the search (every branch closed)
+    _, cap = run(capsys, "run", "--preset", "S-a", "--rules", "R1,R2n", "--plain")
+    assert "IMPOSSIBLE" in cap.out and "every branch closed" in cap.out and "contradictions by rule" in cap.out
+    _, cap = run(capsys, "run", "--preset", "S-a", "--rules", "R1,R2n", "--max-nodes", "1", "--plain")
+    assert "UNDECIDED" in cap.out
+
+
+@pytest.mark.parametrize("argv, message", [
+    (["run", "--preset", "S"], "ambiguous: S-a, S-b, S-c, S-d, S-e"),
+    (["run", "--preset", "zzz"], "no preset 'zzz'"),
+    (["run", "--preset", "A-e", "--rules", "R9"], "unknown rule R9"),
+    (["run", "--a", "+--", "--B", "++/++"], "B needs 3 rows of 3 signs"),
+    (["run", "--a", "+-", "--B=-+/++"], "diagonal of B is positive"),
+    (["run", "--a", "+2", "--B", "++/++"], "'2' is none of these"),
+    (["run"], "give a pattern"),
+    (["run", "--preset", "A-e", "--random", "4"], "exactly one pattern"),
+    (["replay", "--preset", "A-e", "--idle", "R0"], "unknown rule R0"),
+])
+def test_bad_input_is_a_clean_error(capsys, argv, message):
+    with pytest.raises(SystemExit) as e:
+        cli.main(argv)
+    assert e.value.code == 2
+    err = capsys.readouterr().err
+    assert message in err and "Traceback" not in err
+
+
+def test_compact_and_comma_signs_agree():
+    a1, B1 = parse_pattern("+--", "+++/-++/--+")
+    a2, B2 = parse_pattern("1,-1,-1", "1,1,1/-1,1,1/-1,-1,1")
+    assert a1 == a2 and (B1 == B2).all()
+    assert parse_pattern("+,−,−", "+,+,+/−,+,+/−,−,+")[0] == a2
+
+
+def test_presets_resolve_by_short_id_and_prefix(capsys):
+    assert resolve_preset("a-e") == "A-e competitor + 3-cycle (Thm 3.5)"
+    assert resolve_preset("parity") == "parity_k2"
+    code, cap = run(capsys, "presets")
+    assert code == 0
+    for name in list(ELEVEN) + list(PATTERNS):
+        assert name.split()[0] in cap.out
+
+
+def test_replay(capsys):
+    code, cap = run(capsys, "replay", "--preset", "parity_k2")
+    assert code == 0 and "R8" in cap.out and "replay OK" in cap.out
+    code, cap = run(capsys, "replay", "--preset", "S-d", "--rules", "R1,R2n")
+    assert code == 1 and "not killed at the root" in cap.out
+
+
+def test_tree_writes_the_viewer(capsys, tmp_path):
+    out = tmp_path / "t.html"
+    code, cap = run(capsys, "tree", "--preset", "S-d", "--rules", "R1,R2n", "--out", str(out))
+    assert code == 0 and "64 completions" in cap.out and out.read_text().startswith("<!doctype html>")
+
+
+def test_screen_candidates(capsys):
+    code, cap = run(capsys, "screen", "5", "--candidates-only")
+    assert code == 0 and "83 non-trivial candidates" in cap.out
+
+
+def test_module_and_aliases_run():
+    for cmd in ([sys.executable, "-m", "signrules", "--help"],
+                [sys.executable, "-c", "from signrules.livesearch import main; main(['--preset', 'A-e', '--plain'])"],
+                [sys.executable, "-c", "from signrules.treeview import main; main(['--help'])"]):
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+        assert r.returncode == 0, r.stderr
+
+
+def test_readme_command_table_matches_commands():
+    from pathlib import Path
+    readme = (Path(__file__).resolve().parents[1] / "README.md").read_text()
+    for name, (summary, _, _) in cli.COMMANDS.items():
+        assert f"| `{name}` | {summary} |" in readme, f"README: the row of {name} differs from cli.COMMANDS"
