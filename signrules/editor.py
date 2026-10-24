@@ -1,22 +1,23 @@
 """
-``signrules edit``: edit a sign pattern as the matrix [diag(a) | B] and watch its network.
+The full-screen app of ``signrules`` (also ``signrules edit``): every step without flags.
 
-    signrules edit                    # four free competitors to start from
-    signrules edit --n 5
-    signrules edit --preset A-e
+    signrules                         # opens with the pattern library
+    signrules edit --preset A-e       # opens with a pattern
 
-The left panel is the n × 2n sign matrix: the diagonal block holds the signs of a (only its diagonal is
-editable), the right block holds B (its diagonal is fixed +).  Column numbers are those of [diag(a) | B],
-so the Plücker coordinate p_0257 is the minor on the columns 0, 2, 5, 7.  The right panel draws the
-interaction network as the article's ``\\econet`` (``network.py``).  Below them, recomputed after every
-change: whether the pattern is trivial, which library pattern it is up to relabelling, and the verdict of
-the root propagation under all rules.
+The left panel is the n × 2n sign matrix [diag(a) | B]: the diagonal block holds the signs of a (only its
+diagonal is editable), the right block holds B (its diagonal is fixed +).  Column numbers are those of
+[diag(a) | B], so the Plücker coordinate p_0257 is the minor on the columns 0, 2, 5, 7.  The right panel
+draws the interaction network as the article's ``\\econet`` (``network.py``).  Below them, recomputed after
+every change: whether the pattern is trivial, which library pattern it is up to relabelling, the verdict
+of the root propagation, and the rules and node limit of the search.
 
-Keys: the arrows move over the editable signs, tab jumps between a and B, space or enter flips, + and - set a sign (a click flips too); l opens the
-library, < and > (or 2–7, or n for a chooser) change the number of species, r runs the search, t writes the tree viewer, e exports the
-network (png, pdf and the \\econet call), ? shows this help, q quits and prints the command line.
+Keys: the arrows move over the editable signs, tab jumps between a and B, space or enter flips, + and -
+set a sign (a click flips too); l opens the library, < and > (or 2–7, or n for a chooser) change the
+number of species, u chooses the rules and the node limit, r runs the search on a screen with the live
+dashboard and then the verdict (where h writes the tree viewer and c the certificate drawing), e exports
+the network (png, pdf and the \\econet call), s shows the classification, ? shows the help, q quits.
 
-Needs textual (the ``live`` extra).  ``edit()`` returns the edited pattern and the action chosen.
+Needs textual (the ``live`` extra).
 """
 from typing import Dict, List, Optional, Sequence, Tuple
 
@@ -25,7 +26,7 @@ from textual import events, work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal, Vertical, VerticalScroll
-from textual.screen import ModalScreen
+from textual.screen import ModalScreen, Screen
 from textual.widget import Widget
 from textual.widgets import Footer, OptionList, Static
 from textual.widgets.option_list import Option
@@ -289,7 +290,7 @@ class SpeciesScreen(ModalScreen):
         self.dismiss(int(event.option.id))
 
 
-HELP = """[b]signrules edit[/b]: the pattern as the sign matrix [diag(a) | B]
+HELP = """[b]signrules[/b]: the pattern as the sign matrix [diag(a) | B], its network, and the search
 
 [b]matrix[/b]   ←↑↓→ move (only over the signs you can change) · tab jumps a ⇄ B · home/end row ends
          space/enter flip · + / − set · click flips
@@ -302,10 +303,13 @@ HELP = """[b]signrules edit[/b]: the pattern as the sign matrix [diag(a) | B]
 [b]l[/b] library   presets, the eleven n = 4 patterns, the minimal impossible n = 5, 6 patterns
 [b]< >[/b]       one species less / more (also [ ]); [b]2[/b]–[b]7[/b] set n directly; [b]n[/b] opens the chooser
          the top-left block is kept; new species are free and compete with everyone
-[b]r[/b] run       leave and run `signrules run` on the pattern (dashboard, verdict)
-[b]t[/b] tree      leave and write the tree viewer (`signrules tree`)
+[b]u[/b] rules     the rules to run (space toggles; a all, c R1,R2n) and the node limit
+[b]r[/b] run       the search, with its live dashboard; then the verdict (the certificate and its replay for a
+         kill at the root). There: h writes the tree viewer (HTML), c the certificate drawing, x stops,
+         esc comes back here
 [b]e[/b] export    write <name>_network.png / .pdf / .tex (the \\econet call for the article)
-[b]q[/b] quit      leave and print the command line of the pattern
+[b]s[/b] classification  what the rules decide for n = 4, 5, 6 (the shipped screens)
+[b]q[/b] quit      leave (the command line of the pattern is printed)
 
 esc closes this help"""
 
@@ -323,6 +327,225 @@ class HelpScreen(ModalScreen):
             yield Static(HELP)
 
 
+
+LIMITS = [("2,000 nodes", 2000), ("20,000 nodes", 20000), ("200,000 nodes", 200000), ("no limit", None)]
+
+
+class RulesScreen(ModalScreen):
+    """The rules to run and the node limit of the search; esc applies."""
+
+    BINDINGS = [Binding("escape", "done", "done"), Binding("a", "all", "all rules"),
+                Binding("c", "classical", "R1,R2n (Annals)")]
+    DEFAULT_CSS = """
+    RulesScreen { align: center middle; }
+    #rules-box { width: 100; height: auto; max-height: 90%; border: round $accent; background: $surface; }
+    #rules-box SelectionList { height: auto; border: none; }
+    #rules-box OptionList { height: auto; border: none; }
+    #rules-box .label { padding: 1 1 0 1; color: $text-muted; }
+    """
+
+    def __init__(self, rules, limit) -> None:
+        super().__init__()
+        self.rules, self.limit = tuple(rules), limit
+
+    def compose(self) -> ComposeResult:
+        from textual.widgets import SelectionList
+        from .livesearch import RULE_NOTES
+        with Vertical(id="rules-box"):
+            yield Static("rules (space toggles, tab goes to the limit, esc applies)", classes="label")
+            yield SelectionList(*[(f"{r:<4} {RULE_NOTES[r]}", r, r in self.rules)
+                                  for r in ("R1", "R2", "R2n", "R3", "R4", "R5", "R6", "R7", "R8")], id="rule-list")
+            yield Static("stop the search after", classes="label")
+            yield OptionList(*[Option(("● " if v == self.limit else "  ") + t, id=str(k))
+                               for k, (t, v) in enumerate(LIMITS)], id="limit-list")
+        yield Footer()
+
+    def on_mount(self) -> None:
+        self.query_one("#rules-box").border_title = "rules and limit"
+        self.query_one("#rule-list").focus()
+
+    def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
+        self.limit = LIMITS[int(event.option.id)][1]
+        ol = self.query_one("#limit-list", OptionList)
+        for k, (t, v) in enumerate(LIMITS):
+            ol.replace_option_prompt_at_index(k, ("● " if v == self.limit else "  ") + t)
+
+    def _set(self, rules) -> None:
+        from textual.widgets import SelectionList
+        sl = self.query_one("#rule-list", SelectionList)
+        sl.deselect_all()
+        for r in rules:
+            sl.select(r)
+
+    def action_all(self) -> None:
+        from .rules import Ecology
+        self._set(Ecology.ALL_RULES)
+
+    def action_classical(self) -> None:
+        self._set(("R1", "R2n"))
+
+    def action_done(self) -> None:
+        from textual.widgets import SelectionList
+        order = ("R1", "R2", "R2n", "R3", "R4", "R5", "R6", "R7", "R8")
+        chosen = set(self.query_one("#rule-list", SelectionList).selected)
+        self.dismiss((tuple(r for r in order if r in chosen), self.limit))
+
+
+class _Stopped(Exception):
+    pass
+
+
+class RunScreen(Screen):
+    """One search: the live dashboard while it runs, then the verdict; h writes the tree viewer."""
+
+    BINDINGS = [Binding("x", "stop", "stop"), Binding("h", "html", "tree viewer (HTML)"),
+                Binding("c", "cert", "certificate drawing"), Binding("escape,b", "back", "back to the pattern")]
+    DEFAULT_CSS = """
+    #dash { height: auto; padding: 0 1; }
+    #verdict { height: 1fr; padding: 0 1; }
+    """
+
+    def __init__(self, a, B, name: str, rules, limit) -> None:
+        super().__init__()
+        from .livesearch import LiveSearch
+        from .rules import Ecology
+        self.eco = Ecology(a, B, name)
+        self.rules, self.limit = tuple(rules), limit
+        self.tally = LiveSearch(self.eco, self.rules)
+        self.res = None
+        self.stop_requested = False
+
+    def compose(self) -> ComposeResult:
+        yield Static(id="dash")
+        with VerticalScroll(id="verdict"):
+            yield Static(Text("searching… x stops", style="dim"), id="verdict-text")
+        yield Footer()
+
+    def on_mount(self) -> None:
+        import time
+        self.tally.t0 = time.time()
+        self._timer = self.set_interval(0.15, self._tick)
+        self.search()
+
+    def _tick(self) -> None:
+        self.query_one("#dash", Static).update(self.tally)
+
+    def _progress(self, ev) -> None:
+        if self.stop_requested:
+            raise _Stopped()
+        self.tally(ev)
+
+    @work(thread=True, exclusive=True)
+    def search(self) -> None:
+        from .search import complete
+        try:
+            res = complete(self.eco, use=self.rules, progress=self._progress, record_tree=True,
+                           keep_derivations=True, max_nodes=self.limit)
+        except _Stopped:
+            res = None
+        panel = None
+        if res is not None:
+            from .report import verdict_panel
+            panel = verdict_panel(self.eco, res, self.rules, closed=self.tally.closed, covered=self.tally.covered)
+        self.app.call_from_thread(self._finished, res, panel)
+
+    def _finished(self, res, panel) -> None:
+        self.res = res
+        self.tally.finished = True
+        self._timer.stop()
+        self._tick()
+        box = self.query_one("#verdict-text", Static)
+        if res is None:
+            t = self.tally
+            box.update(Text(f"stopped by you after {t.nodes:,} nodes: {t.completions:,} completions, "
+                            f"{t.conflicts:,} contradictions, {100 * t.covered:.2f}% swept.  esc goes back.", style="bold"))
+        else:
+            box.update(panel)
+
+    def action_stop(self) -> None:
+        if self.res is None:
+            self.stop_requested = True
+
+    def _stem(self) -> str:
+        return "".join(ch if ch.isalnum() or ch in "-_" else "_" for ch in (self.eco.name or "pattern"))
+
+    def action_html(self) -> None:
+        if self.res is None:
+            self.notify("wait for the search to end (x stops it)", severity="warning")
+            return
+        from .treeview import save_tree_viewer
+        path = f"{self._stem()}_tree.html"
+        save_tree_viewer(self.eco, self.res, path, use=self.rules)
+        self.notify(f"wrote {path}: open it in a browser", timeout=8)
+
+    def action_cert(self) -> None:
+        if self.res is None:
+            self.notify("wait for the search to end (x stops it)", severity="warning")
+            return
+        from .certificate import write_certificate, write_completion
+        stem = self._stem()
+        try:
+            if self.res.root_conflict:
+                write_certificate(self.eco, self.res, f"{stem}_certificate")
+                self.notify(f"wrote {stem}_certificate.png / .pdf / .dot", timeout=8)
+            elif self.res.derivations:
+                write_completion(self.eco, self.res, f"{stem}_completion0", index=0)
+                self.notify(f"wrote {stem}_completion0.png / .pdf / .dot (the first completion)", timeout=8)
+            else:
+                self.notify("nothing to draw: no kill at the root, no completion", severity="warning")
+        except Exception as e:                            # Graphviz missing, typically
+            self.notify(f"drawing failed: {e} (needs Graphviz's dot)", severity="error")
+
+    def action_back(self) -> None:
+        self.stop_requested = True
+        self.app.pop_screen()
+
+
+class ClassificationScreen(ModalScreen):
+    """What the rules decide: the shipped results of the screens, n = 4, 5, 6."""
+
+    BINDINGS = [Binding("escape,s", "dismiss(None)", "back"), Binding("l", "library", "browse the kills")]
+    DEFAULT_CSS = """
+    ClassificationScreen { align: center middle; }
+    ClassificationScreen VerticalScroll { width: 100; height: auto; max-height: 90%; border: round $accent;
+                                          background: $surface; padding: 1 2; }
+    """
+
+    def compose(self) -> ComposeResult:
+        from collections import Counter
+        from rich.table import Table
+        from .data import screen_records
+        tb = Table(box=None, padding=(0, 2), header_style="bold")
+        for col in ("n", "candidates", "killed at the root", "by rule", "the rest"):
+            tb.add_column(col)
+        tb.add_row("4", "11 (Meng et al.)", "11", "R2, R3, R7, R8", "—")
+        for n in (5, 6):
+            recs = screen_records(n)
+            kills = [r for r in recs if r["status"] == "killed_root"]
+            rules = Counter((r.get("info") or "?").split()[0] for r in kills)
+            tb.add_row(str(n), str(len(recs)), str(len(kills)), ", ".join(f"{r} {c}" for r, c in sorted(rules.items())),
+                       f"{len(recs) - len(kills)} possible")
+        intro = Text("Every impossible pattern on n species deletes to an impossible one on n − 1 (the deletion "
+                     "lemma), so the candidates at n are the one-species extensions of the kills at n − 1.  The "
+                     "rules kill the candidates below at the root; the others have certificates of possibility, so "
+                     "these kills are exactly the minimal impossible patterns (the certificates of possibility, tropical witnesses, are in "
+                     "the repository feasible_ecologies).\n", style="")
+        foot = Text("\nl opens the library, where every kill can be loaded (\"minimal impossible\" groups); "
+                    "esc goes back.  Recomputing the screens takes minutes: signrules screen 5 / 6 in a shell.",
+                    style="dim")
+        with VerticalScroll():
+            yield Static(intro)
+            yield Static(tb)
+            yield Static(foot)
+        yield Footer()
+
+    def on_mount(self) -> None:
+        self.query_one(VerticalScroll).border_title = "classification"
+
+    def action_library(self) -> None:
+        self.dismiss("library")
+
+
 # --------------------------------------------------------------------------- the app
 
 def free_competitors(n: int) -> Tuple[List[int], List[List[int]]]:
@@ -333,15 +556,15 @@ def free_competitors(n: int) -> Tuple[List[int], List[List[int]]]:
 class PatternEditor(App):
     """The editor; ``self.return_value`` is (a, B, name, action) or None."""
 
-    TITLE = "signrules edit"
+    TITLE = "signrules"
     BINDINGS = [
         Binding("l", "library", "library"), Binding("n", "species", "species"),
         Binding("less_than_sign,left_square_bracket", "grow(-1)", "n−1", key_display="<"),
         Binding("greater_than_sign,right_square_bracket", "grow(1)", "n+1", key_display=">"),
         *[Binding(str(k), f"set_species({k})", f"n = {k}", show=False) for k in range(2, 8)],
-        Binding("r", "leave('run')", "run"), Binding("t", "leave('tree')", "tree"),
-        Binding("e", "export", "export"), Binding("question_mark", "help", "help"),
-        Binding("q", "leave('quit')", "quit"),
+        Binding("u", "rules", "rules"), Binding("r", "run", "run"),
+        Binding("e", "export", "export"), Binding("s", "classification", "classification"),
+        Binding("question_mark", "help", "help"), Binding("q", "leave('quit')", "quit"),
     ]
     CSS = """
     #top { height: 1fr; }
@@ -352,8 +575,14 @@ class PatternEditor(App):
     #status { height: auto; padding: 0 1; border-top: solid $accent; }
     """
 
-    def __init__(self, a=None, B=None, name: str = "", n: int = 4) -> None:
+    def __init__(self, a=None, B=None, name: str = "", n: int = 4, rules=None, limit: Optional[int] = 20000,
+                 open_library: bool = False) -> None:
         super().__init__()
+        from .patterns import preset_rules
+        from .rules import Ecology
+        self.rules = tuple(rules) if rules else (preset_rules(name) or tuple(Ecology.ALL_RULES))
+        self.limit = limit
+        self.open_library = open_library
         if a is None:
             a, B = free_competitors(n)
         self.a = [int(x) for x in a]
@@ -361,6 +590,15 @@ class PatternEditor(App):
         self.origin = name                                # the name of the pattern as loaded
         self.loaded = (list(self.a), [list(r) for r in self.B])
         self._generation = 0
+
+    EDITOR_ACTIONS = {"library", "species", "grow", "set_species", "rules", "run", "export", "classification",
+                      "help", "leave"}
+
+    def check_action(self, action: str, parameters) -> Optional[bool]:
+        """The editor's keys act only on the main screen (not under the run screen or a dialog)."""
+        if action in self.EDITOR_ACTIONS and len(self.screen_stack) > 1:
+            return False
+        return True
 
     @property
     def name_now(self) -> str:
@@ -374,7 +612,7 @@ class PatternEditor(App):
                 with Vertical(id="matrix-box"):
                     yield MatrixGrid()
                 yield Static(Text("←↑↓→ move · tab a ⇄ B · home/end · space flip · + − set\n"
-                                  "< > or 2–7 change n · l library · ? help", style="dim"), id="hint")
+                                  "< > or 2–7 change n · l library · u rules · r run · ? help", style="dim"), id="hint")
             with Vertical(id="network-box"):
                 yield NetworkView()
         yield Static(id="status")
@@ -384,6 +622,8 @@ class PatternEditor(App):
         self.query_one("#network-box").border_title = "network"
         self.query_one(MatrixGrid).focus()
         self.changed()
+        if self.open_library:
+            self.action_library()
 
     # ------------------------------------------------------------------ updates
     def changed(self) -> None:
@@ -395,7 +635,7 @@ class PatternEditor(App):
         self.query_one("#matrix-box").border_subtitle = self.name_now
         self._generation += 1
         self.query_one("#status", Static).update(self._status_text(None))
-        self.analyse(self._generation, list(self.a), [list(r) for r in self.B])
+        self.analyse(self._generation, list(self.a), [list(r) for r in self.B], self.rules)
 
     def _status_text(self, info) -> Text:
         from .patterns import trivial
@@ -413,7 +653,7 @@ class PatternEditor(App):
         matches, verdict, open_signs, seconds = info
         t.append("library: ", style="dim")
         t.append(", ".join(matches) + " (up to relabelling)" if matches else "not in the library")
-        t.append("\nroot: ", style="dim")
+        t.append("\nroot (under the rules below): ", style="dim")
         if verdict:
             t.append("IMPOSSIBLE", style="bold")
             t.append(f" · killed by {verdict}")
@@ -421,16 +661,19 @@ class PatternEditor(App):
             t.append(f"{open_signs} signs open after root propagation", style=style.COMPLETION)
             t.append(" · r runs the search", style="dim")
         t.append(f"  ({seconds:.2f}s)", style="dim")
-        t.append("\n" + command_line(self.a, self.B), style="dim")
+        t.append("\nsearch: ", style="dim")
+        t.append(f"rules {', '.join(self.rules) or 'none'} · ")
+        t.append(f"stop after {self.limit:,} nodes" if self.limit else "no node limit")
+        t.append("   u changes them · r runs", style="dim")
         return t
 
     @work(thread=True, exclusive=True)
-    def analyse(self, generation: int, a, B) -> None:
+    def analyse(self, generation: int, a, B, rules) -> None:
         from . import labels as L
         from .rules import Ecology
         from .search import complete
         matches = library_matches(a, B)
-        res = complete(Ecology(a, B), max_nodes=0, max_completions=1, keep_derivations=False)
+        res = complete(Ecology(a, B), use=rules, max_nodes=0, max_completions=1, keep_derivations=False)
         verdict = L.rule(res.root_conflict).headline("plain") if res.root_conflict else None
         info = (matches, verdict, res.root_unknowns, res.seconds)
         if generation == self._generation:
@@ -445,8 +688,14 @@ class PatternEditor(App):
         def load(picked) -> None:
             if picked:
                 ident, a, B = picked
+                from .patterns import preset_rules
+                from .rules import Ecology
                 self.a, self.B, self.origin = a, B, ident
                 self.loaded = (list(a), [list(r) for r in B])
+                own = preset_rules(ident)
+                if own or self.rules == ("R1", "R2n"):
+                    self.rules = own or tuple(Ecology.ALL_RULES)
+                    self.notify(f"rules {', '.join(self.rules)}" + (": the preset's own" if own else ""), timeout=3)
                 self.query_one(MatrixGrid).cursor = (0, 0)
                 self.changed()
         self.push_screen(LibraryScreen(), load)
@@ -476,6 +725,22 @@ class PatternEditor(App):
     def action_species(self) -> None:
         self.push_screen(SpeciesScreen(), self.action_set_species)
 
+    def action_rules(self) -> None:
+        def apply(picked) -> None:
+            if picked:
+                self.rules, self.limit = picked
+                self.changed()
+        self.push_screen(RulesScreen(self.rules, self.limit), apply)
+
+    def action_run(self) -> None:
+        self.push_screen(RunScreen(self.a, self.B, self.name_now, self.rules, self.limit))
+
+    def action_classification(self) -> None:
+        def then(what) -> None:
+            if what == "library":
+                self.action_library()
+        self.push_screen(ClassificationScreen(), then)
+
     def action_help(self) -> None:
         self.push_screen(HelpScreen())
 
@@ -499,6 +764,6 @@ def command_line(a, B) -> str:
     return f"signrules run --a={sa} --B={sB}"
 
 
-def edit(a=None, B=None, name: str = "", n: int = 4):
-    """Run the editor; (a, B, name, action) with action "run", "tree" or "quit", or None (closed otherwise)."""
-    return PatternEditor(a, B, name, n).run()
+def edit(a=None, B=None, name: str = "", n: int = 4, open_library: bool = False):
+    """Run the app; (a, B, name, "quit") when left with q, or None (closed otherwise)."""
+    return PatternEditor(a, B, name, n, open_library=open_library).run()

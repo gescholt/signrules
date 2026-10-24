@@ -103,11 +103,40 @@ def test_library_loads_and_species_resize():
 
 
 def test_leave_actions_and_helpers():
-    assert drive(PatternEditor(*AE, "A-e"), "r")[3] == "run"
-    assert drive(PatternEditor(*AE, "A-e"), "t")[3] == "tree"
     assert drive(PatternEditor(*AE, "A-e"), "question_mark", 0.2, "escape", "q")[3] == "quit"
     assert command_line(*AE) == "signrules run --a=+--- --B=++++/++-+/+++-/+-++"
     assert editable(3, 0, 0) and not editable(3, 0, 1) and not editable(3, 1, 4) and editable(3, 1, 3)
     from signrules.patterns import PATTERNS, TREES
     assert len(library()) == len(TREES) + len(ELEVEN) + len(PATTERNS) + 24 + 41
     assert "A-e" in library_matches(*AE)
+
+
+def test_run_inside_the_app(tmp_path, monkeypatch):
+    """r runs the search on its own screen; the verdict appears; editor keys do nothing there; h writes HTML."""
+    monkeypatch.chdir(tmp_path)
+    from signrules.editor import RunScreen
+    seen = {}
+
+    def look(app):
+        seen["screen"] = type(app.screen).__name__
+        seen["res"] = app.screen.res
+        seen["verdict"] = str(app.screen.query_one("#verdict-text").render())
+
+    drive(PatternEditor(open_library=True), "enter", 0.3,                 # tree_S-d_annals, rules R1,R2n
+          "r", 1.5, look, "l", "r", 0.3,                                  # library / run keys: ignored here
+          lambda app: seen.update(after=type(app.screen).__name__, depth=len(app.screen_stack)),
+          "h", 0.3, "escape", 0.3, lambda app: seen.update(back=type(app.screen).__name__), "q")
+    assert seen["screen"] == "RunScreen" and seen["after"] == "RunScreen" and seen["depth"] == 2
+    assert seen["res"].summary().startswith("64 completions, 131 nodes")
+    assert (tmp_path / "tree_S-d_annals_tree.html").exists()
+    assert seen["back"] == "Screen"
+
+
+def test_rules_dialog_and_status():
+    seen = {}
+    drive(PatternEditor(*AE, "A-e"), 1.0, lambda app: seen.update(all=status(app)),
+          "u", 0.3, "c", "escape", 1.0,                                    # R1,R2n
+          lambda app: seen.update(rules=app.rules, classical=status(app)), "q")
+    assert seen["rules"] == ("R1", "R2n")
+    assert "killed by R7" in seen["all"] and "rules R1, R2n" in seen["classical"]
+    assert "signs open after root propagation" in seen["classical"]          # A-e survives the root under R1,R2n

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "signrules"
-version = "0.3.0"
+version = "0.4.0"
 description = "Sign completion on the ecological Grassmannian: rules that prove Lotka-Volterra sign patterns impossible, with machine certificates and an independent replay checker"
 readme = "README.md"
 license = {text = "MIT"}

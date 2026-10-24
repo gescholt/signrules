@@ -126,7 +126,9 @@ class LiveSearch:
             lab = L.rule(ev.get("reason", ""), self.eco.n)
             self.closed[lab.rule] += 1
             if _milestone(self.closed[lab.rule]):
-                nth = "first" if self.closed[lab.rule] == 1 else f"{self.closed[lab.rule]:,}th"
+                k = self.closed[lab.rule]
+                suffix = "th" if 10 <= k % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(k % 10, "th")
+                nth = "first" if k == 1 else f"{k:,}{suffix}"
                 self._event("conflict", f"{nth} ⊥ by {lab.headline('plain')} at depth {d}")
         elif kind == "stopped":
             self.stopped += 1

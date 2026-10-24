@@ -39,7 +39,7 @@ COMMANDS = {
                "every step from the identity or inequality it names (signrules.replay), without the engine.",
                "signrules replay --preset A-d\n"
                "signrules replay --preset parity_k2 --cert out/"),
-    "edit": ("edit a pattern as the sign matrix [diag(a) | B] with its network drawn live, then run it",
+    "edit": ("the full-screen app (also plain `signrules`): library, matrix editor, network, rules, search, verdict",
              "Open the pattern editor: the n × 2n sign matrix [diag(a) | B] on the left (arrows move, space flips), "
              "the interaction network on the right in the style of the article (pink free, blue obligate, dashed "
              "blue arrow i → j where i benefits from j, red line where both lose), and below them the root verdict "
@@ -316,17 +316,8 @@ def cmd_edit(args, ap) -> int:
     if out is None:
         return 1
     a, B, name, action = out
-    line = command_line(a, B)
-    if action == "quit":
-        print(line)
-        return 0
-    sa, sB = line.split()[2].split("=", 1)[1], line.split()[3].split("=", 1)[1]
-    argv = ["tree" if action == "tree" else "run", f"--a={sa}", f"--B={sB}", "--name", name]
-    from .patterns import preset_rules
-    if preset_rules(name):                                # an unchanged tree_* preset: run it under its rules
-        argv += ["--rules", ",".join(preset_rules(name))]
-    print("$ signrules " + " ".join(argv[:3]) + f" --name '{name}'" + (" " + " ".join(argv[5:]) if len(argv) > 5 else ""))
-    return main(argv)
+    print(command_line(a, B))
+    return 0
 
 
 def edited_pattern() -> Optional[dict]:
@@ -359,7 +350,8 @@ def build_parser() -> argparse.ArgumentParser:
     from . import screen
     ap = argparse.ArgumentParser(
         prog="signrules", description=DESCRIPTION, formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="Run 'signrules <command> --help' for its options.  With no command, in a terminal: a menu.")
+        epilog="With no command, in a terminal: the full-screen app (pattern library, matrix editor, rules, "
+               "search, verdict; every action is a key).  Run 'signrules <command> --help' for the options of a command.")
     sub = ap.add_subparsers(dest="command", title="commands", metavar="<command>")
     for name, (summary, description, examples) in COMMANDS.items():
         sp = sub.add_parser(name, help=summary, description=description or screen.__doc__,
@@ -432,7 +424,14 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if not argv:
         if _interactive():
-            return _menu(ap)
+            try:
+                from .editor import command_line, edit
+            except ImportError:                           # no textual: the question-and-answer menus
+                return _menu(ap)
+            out = edit(open_library=True)
+            if out:
+                print(command_line(out[0], out[1]))
+            return 0
         ap.print_help()
         return 0
     args = ap.parse_args(argv)

@@ -101,7 +101,12 @@ def report(eco: Ecology, res: SearchResult, use: Sequence[str], console: Optiona
            replay: bool = True) -> None:
     """Print the verdict panel of ``res`` (see the module docstring).  ``closed`` (contradictions per rule)
     and ``covered`` (share of the search space swept) come from a ``livesearch.LiveSearch`` tally."""
-    console = console or Console()
+    (console or Console()).print(verdict_panel(eco, res, use, closed, covered, verbose, replay))
+
+
+def verdict_panel(eco: Ecology, res: SearchResult, use: Sequence[str], closed: Optional[Counter] = None,
+                  covered: Optional[float] = None, verbose: bool = False, replay: bool = True) -> Panel:
+    """The verdict of ``report`` as a rich renderable (the TUI shows it in a widget)."""
     word, why = verdict(res)
     colour = style.COMPLETION if word.startswith("NOT") else ("" if word == "UNDECIDED" else "bold")
     body = [Text.assemble((word, f"bold {colour}".strip()), "  ·  ", why)]
@@ -127,4 +132,4 @@ def report(eco: Ecology, res: SearchResult, use: Sequence[str], console: Optiona
         if closed:
             body.append(Text("contradictions by rule: " + ", ".join(f"{r} {c:,}" for r, c in closed.most_common()),
                              style="dim"))
-    console.print(Panel(Group(*body), title="verdict", title_align="left", border_style="dim"))
+    return Panel(Group(*body), title="verdict", title_align="left", border_style="dim")

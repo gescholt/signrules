@@ -71,24 +71,40 @@ sign table is a flat list indexed by basis id with `+1`, `-1`, `UNKNOWN = 0`; `e
 
 ## Run
 
-One command, `signrules`, with six subcommands (`signrules --help` lists them, `signrules <command> --help`
-gives the options and examples of each; `python -m signrules` is the same):
+Type `signrules` (with the `live` extra installed). A full-screen app opens on the pattern library;
+everything else is a key, listed in the footer:
+
+| key | what it does |
+|---|---|
+| ↑↓ enter (in the library) | preview a pattern's matrix and network, load it; the `tree_*` patterns come first |
+| ←↑↓→, tab, space, click | move over the sign matrix `[diag(a) | B]`, jump between a and B, flip a sign |
+| `<` `>` or `2`–`7` | one species less / more, or n directly |
+| `u` | the rules (checkboxes; `a` all, `c` R1,R2n) and the node limit |
+| `r` | run the search: live dashboard, then the verdict (certificate and replay for a root kill); there `h` writes the tree viewer, `c` the certificate drawing, `x` stops, esc comes back |
+| `e` | export the network as png, pdf and the article's `\econet` call |
+| `s` | the classification: what the rules decide for n = 4, 5, 6 |
+| `?`, `q` | help, quit |
+
+The status line under the matrix follows every edit: trivial or not, the library pattern it equals up to
+relabelling, the root verdict under the chosen rules. The same app opens with a pattern through
+`signrules edit --preset A-e`.
+
+Without the app, for scripts and logs, the same steps are subcommands (`signrules --help`,
+`signrules <command> --help`; `python -m signrules` is the same):
 
 | command | what it does |
 |---|---|
 | `run` | complete one pattern with a live dashboard; prints the verdict and, for a kill, the certificate |
 | `tree` | complete one pattern and write an interactive HTML viewer of the search tree |
 | `replay` | kill one pattern at the root and check its certificate with the independent replayer |
-| `edit` | edit a pattern as the sign matrix [diag(a) | B] with its network drawn live, then run it |
+| `edit` | the full-screen app (also plain `signrules`): library, matrix editor, network, rules, search, verdict |
 | `presets` | list the named patterns (the eleven n = 4 patterns, the n = 5, 6 presets) with short ids |
 | `screen` | list the candidates for impossible n-species patterns (deletion lemma) and run the rules on each |
 
 ```bash
-signrules                                          # in a terminal: menus for everything
 signrules presets                                  # the named patterns: tree_*, S-a … S-e, A-a … A-f, parity_k2, ...
 signrules run --preset tree_S-d                    # a search tree to watch: 64 completions, 4 contradictions
 signrules run --preset tree_S-a                    # survives the root, every branch closes
-signrules edit --preset A-e                        # the sign matrix and its network; edit, then r to run
 signrules run --preset A-e                         # dashboard, then the verdict and the certificate
 signrules run --preset S-d --rules R1,R2n          # 64 completions: not decided by R1, R2n alone
 signrules run --a +--- --B "+-++/-+++/+++-/++-+"   # your own pattern (or --a=1,-1,-1,-1 --B=1,-1,1,1/...)
@@ -133,18 +149,6 @@ file or pipe, prints only the verdict. The tree viewer (`--html`, or `signrules 
 self-contained HTML file: click a node to see the signs it forced with their rules, what the known signs
 say about stability and feasibility, and every minor of `B`; at a contradiction it names the violated rule
 and its premises. The old names `signrules-live`, `signrules-tree`, `signrules-screen` still work.
-
-`signrules edit` (needs the `live` extra) shows the pattern as the n × 2n sign matrix `[diag(a) | B]`:
-the arrows move over the signs you can change (`a_i` is the diagonal of the left block, `b_ii` stays `+`),
-tab jumps between the a block and B, home/end go to the ends of a row, space or a click flips a sign.
-`<` and `>` (or `[` `]`) remove or add a species, `2`–`7` set n directly; the top-left block is kept and a
-new species is free and competes with everyone. Beside it the interaction network is drawn in the style of the article, and below, after every
-change, whether the pattern is trivial, which library pattern it equals up to relabelling, and the root
-verdict under all rules. `l` opens the library (the presets, the eleven four-species patterns, the 24 + 41
-minimal impossible five- and six-species patterns) with a preview of each, `n` opens a chooser for the
-number of species, `r` runs the search on the edited pattern, `t` writes its tree viewer, `e` exports the network
-as png, pdf and the `\econet` call for the article, `?` lists the keys, `q` quits and prints the
-`signrules run` line of the pattern. In the menus, the pattern choice "custom" opens the same editor.
 
 <img src="docs/figures/network_A-e.png" width="220" alt="network of A-e">
 
