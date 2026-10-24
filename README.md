@@ -85,7 +85,9 @@ gives the options and examples of each; `python -m signrules` is the same):
 
 ```bash
 signrules                                          # in a terminal: menus for everything
-signrules presets                                  # the named patterns: S-a … S-e, A-a … A-f, parity_k2, ...
+signrules presets                                  # the named patterns: tree_*, S-a … S-e, A-a … A-f, parity_k2, ...
+signrules run --preset tree_S-d                    # a search tree to watch: 64 completions, 4 contradictions
+signrules run --preset tree_S-a                    # survives the root, every branch closes
 signrules edit --preset A-e                        # the sign matrix and its network; edit, then r to run
 signrules run --preset A-e                         # dashboard, then the verdict and the certificate
 signrules run --preset S-d --rules R1,R2n          # 64 completions: not decided by R1, R2n alone
@@ -97,7 +99,11 @@ signrules tree --preset S-d --rules R1,R2n --out s-d.html      # only the HTML v
 
 Signs are written `1,-1,...`, `+,-,...` or `+-...`; rows of `B` are separated by `/`. A value that starts
 with `-` needs an equals sign (`--a=-+--`), as argparse otherwise reads it as an option. A preset is named
-by its short id or any unambiguous prefix of its name. Mistakes (an unknown preset, a rule name, a wrong
+by its short id or any unambiguous prefix of its name. The `tree_*` presets come first: patterns the root
+does not decide, so the search grows a tree with completions and contradictions; `tree_S-d_annals` and
+`tree_S-a_search_kill` bring their own rules (R1,R2n; `--rules all` overrides), the others use all rules.
+Under all rules the other four-species presets die at the root, and the five- and six-species ones grow
+trees too large to finish. Mistakes (an unknown preset, a rule name, a wrong
 size of `B`) are reported in one line.
 
 During a search the terminal shows a live dashboard: the share of the tree already swept, the signs forced

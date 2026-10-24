@@ -125,3 +125,16 @@ def test_readme_command_table_matches_commands():
     readme = (Path(__file__).resolve().parents[1] / "README.md").read_text()
     for name, (summary, _, _) in cli.COMMANDS.items():
         assert f"| `{name}` | {summary} |" in readme, f"README: the row of {name} differs from cli.COMMANDS"
+
+
+def test_tree_presets_grow_trees(capsys):
+    """Every tree_* preset survives the root under its rules and the search ends (the claim of its note)."""
+    from signrules import Ecology, complete
+    from signrules.patterns import TREES, preset_rules
+    for name, (a, B) in TREES.items():
+        res = complete(Ecology(a, B), use=preset_rules(name) or Ecology.ALL_RULES, keep_derivations=False)
+        assert res.root_conflict is None and not res.stopped and res.conflicts > 0, name
+    code, cap = run(capsys, "run", "--preset", "tree_S-a", "--plain")
+    assert "the preset's own" in cap.out and "every branch closed" in cap.out
+    code, cap = run(capsys, "run", "--preset", "tree_S-d", "--rules", "all", "--plain")
+    assert "the preset's own" not in cap.out and "killed at the root" in cap.out

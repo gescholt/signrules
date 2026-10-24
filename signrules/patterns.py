@@ -6,6 +6,7 @@ Sign patterns used across the package.
   A-a … A-f Figure 3 (a)–(f).
 * ``parity_pattern``: the benefactor-permutation family (rule R8; every species of a cycle is obligate and
   benefits only from the next one, the fixed species are free and benefit from everyone).
+* ``TREES``: presets whose search tree is worth watching, with the rules to run them under (``TREE_RULES``).
 * ``PATTERNS``: five- and six-species presets of the live search (``signrules run --preset``);
   ``presets()`` is both tables, ``resolve_preset`` finds one by its short id (``S-d``) or a prefix.
 * ``all_patterns``, ``canonical_classes``, ``trivial``: enumeration of the patterns on n species and of
@@ -177,6 +178,36 @@ PATTERNS: Dict[str, Pattern] = {
 }
 
 
+# Presets whose search tree is worth watching: the root propagation does not decide them under the rules given
+# with each (TREE_RULES; all rules when absent), and the search ends in a tree of completions and contradictions.  Under all rules every
+# pattern on n <= 4 species that survives the root ends almost only in completions (at most 7 contradictions in
+# 1,734 nodes, and no search kills); the contradictions show best under the Annals algorithm R1, R2n.
+TREES: Dict[str, Pattern] = {
+    "tree_S-d_annals": ELEVEN["S-d {0,1}|{2,3}, {2,3} obligate, a01=(+,-)"],
+    "tree_S-a_search_kill": ELEVEN["S-a obligate mutualism"],
+    "tree_hub3": ([1, 1, 1], np.array([[1, 1, -1], [1, 1, -1], [-1, -1, 1]])),
+    "tree_chain4": ([1, -1, -1, -1], np.array([[1, 1, -1, -1], [-1, 1, 1, 1], [1, 1, 1, -1], [1, 1, -1, 1]])),
+    "tree_preyed_pair4": ([1, 1, -1, -1], np.array([[1, 1, -1, -1], [-1, 1, -1, -1], [1, 1, 1, -1], [1, 1, -1, 1]])),
+    "tree_mutualists4": ([1, 1, 1, -1], np.array([[1, 1, 1, -1], [1, 1, -1, 1], [-1, -1, 1, 1], [-1, 1, 1, 1]])),
+}
+TREE_RULES: Dict[str, Tuple[str, ...]] = {          # the others run under all rules, the default
+    "tree_S-d_annals": ("R1", "R2n"), "tree_S-a_search_kill": ("R1", "R2n"),
+}
+TREE_NOTES: Dict[str, str] = {
+    "tree_S-d_annals": "S-d under the Annals algorithm: 64 completions, 131 nodes, 4 contradictions",
+    "tree_S-a_search_kill": "S-a under R1, R2n: survives the root, every branch closes (5 contradictions)",
+    "tree_hub3": "competitors 0, 1, each a mutualist of 2: 30 completions, 60 nodes, 1 contradiction",
+    "tree_chain4": "obligate pair {2,3}, free 0 eats both, obligate 1 eats 0: 416 completions, 2 contradictions",
+    "tree_preyed_pair4": "obligate pair {2,3} eaten by the free pair {0,1}: 416 completions, 1 contradiction",
+    "tree_mutualists4": "free pair {1,2}, obligate 3 with 0, 2 eats 0: 864 completions, 7 contradictions",
+}
+
+
+def preset_rules(name: str) -> Optional[Tuple[str, ...]]:
+    """The rules a preset is meant to be run with (the ``TREES`` presets), or None."""
+    return TREE_RULES.get(name)
+
+
 _SIGN = {"+": 1, "1": 1, "+1": 1, "-": -1, "−": -1, "-1": -1}
 
 
@@ -215,10 +246,10 @@ def short_id(name: str) -> str:
 
 
 def presets() -> Dict[str, Pattern]:
-    """Every named pattern: the eleven four-species patterns (``ELEVEN``), then the five- and six-species
-    presets (``PATTERNS``), as plain lists."""
+    """Every named pattern: the search-tree presets (``TREES``), the eleven four-species patterns (``ELEVEN``),
+    then the five- and six-species presets (``PATTERNS``), as plain lists."""
     out = {}
-    for table in (ELEVEN, PATTERNS):
+    for table in (TREES, ELEVEN, PATTERNS):
         for k, (a, B) in table.items():
             out[k] = (list(map(int, a)), [list(map(int, r)) for r in B])
     return out
@@ -338,5 +369,6 @@ def canonical(codes: Sequence[int], n: int) -> np.ndarray:
 
 
 __all__ = ["Pattern", "ELEVEN", "PATTERNS", "sym", "cycle_pattern", "parity_pattern", "cycle_types", "cycle",
+           "TREES", "TREE_RULES", "TREE_NOTES", "preset_rules",
            "parse_signs", "parse_pattern", "short_id", "presets", "resolve_preset", "random_pattern", "all_patterns", "trivial", "canonical_classes",
            "off", "perms", "key", "encode", "decode", "canonical"]

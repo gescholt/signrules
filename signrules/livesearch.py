@@ -42,7 +42,7 @@ from rich.table import Table
 from rich.text import Text
 
 from . import labels as L
-from .patterns import random_pattern  # re-exported: tests and scripts import it from here
+from .patterns import TREE_NOTES, random_pattern  # re-exported: tests and scripts import it from here
 from . import style
 from .rules import Ecology
 from .search import complete
@@ -285,13 +285,15 @@ def _signs(a) -> str:
 
 def _group(name: str) -> str:
     """The menu group of a preset."""
+    if name.startswith("tree_"):
+        return "search trees worth watching (each with its own rules)"
     if name.startswith("r8_") or name == "parity_k2":
-        return "killed by R8 alone, open under R1–R7"
+        return "killed by R8 alone at the root, open under R1–R7"
     if name.startswith("n6_hard_"):
-        return "six species, possible (the certificates of possibility in feasible_ecologies were hard to find)"
+        return "six species, possible: huge trees (certificates of possibility in feasible_ecologies)"
     if name[:2] in ("S-", "A-"):
-        return "four species, proved impossible"
-    return "five species, open patterns near the kills"
+        return "four species, proved impossible: killed at the root (R1,R2n gives a tree)"
+    return "five species, open patterns near the kills: huge trees"
 
 
 def questionary_kit():
@@ -326,7 +328,8 @@ def _pick_pattern(presets: dict):
         choices.append(Separator(f"  {g}"))
         for n in names:
             a, _ = presets[n]
-            choices.append(Choice(f"{n:<{width}}   n = {len(a)}   a = {_signs(a)}", value=n))
+            note = TREE_NOTES.get(n, "")
+            choices.append(Choice(f"{n:<{width}}   n = {len(a)}   a = {_signs(a)}" + (f"   {note}" if note else ""), value=n))
     choices += [Separator("  other"), Choice(f"{'custom':<{width}}   edit the sign matrix (or type a and B)", value="custom"),
                 Choice(f"{'random':<{width}}   a random pattern", value="random")]
     pattern = questionary.select("Pattern", choices=choices, **kw).ask()
@@ -358,7 +361,9 @@ def _pick(presets: dict):
     if out is None:
         return None
     questionary, Choice, Separator, kw, kt = questionary_kit()
-    rule_choices = [Choice(f"{r:<4} {RULE_NOTES[r]}", value=r, checked=r in Ecology.ALL_RULES)
+    from .patterns import preset_rules
+    default = preset_rules(out["preset"] or "") or Ecology.ALL_RULES
+    rule_choices = [Choice(f"{r:<4} {RULE_NOTES[r]}", value=r, checked=r in default)
                     for r in ("R1", "R2", "R2n", "R3", "R4", "R5", "R6", "R7", "R8")]
     menu = {k: v for k, v in kw.items() if k not in ("use_shortcuts", "use_indicator", "instruction")}
     rules = questionary.checkbox("Rules", choices=rule_choices, instruction="(space to toggle, enter to confirm)",

@@ -92,7 +92,9 @@ def test_change_n_with_keys():
 
 
 def test_library_loads_and_species_resize():
-    out = drive(PatternEditor(), "l", 0.3, "down", "down", "down", "enter", 0.5, "q")   # S-a highlighted first
+    from signrules.patterns import TREES
+    downs = ["down"] * (len(TREES) + 3)                    # the first entry is highlighted; S-d is the 4th of ELEVEN
+    out = drive(PatternEditor(), "l", 0.3, *downs, "enter", 0.5, "q")
     sd = ELEVEN["S-d {0,1}|{2,3}, {2,3} obligate, a01=(+,-)"]
     assert out[2] == "S-d" and out[0] == list(sd[0]) and out[1] == [list(map(int, r)) for r in sd[1]]
     out = drive(PatternEditor(*AE, "A-e"), "n", 0.3, "down", "enter", 0.3, "q")      # n = 4 -> 5
@@ -106,6 +108,6 @@ def test_leave_actions_and_helpers():
     assert drive(PatternEditor(*AE, "A-e"), "question_mark", 0.2, "escape", "q")[3] == "quit"
     assert command_line(*AE) == "signrules run --a=+--- --B=++++/++-+/+++-/+-++"
     assert editable(3, 0, 0) and not editable(3, 0, 1) and not editable(3, 1, 4) and editable(3, 1, 3)
-    from signrules.patterns import PATTERNS
-    assert len(library()) == len(ELEVEN) + len(PATTERNS) + 24 + 41
+    from signrules.patterns import PATTERNS, TREES
+    assert len(library()) == len(TREES) + len(ELEVEN) + len(PATTERNS) + 24 + 41
     assert "A-e" in library_matches(*AE)

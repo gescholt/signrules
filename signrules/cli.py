@@ -77,12 +77,12 @@ def add_pattern_args(ap: argparse.ArgumentParser) -> None:
     g.add_argument("--name", default="", help="a label for the pattern in the output")
 
 
-def add_rule_args(ap: argparse.ArgumentParser, default: str = "all") -> None:
+def add_rule_args(ap: argparse.ArgumentParser) -> None:
     """--rules, --idle, --root-only."""
     g = ap.add_argument_group("rules")
-    g.add_argument("--rules", default=default,
-                   help=f"'all' (R1–R8, the default) or a comma list of {', '.join(KNOWN_RULES)}; "
-                        "R1,R2n is the algorithm of the Annals paper")
+    g.add_argument("--rules", default=None,
+                   help=f"'all' (R1–R8, the default; a tree_* preset brings its own) or a comma list of "
+                        f"{', '.join(KNOWN_RULES)}; R1,R2n is the algorithm of the Annals paper")
     g.add_argument("--idle", default="auto",
                    help="rules among --rules that are registered but never run: 'auto' (default: R4 and R6 "
                         "when the rules that subsume them are on), a list such as R4,R6, or '' to run everything")
@@ -99,7 +99,21 @@ def _rule_list(text: str, ap: argparse.ArgumentParser, what: str = "--rules") ->
 
 def rules_from_args(args, ap: argparse.ArgumentParser):
     """(use, idle, root_only) from the parsed rule options; a bad name is an argparse error."""
-    use = tuple(Ecology.ALL_RULES) if args.rules == "all" else _rule_list(args.rules, ap)
+    rules = args.rules
+    if rules is None:                                     # not given: the preset's own rules, else all
+        from .patterns import preset_rules, resolve_preset
+        own = None
+        if getattr(args, "preset", None):
+            try:
+                own = preset_rules(resolve_preset(args.preset))
+            except ValueError:
+                pass
+        if own:
+            print(f"rules {','.join(own)}: the preset's own (--rules all to override)")
+            rules = ",".join(own)
+        else:
+            rules = "all"
+    use = tuple(Ecology.ALL_RULES) if rules == "all" else _rule_list(rules, ap)
     idle = "auto" if args.idle == "auto" else _rule_list(args.idle, ap, "--idle")
     return use, idle, _rule_list(args.root_only, ap, "--root-only")
 
@@ -273,9 +287,13 @@ def cmd_presets(args, ap) -> int:
         tb.add_column(style="dim")
         for name in names:
             a, _ = table[name]
-            tb.add_row(short_id(name), f"n = {len(a)}", f"a = {_signs(a)}", name[len(short_id(name)):].strip())
+            from .patterns import TREE_NOTES, preset_rules
+            note = TREE_NOTES.get(name, name[len(short_id(name)):].strip())
+            if preset_rules(name):
+                note += f"  [rules {','.join(preset_rules(name))}]"
+            tb.add_row(short_id(name), f"n = {len(a)}", f"a = {_signs(a)}", note)
         console.print(tb)
-    console.print("[dim]use the id (or a prefix of the name):  signrules run --preset S-d[/dim]")
+    console.print("[dim]use the id (or a prefix of the name):  signrules run --preset tree_S-d_annals[/dim]")
     return 0
 
 
@@ -304,7 +322,10 @@ def cmd_edit(args, ap) -> int:
         return 0
     sa, sB = line.split()[2].split("=", 1)[1], line.split()[3].split("=", 1)[1]
     argv = ["tree" if action == "tree" else "run", f"--a={sa}", f"--B={sB}", "--name", name]
-    print("$ signrules " + " ".join(argv[:3]) + f" --name '{name}'")
+    from .patterns import preset_rules
+    if preset_rules(name):                                # an unchanged tree_* preset: run it under its rules
+        argv += ["--rules", ",".join(preset_rules(name))]
+    print("$ signrules " + " ".join(argv[:3]) + f" --name '{name}'" + (" " + " ".join(argv[5:]) if len(argv) > 5 else ""))
     return main(argv)
 
 
