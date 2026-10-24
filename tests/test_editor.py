@@ -31,29 +31,64 @@ def status(app) -> str:
     return str(app.query_one("#status").render())
 
 
+def cursor(app):
+    from signrules.editor import MatrixGrid
+    return app.query_one(MatrixGrid).cursor
+
+
+def put(r, c):
+    """A step that places the cursor (as a click would, without flipping)."""
+    def go(app):
+        from signrules.editor import MatrixGrid
+        app.query_one(MatrixGrid).cursor = (r, c)
+    return go
+
+
+def test_navigation_visits_only_editable_cells():
+    seen = []
+    note = lambda app: seen.append(cursor(app))                            # noqa: E731
+    drive(PatternEditor(*AE, "A-e"),
+          "right", note, "right", note, "right", note, "right", note,        # a_0, then b_01 b_02 b_03, wrap to a_0
+          "down", note, "down", note,                                        # a_1, a_2: the diagonal follows
+          "tab", note, "tab", note,                                          # row 2 of B: b_20 (col 4); back to a_2
+          "end", note, "home", note,                                         # b_23 (col 7); a_2
+          put(0, 5), "down", note,                                           # b_01 -> b_11 is fixed -> b_21
+          "q")
+    assert seen == [(0, 5), (0, 6), (0, 7), (0, 0), (1, 1), (2, 2), (2, 4), (2, 2), (2, 7), (2, 2), (2, 5)]
+
+
 def test_flip_set_and_locked_cells():
     seen = {}
     out = drive(PatternEditor(*AE, "A-e"),
-                "right", "right", "right", "right", "right", "space",     # (0, 5): b_01 + -> -
-                "down", "left", "left", "left", "left", "minus",          # (1, 1): a_1 stays -
-                "up", "space",                                            # (0, 1): not a sign
-                "right", "right", "right", "space",                       # (0, 4): b_00 fixed
-                "left", "left", "left", "left", "space",                  # (0, 0): a_0 + -> -
+                "right", "space",                                            # (0, 5): b_01 + -> -
+                "down", "minus",                                             # (2, 5): b_21 + -> -
+                put(1, 5), "space",                                          # b_11: fixed, a warning
+                put(0, 1), "space",                                          # not a sign
+                put(0, 0), "space",                                          # a_0 + -> -
                 lambda app: seen.update(name=app.name_now), "q")
     a, B, name, action = out
     assert action == "quit" and name == "edited from A-e" == seen["name"]
-    assert a == [-1, -1, -1, -1] and B[0] == [1, -1, 1, 1] and all(B[i][i] == 1 for i in range(4))
+    assert a == [-1, -1, -1, -1] and B[0] == [1, -1, 1, 1] and B[2][1] == -1
+    assert all(B[i][i] == 1 for i in range(4))
 
 
 def test_status_follows_the_pattern():
     seen = {}
     drive(PatternEditor(*AE, "A-e"), 1.0, lambda app: seen.update(before=status(app)),
-          "right", "right", "right", "right", "down", "right", "space", 1.0,   # (1, 5): b_11 is fixed, nothing
-          lambda app: seen.update(same=status(app)),
-          "right", "space", 1.0, lambda app: seen.update(after=status(app)), "q")  # (1, 6): b_12 - -> +
+          put(1, 6), "space", 1.0, lambda app: seen.update(after=status(app)), "q")   # b_12 - -> +
     assert "A-e" in seen["before"] and "killed by R7" in seen["before"]
-    assert seen["same"] == seen["before"]
     assert "A-e" not in seen["after"].split("root:")[0]
+
+
+def test_change_n_with_keys():
+    seen = []
+    note = lambda app: seen.append((len(app.a), app.query_one("#matrix-box").border_title))   # noqa: E731
+    out = drive(PatternEditor(*AE, "A-e"), ">", note, "greater_than_sign", note, "<", note, "3", note,
+                "right_square_bracket", note, "2", "<", note, "7", ">", note, "q")
+    assert [k for k, _ in seen] == [5, 6, 5, 3, 4, 2, 7]                     # stays within 2 … 7
+    assert "n = 5" in seen[0][1]
+    a, B, _, _ = out
+    assert len(a) == 7 and a[:2] == list(AE[0][:2]) and B[0][:2] == list(map(int, AE[1][0][:2]))
 
 
 def test_library_loads_and_species_resize():

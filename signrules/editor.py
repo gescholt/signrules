@@ -12,8 +12,8 @@ interaction network as the article's ``\\econet`` (``network.py``).  Below them,
 change: whether the pattern is trivial, which library pattern it is up to relabelling, and the verdict of
 the root propagation under all rules.
 
-Keys: the arrows move, space or enter flips, + and - set a sign (a click flips too); l opens the
-library, n changes the number of species, r runs the search, t writes the tree viewer, e exports the
+Keys: the arrows move over the editable signs, tab jumps between a and B, space or enter flips, + and - set a sign (a click flips too); l opens the
+library, < and > (or 2–7, or n for a chooser) change the number of species, r runs the search, t writes the tree viewer, e exports the
 network (png, pdf and the \\econet call), ? shows this help, q quits and prints the command line.
 
 Needs textual (the ``live`` extra).  ``edit()`` returns the edited pattern and the action chosen.
@@ -112,6 +112,8 @@ class MatrixGrid(Widget, can_focus=True):
     BINDINGS = [
         Binding("up", "move(-1, 0)", "move", show=False), Binding("down", "move(1, 0)", "move", show=False),
         Binding("left", "move(0, -1)", "move", show=False), Binding("right", "move(0, 1)", "move", show=False),
+        Binding("tab,shift+tab", "switch_block", "a ⇄ B", show=False),
+        Binding("home", "row_end(0)", "row start", show=False), Binding("end", "row_end(1)", "row end", show=False),
         Binding("space,enter", "flip", "flip"), Binding("plus,equals_sign", "set(1)", "+", show=False),
         Binding("minus", "set(-1)", "−", show=False),
     ]
@@ -131,9 +133,38 @@ class MatrixGrid(Widget, can_focus=True):
         return 2 + len(self.app.a)
 
     def action_move(self, dr: int, dc: int) -> None:
+        """Move to the next editable cell: the a block holds only its diagonal, the B block skips b_ii."""
         n = len(self.app.a)
         r, c = self.cursor
-        self.cursor = ((r + dr) % n, (c + dc) % (2 * n))
+        if dc:
+            for _ in range(2 * n):
+                c = (c + dc) % (2 * n)
+                if editable(n, r, c):
+                    break
+        if dr:
+            if c < n:                                     # a_i: the diagonal follows the row
+                r = (r + dr) % n
+                c = r
+            else:
+                for _ in range(n):
+                    r = (r + dr) % n
+                    if editable(n, r, c):
+                        break
+        self.cursor = (r, c)
+        self.refresh()
+
+    def action_switch_block(self) -> None:
+        """Jump between a_r and the first editable entry of row r of B."""
+        n = len(self.app.a)
+        r, c = self.cursor
+        self.cursor = (r, r) if c >= n else (r, n + (1 if r == 0 else 0))
+        self.refresh()
+
+    def action_row_end(self, end: int) -> None:
+        """The first (a_r) or last editable cell of the row."""
+        n = len(self.app.a)
+        r, _ = self.cursor
+        self.cursor = (r, r) if not end else (r, 2 * n - 1 if r != n - 1 else 2 * n - 2)
         self.refresh()
 
     def _write(self, value: Optional[int]) -> None:
@@ -260,7 +291,8 @@ class SpeciesScreen(ModalScreen):
 
 HELP = """[b]signrules edit[/b]: the pattern as the sign matrix [diag(a) | B]
 
-[b]matrix[/b]   ←↑↓→ move · space/enter flip · + / − set · click flips
+[b]matrix[/b]   ←↑↓→ move (only over the signs you can change) · tab jumps a ⇄ B · home/end row ends
+         space/enter flip · + / − set · click flips
          a_i is the diagonal of the left block; b_ii is fixed +; b_ij < 0: j benefits i
 [b]network[/b]  pink node free (a_i > 0), blue obligate (a_i < 0); a blue dashed arrow i → j:
          i benefits from j; a red line: the pair loses both ways; one-way losses are not drawn
@@ -268,7 +300,8 @@ HELP = """[b]signrules edit[/b]: the pattern as the sign matrix [diag(a) | B]
          under all rules (recomputed after every change)
 
 [b]l[/b] library   presets, the eleven n = 4 patterns, the minimal impossible n = 5, 6 patterns
-[b]n[/b] species   change n (the top-left block is kept)
+[b]< >[/b]       one species less / more (also [ ]); [b]2[/b]–[b]7[/b] set n directly; [b]n[/b] opens the chooser
+         the top-left block is kept; new species are free and compete with everyone
 [b]r[/b] run       leave and run `signrules run` on the pattern (dashboard, verdict)
 [b]t[/b] tree      leave and write the tree viewer (`signrules tree`)
 [b]e[/b] export    write <name>_network.png / .pdf / .tex (the \\econet call for the article)
@@ -303,6 +336,9 @@ class PatternEditor(App):
     TITLE = "signrules edit"
     BINDINGS = [
         Binding("l", "library", "library"), Binding("n", "species", "species"),
+        Binding("less_than_sign,left_square_bracket", "grow(-1)", "n−1", key_display="<"),
+        Binding("greater_than_sign,right_square_bracket", "grow(1)", "n+1", key_display=">"),
+        *[Binding(str(k), f"set_species({k})", f"n = {k}", show=False) for k in range(2, 8)],
         Binding("r", "leave('run')", "run"), Binding("t", "leave('tree')", "tree"),
         Binding("e", "export", "export"), Binding("question_mark", "help", "help"),
         Binding("q", "leave('quit')", "quit"),
@@ -337,15 +373,14 @@ class PatternEditor(App):
             with Vertical(id="left"):
                 with Vertical(id="matrix-box"):
                     yield MatrixGrid()
-                yield Static(Text("←↑↓→ move · space flip · + − set · click flips\n"
-                                  "l library · n species · ? help", style="dim"), id="hint")
+                yield Static(Text("←↑↓→ move · tab a ⇄ B · home/end · space flip · + − set\n"
+                                  "< > or 2–7 change n · l library · ? help", style="dim"), id="hint")
             with Vertical(id="network-box"):
                 yield NetworkView()
         yield Static(id="status")
         yield Footer()
 
     def on_mount(self) -> None:
-        self.query_one("#matrix-box").border_title = "pattern [diag(a) | B]"
         self.query_one("#network-box").border_title = "network"
         self.query_one(MatrixGrid).focus()
         self.changed()
@@ -356,6 +391,7 @@ class PatternEditor(App):
         grid = self.query_one(MatrixGrid)
         grid.refresh(layout=True)
         self.query_one(NetworkView).refresh()
+        self.query_one("#matrix-box").border_title = f"pattern · n = {len(self.a)}"
         self.query_one("#matrix-box").border_subtitle = self.name_now
         self._generation += 1
         self.query_one("#status", Static).update(self._status_text(None))
@@ -415,19 +451,30 @@ class PatternEditor(App):
                 self.changed()
         self.push_screen(LibraryScreen(), load)
 
+    def action_set_species(self, n: int) -> None:
+        """Resize to n species: the top-left block is kept, new species are free and compete with everyone."""
+        if not n or n == len(self.a):
+            return
+        if not 2 <= n <= 7:
+            self.notify("between 2 and 7 species", severity="warning", timeout=2)
+            return
+        fa, fB = free_competitors(n)
+        m = min(n, len(self.a))
+        for i in range(m):
+            fa[i] = self.a[i]
+            for j in range(m):
+                fB[i][j] = self.B[i][j]
+        self.a, self.B = fa, fB
+        grid = self.query_one(MatrixGrid)
+        r, c = grid.cursor
+        grid.cursor = (r, c) if r < n and c < n and c == r else (0, 0)
+        self.changed()
+
+    def action_grow(self, step: int) -> None:
+        self.action_set_species(len(self.a) + step)
+
     def action_species(self) -> None:
-        def resize(n) -> None:
-            if n and n != len(self.a):
-                fa, fB = free_competitors(n)
-                m = min(n, len(self.a))
-                for i in range(m):
-                    fa[i] = self.a[i]
-                    for j in range(m):
-                        fB[i][j] = self.B[i][j]
-                self.a, self.B = fa, fB
-                self.query_one(MatrixGrid).cursor = (0, 0)
-                self.changed()
-        self.push_screen(SpeciesScreen(), resize)
+        self.push_screen(SpeciesScreen(), self.action_set_species)
 
     def action_help(self) -> None:
         self.push_screen(HelpScreen())

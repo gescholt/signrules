@@ -129,12 +129,14 @@ say about stability and feasibility, and every minor of `B`; at a contradiction 
 and its premises. The old names `signrules-live`, `signrules-tree`, `signrules-screen` still work.
 
 `signrules edit` (needs the `live` extra) shows the pattern as the n × 2n sign matrix `[diag(a) | B]`:
-move with the arrows, flip a sign with space or a click; `a_i` is the diagonal of the left block, `b_ii`
-stays `+`. Beside it the interaction network is drawn in the style of the article, and below, after every
+the arrows move over the signs you can change (`a_i` is the diagonal of the left block, `b_ii` stays `+`),
+tab jumps between the a block and B, home/end go to the ends of a row, space or a click flips a sign.
+`<` and `>` (or `[` `]`) remove or add a species, `2`–`7` set n directly; the top-left block is kept and a
+new species is free and competes with everyone. Beside it the interaction network is drawn in the style of the article, and below, after every
 change, whether the pattern is trivial, which library pattern it equals up to relabelling, and the root
 verdict under all rules. `l` opens the library (the presets, the eleven four-species patterns, the 24 + 41
-minimal impossible five- and six-species patterns) with a preview of each, `n` changes the number of
-species, `r` runs the search on the edited pattern, `t` writes its tree viewer, `e` exports the network
+minimal impossible five- and six-species patterns) with a preview of each, `n` opens a chooser for the
+number of species, `r` runs the search on the edited pattern, `t` writes its tree viewer, `e` exports the network
 as png, pdf and the `\econet` call for the article, `?` lists the keys, `q` quits and prints the
 `signrules run` line of the pattern. In the menus, the pattern choice "custom" opens the same editor.
 
