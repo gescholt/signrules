@@ -71,16 +71,3 @@ At n = 5 these are 24 minimal impossible patterns. Ten of them are covered by no
 stable-coexistence paper, and they sharpen the earlier upper bound of 30 candidates to 24. At n = 6 there are 41. Every other candidate has a
 certificate of possibility (tropical witness) in the companion repository `feasible_ecologies`, so the
 lists are complete.
-
-## 5. Software
-
-- Python (numpy; rich and textual for the terminal) instead of Maple; MIT licence; 237 tests.
-- One command, `signrules`, opens a full-screen app:
-  - a pattern library;
-  - an editor for the sign matrix, with the interaction network drawn in the article's style;
-  - a choice of rules and a node limit;
-  - a live dashboard of the search;
-  - the verdict, with the certificate and its replay.
-- Subcommands (`run`, `tree`, `replay`, `presets`, `screen`) do the same for scripts.
-- Drawings of certificates, search trees and networks, an HTML search-tree viewer, and the data of every
-  screen ship with the package.
