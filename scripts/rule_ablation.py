@@ -32,7 +32,8 @@ contribute: they sit at the highest priority levels, so each of their runs sees 
 GP, R1, R2, R3, R5, R7, R8, and a nonzero count is a pattern where the other rules do not subsume
 them (docs/SIGNRULES.md, "R4 and R6 are subsumed"; none found).  Records census<n>[_random].jsonl,
 with the R4/R6 counts only; exit code 1 if any pattern fired.  Shipped records: all.jsonl, root46.jsonl,
-drop46.jsonl, census3.jsonl, census4.jsonl; the random census files for n = 5, 6 are not committed (10 MB),
+drop46.jsonl, the single-rule variants root4.jsonl, root6.jsonl, drop4.jsonl, drop6.jsonl, census3.jsonl,
+census4.jsonl; the random census files for n = 5, 6 are not committed (10 MB),
 their summary is in docs/SIGNRULES.md §3 ("R4 and R6 are subsumed").
 """
 
