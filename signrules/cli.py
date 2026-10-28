@@ -1,14 +1,14 @@
 """
 The command ``signrules``: one entry point for the sign completion.
 
-    signrules                         # in a terminal: menus for everything
+    signrules                         # in a terminal: the app (library, editor, rules, search, verdict)
     signrules run --preset A-e        # dashboard, then the verdict (and the certificate of a kill)
     signrules presets                 # the named patterns and their short ids
-    signrules <command> --help
+    signrules <command> --help        # --help-all adds the options kept for the ablations
 
 The commands and their one-line descriptions are ``COMMANDS``; the help, the menu and the README take
-them from there.  ``signrules-live``, ``signrules-tree`` and ``signrules-screen`` are the same as
-``signrules run``, ``signrules tree`` and ``signrules screen``.
+them from there (a test checks the README's table against ``COMMANDS``).  The older entry points
+``signrules-live``, ``signrules-tree`` and ``signrules-screen`` are ``signrules run``, ``tree`` and ``screen``.
 """
 import argparse
 import re
@@ -28,7 +28,7 @@ COMMANDS = {
             "verdict: impossible (with the certificate and its independent replay when the kill is at the root), "
             "not decided by the rules (completions exist), or undecided (a limit was hit).",
             "signrules run --preset A-e                        # a four-species kill, certificate printed\n"
-            "signrules run --preset S-d --rules R1,R2n         # 64 completions under the Annals algorithm\n"
+            "signrules run --preset S-d --rules annals         # 64 completions under the Annals paper's algorithm\n"
             "signrules run --a +--- --B \"+-++/-+++/+++-/++-+\"  # your own pattern"),
     "tree": ("complete one pattern and write an interactive HTML viewer of the search tree",
              "Run the search with the tree recorded and write one self-contained HTML page: the binary search "

@@ -188,8 +188,9 @@ R7, Schur block of R4/R6), every coordinate knows the propagators that read it, 
 choice only those touching changed coordinates run, in priority levels from the 3-term relations up
 to the Z-blocks. Monotonicity makes the fixed point independent of the order, so verdicts and
 completions are those of the full sweep (`engine="sweep"`), 5–9 times faster on the $n=4$ searches.
-Sign tables are flat lists indexed by basis id (`UNKNOWN = 0`), and every propagator is compiled to ids
-once per pattern; against the earlier dict-keyed tables this halves the time of the $n=5$ and $n=6$
+Sign tables are flat lists indexed by basis id (`+1`, `-1`, `UNKNOWN = 0`; `idx.to_dict` names the bases),
+and `eco._minor_key[(P, Q)] = (S, c)` gives `sign(det B_PQ) = c · chi[S]`: the dictionary of §1 compiled to
+ids. Every propagator is compiled to ids once per pattern; against the earlier dict-keyed tables this halves the time of the $n=5$ and $n=6$
 extension screens (226 first-completion searches: 97 s → 51 s single-threaded, identical trees, nodes
 and completions) and cuts the per-node cost of a seven-species search from about 10 ms to 5 ms.
 Branching goes to the open coordinate read by the most propagators; on the 32 known $n=4,5$ kills
