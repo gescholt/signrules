@@ -16,14 +16,14 @@ from typing import Optional, Sequence
 
 from .rules import Ecology
 
-DESCRIPTION = ("Decide whether a Lotka–Volterra sign pattern is impossible: complete the signs of the Plücker "
-               "coordinates of [diag(a) | B] with the Grassmann–Plücker relations and the rules R1–R8.")
+DESCRIPTION = ("Decide whether a Lotka–Volterra sign pattern can support a stable coexistence equilibrium; "
+               "a kill comes with a machine-checked certificate.")
 
 # name: (summary, description, examples)
 COMMANDS = {
     "run": ("complete one pattern with a live dashboard; prints the verdict and, for a kill, the certificate",
-            "Complete the sign table of one pattern: propagation at the root, then a depth-first search over the "
-            "open signs.  A terminal shows a live dashboard (progress, rules, current path); at the end comes the "
+            "Complete the signs of the minors of B for one pattern: propagation at the root, then a depth-first "
+            "search over the open signs.  A terminal shows a live dashboard (progress, rules, current path); at the end comes the "
             "verdict: impossible (with the certificate and its independent replay when the kill is at the root), "
             "not decided by the rules (completions exist), or undecided (a limit was hit).",
             "signrules run --preset A-e                        # a four-species kill, certificate printed\n"

@@ -81,19 +81,35 @@ def certificate_table(eco: Ecology, res: SearchResult, verbose: bool = False) ->
     return tb
 
 
+MEANING = {
+    "root": ("No magnitudes with these signs have a stable positive equilibrium: the certificate below is the "
+             "proof, replayed by an independent checker."),
+    "closed": ("No magnitudes with these signs have a stable positive equilibrium: every way to complete the "
+               "signs met a contradiction."),
+    "open": ("The rules cannot exclude this pattern; it may have a realisation (the companion repository's "
+             "witnesses decide that)."),
+    "undecided": "The node limit stopped the search before a completion or a proof.",
+}
+
+
 def verdict(res: SearchResult):
-    """(word, explanation) for the outcome of ``res``."""
+    """(word, explanation, meaning) for the outcome of ``res``: the headline word, what the search found, and
+    one sentence on what that says about the ecology (``MEANING``)."""
     if res.root_conflict:
-        return "IMPOSSIBLE", f"killed at the root by {L.rule(res.root_conflict).headline('plain')}"
+        return ("IMPOSSIBLE", f"killed at the root by {L.rule(res.root_conflict).headline('plain')}",
+                MEANING["root"])
     if res.completions:
         more = " (the search stopped early: there may be more)" if res.stopped else ""
         k = len(res.completions)
         return ("NOT DECIDED BY THE RULES",
                 f"{k:,} completion{'s' if k != 1 else ''}{more}: sign tables consistent with every rule used, so the "
-                "rules cannot kill this pattern; it may still be impossible, or have a realisation")
+                "rules cannot kill this pattern; it may still be impossible, or have a realisation",
+                MEANING["open"])
     if res.stopped:
-        return "UNDECIDED", "the search stopped at its limit before finding a completion; raise --max-nodes"
-    return "IMPOSSIBLE", f"every branch closed: {res.conflicts:,} contradictions in {res.nodes:,} nodes"
+        return ("UNDECIDED", "the search stopped at its limit before finding a completion; raise --max-nodes",
+                MEANING["undecided"])
+    return ("IMPOSSIBLE", f"every branch closed: {res.conflicts:,} contradictions in {res.nodes:,} nodes",
+            MEANING["closed"])
 
 
 def report(eco: Ecology, res: SearchResult, use: Sequence[str], console: Optional[Console] = None,
@@ -107,11 +123,12 @@ def report(eco: Ecology, res: SearchResult, use: Sequence[str], console: Optiona
 def verdict_panel(eco: Ecology, res: SearchResult, use: Sequence[str], closed: Optional[Counter] = None,
                   covered: Optional[float] = None, verbose: bool = False, replay: bool = True) -> Panel:
     """The verdict of ``report`` as a rich renderable (the TUI shows it in a widget)."""
-    word, why = verdict(res)
+    word, why, meaning = verdict(res)
     colour = style.COMPLETION if word.startswith("NOT") else ("" if word == "UNDECIDED" else "bold")
     body = [Text.assemble((word, f"bold {colour}".strip()), "  ·  ", why)]
     body.append(Text(f"{eco.name + ' · ' if eco.name else ''}{L.pattern(eco, 'plain')} · rules {', '.join(use) or 'none'}"
                      f" · {res.seconds:.2f}s", style="dim"))
+    body.append(Text(meaning, style="dim", overflow="fold"))
     if res.root_conflict:
         body += [Text(""), certificate_table(eco, res, verbose)]
         if replay:
