@@ -1,4 +1,4 @@
-% One page: what changed in signrules since the sign-completion algorithm of the Annals paper.
+% One page, internal: what changed in signrules since the sign-completion algorithm of our first paper.
 % The same content as docs/CHANGES.md; every number is from docs/SIGNRULES.md.  pdflatex changes.tex
 \documentclass[10pt]{article}
 \usepackage[a4paper, margin=1.5cm, top=1.3cm, bottom=1.3cm]{geometry}
@@ -15,13 +15,12 @@
 
 \begin{document}
 
-{\LARGE\bfseries signrules: what changed since the Annals algorithm}\par\vspace{3pt}
+{\LARGE\bfseries signrules: what changed since our first paper's algorithm}\par\vspace{3pt}
 {\small Sign completion for Lotka--Volterra sign patterns on $\mathrm{Gr}(n,2n)$ \quad
 \url{https://github.com/gescholt/signrules} \quad v0.4, Oct.\ 2026}\par\vspace{4pt}
 
-The package starts from the sign-completion algorithm of Çelik--Haas--Scholten--Wang--Zucal, \emph{Strata
-of ecological coexistence via Grassmannians}, Ann.\ Comb.\ 2026 (its Maple implementation, ``the Maple
-algorithm''), and adds the arguments of Çelik--Isoldi--Portakal--Zucal (arXiv:2609.09286, CIPZ) and new
+Internal note. The package starts from the sign-completion algorithm of our first paper (its Maple
+implementation, ``the Maple algorithm'') and adds the arguments of the stable-coexistence paper and new
 ones as propagation rules on the same sign variables. Numbers are from \texttt{docs/SIGNRULES.md}.
 
 \begin{multicols}{2}
@@ -30,7 +29,7 @@ The Maple algorithm completes the signs of the Plücker coordinates of $[\operat
 the 3-term Grassmann--Plücker relations, \R{R1} (weak stability: $\det B>0$ and a positive principal
 $k$-minor for every $k$) and \R{R2n} (Cramer's rule on the full system), branching on the open signs.
 \begin{itemize}
-  \item On the eleven four-species candidates of Meng et al.\ it kills S-a, S-b, S-c only after branching
+  \item On the eleven four-species candidates it kills S-a, S-b, S-c only after branching
     and leaves the other eight with 64 to 15{,}512 completions.
   \item On the ten new five-species kills it leaves 158--173 signs open at the root and never closes.
 \end{itemize}
@@ -39,7 +38,7 @@ $k$-minor for every $k$) and \R{R2n} (Cramer's rule on the full system), branchi
 \textbf{Rules.} \R{R2} Cramer on every subsystem; \R{R3} M-matrix minors of balanced patterns; \R{R5}
 Laplace expansions; \R{R7} tope rule, oriented-matroid Farkas (complete for feasibility, subsumes R2);
 \R{R8} real eigenvalue of benefactor-permutation patterns. \R{R4} (Z-blocks) and \R{R6} (Schur blocks),
-the CIPZ arguments, were implemented and shown subsumed by the others, so they are idle by default.
+the arguments of the stable-coexistence paper, were implemented and shown subsumed by the others, so they are idle by default.
 
 \textbf{Search.} Failed-literal probing; symmetry breaking with the pattern's stabilizer (SBDS); coarse
 cells, exact sign correlations, random completions.
@@ -83,8 +82,8 @@ all but R8 & 11 & 21 & 34 \\
 all rules & \textbf{11} & \textbf{24} & \textbf{41} \\
 \bottomrule
 \end{tabular}}\par
-At $n=5$: 24 minimal impossible patterns, ten covered by no theorem of CIPZ, sharpening the bound of 30 of
-Meng et al.\ to 24; at $n=6$: 41. Every other candidate has a tropical witness of possibility
+At $n=5$: 24 minimal impossible patterns, ten covered by no theorem of the stable-coexistence paper,
+sharpening the earlier bound of 30 candidates to 24; at $n=6$: 41. Every other candidate has a tropical witness of possibility
 (repository \texttt{feasible\_ecologies}), so the lists are complete.
 
 \sect{5. Software}

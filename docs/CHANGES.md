@@ -1,8 +1,7 @@
-# What changed since the Annals paper's sign-completion algorithm
+# What changed since the sign-completion algorithm of our first paper
 
-`signrules` starts from the sign-completion algorithm of Çelik–Haas–Scholten–Wang–Zucal, *Strata of
-ecological coexistence via Grassmannians*, Ann. Comb. 2026 (the Maple implementation, "the Maple
-algorithm"), and adds the arguments of Çelik–Isoldi–Portakal–Zucal (arXiv:2609.09286, "CIPZ") and new ones
+Internal note. `signrules` starts from the sign-completion algorithm of our first paper (its Maple
+implementation, "the Maple algorithm") and adds the arguments of the stable-coexistence paper and new ones
 as propagation rules on the same sign variables. Every number below is from [SIGNRULES.md](SIGNRULES.md),
 where the measurements are described. A one-page PDF of this note: [changes.pdf](changes.pdf).
 
@@ -13,7 +12,7 @@ Grassmann–Plücker relations, **R1** (weak stability: `det B > 0` and a positi
 k) and **R2n** (Cramer's rule on the full system), branching on the open signs. In the package these are the
 rules `R1,R2n`:
 
-- On the eleven four-species candidates of Meng et al. it kills S-a, S-b and S-c only after branching,
+- On the eleven four-species candidates it kills S-a, S-b and S-c only after branching,
   and leaves the other eight with 64 to 15,512 completions.
 - On the ten new five-species kills it leaves 158–173 signs open at the root and never closes the search.
 
@@ -25,7 +24,7 @@ rules `R1,R2n`:
   - R5: Laplace expansions of every minor.
   - R7: the tope rule, oriented-matroid Farkas (complete for feasibility; subsumes R2).
   - R8: the real eigenvalue of benefactor-permutation patterns.
-  - R4 (Z-blocks) and R6 (Schur blocks), the CIPZ arguments, were implemented and then shown to be subsumed
+  - R4 (Z-blocks) and R6 (Schur blocks), the arguments of the stable-coexistence paper, were implemented and then shown to be subsumed
     by the others (they never force a sign under them), so they are idle by default.
 - **Search.**
   - Failed-literal probing.
@@ -68,8 +67,8 @@ Root kills of the minimal impossible patterns (n = 4: the eleven; n = 5, 6: the 
 | all but R8 | 11 | 21 | 34 |
 | all rules | **11** | **24** | **41** |
 
-At n = 5 these are 24 minimal impossible patterns. Ten of them are covered by no theorem of CIPZ, and they
-sharpen the upper bound of 30 of Meng et al. to 24. At n = 6 there are 41. Every other candidate has a
+At n = 5 these are 24 minimal impossible patterns. Ten of them are covered by no theorem of the
+stable-coexistence paper, and they sharpen the earlier upper bound of 30 candidates to 24. At n = 6 there are 41. Every other candidate has a
 certificate of possibility (tropical witness) in the companion repository `feasible_ecologies`, so the
 lists are complete.
 
