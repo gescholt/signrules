@@ -57,6 +57,11 @@ Terms used below:
 - Benefactor-permutation patterns of every size n: σ ≠ id; the species fixed by σ grow alone and benefit
   from everybody; every other species i is obligate and benefits only from σ(i). All are impossible.
 
+- **The Python API for a first run:** `Ecology.parse("+---", "+-++/-+++/+++-/++-+")` reads the sign
+  strings of the command line, `print(eco)` shows the sign matrix, `result.verdict` is `impossible`,
+  `open` or `undecided`, `eco.minor_signs(table)` names the minors of a completion; `complete()` documents
+  its six user keywords apart from the ablation knobs; the unused `seed` keyword is gone.
+
 ## 3. Optimisations
 
 | change | measured effect |

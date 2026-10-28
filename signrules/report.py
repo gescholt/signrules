@@ -82,16 +82,17 @@ def certificate_table(eco: Ecology, res: SearchResult, verbose: bool = False) ->
 
 
 def verdict(res: SearchResult):
-    """(word, explanation) for the outcome of ``res``."""
-    if res.root_conflict:
+    """(word, explanation) for the outcome of ``res``: ``res.verdict`` in words."""
+    v = res.verdict
+    if v == "impossible" and res.root_conflict:
         return "IMPOSSIBLE", f"killed at the root by {L.rule(res.root_conflict).headline('plain')}"
-    if res.completions:
+    if v == "open":
         more = " (the search stopped early: there may be more)" if res.stopped else ""
         k = len(res.completions)
         return ("NOT DECIDED BY THE RULES",
                 f"{k:,} completion{'s' if k != 1 else ''}{more}: sign tables consistent with every rule used, so the "
                 "rules cannot kill this pattern; it may still be impossible, or have a realisation")
-    if res.stopped:
+    if v == "undecided":
         return "UNDECIDED", "the search stopped at its limit before finding a completion; raise --max-nodes"
     return "IMPOSSIBLE", f"every branch closed: {res.conflicts:,} contradictions in {res.nodes:,} nodes"
 
