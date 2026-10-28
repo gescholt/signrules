@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use this software, please cite the first two papers below (the algorithm and the arguments it encodes)."
 title: "signrules: sign completion on the ecological Grassmannian"
 type: software
-version: 0.1.1
-date-released: 2026-10-24
+version: 0.4.1
+date-released: 2026-10-27
 authors:
   - family-names: Scholten
     given-names: Georgy

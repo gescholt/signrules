@@ -4,6 +4,9 @@ Sign completion on the ecological Grassmannian: a Python package that proves Lot
 patterns **impossible**, with a machine certificate for every proof and an independent checker that
 replays it.
 
+**New since the Annals paper's Maple algorithm:** [docs/CHANGES.md](docs/CHANGES.md) (one page, also as
+[PDF](docs/changes.pdf)): the rules added, the trust machinery, the measured optimisations, what it decides now.
+
 A Lotka–Volterra community `ẋ = diag(x)(a − Bx)` is described qualitatively by the signs of the growth
 rates `a` and of the interaction matrix `B`. The pattern is *possible* if some magnitudes with these signs
 have a positive equilibrium that is locally asymptotically stable, and *impossible* otherwise. Encoding
@@ -41,8 +44,9 @@ read as propagation rules. The patterns both papers start from are those of
   [doi:10.1016/j.cels.2025.101297](https://doi.org/10.1016/j.cels.2025.101297).
 
 The converse tool, certificates that a pattern *is* possible (tropical witnesses), lives in the companion
-repository [`feasible_ecologies`](https://github.com/gescholt/feasible_ecologies), which will depend on
-this package.
+repository [`feasible_ecologies`](https://github.com/gescholt/feasible_ecologies) (private; ask for access),
+which depends on this package. Nothing here needs it: it is only where the witnesses, the LaTeX statements
+of the rules (`docs/tex/sign_rules.pdf`) and the article are, which the documents below point to.
 
 ## Install
 

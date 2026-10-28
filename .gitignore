@@ -9,3 +9,9 @@ venv/
 out/
 *.swp
 .DS_Store
+# outputs of the signrules app and commands, written to the working directory
+/tree.html
+/*_tree.html
+/*_network.*
+/*_certificate.*
+/*_completion0.*
