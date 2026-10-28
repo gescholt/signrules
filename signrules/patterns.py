@@ -240,6 +240,37 @@ def parse_pattern(a_str: str, B_str: str) -> Pattern:
     return a, B
 
 
+def compact(signs: Sequence[int]) -> str:
+    """A sign vector as the compact string ``parse_signs`` reads: ``[1, -1, -1]`` -> ``"+--"``."""
+    return "".join("+" if int(s) > 0 else "-" for s in signs)
+
+
+def compact_pattern(a: Sequence[int], B) -> Tuple[str, str]:
+    """``(a, B)`` as the two compact strings ``parse_pattern`` reads: ``("+--", "+++/-++/--+")``."""
+    return compact(a), "/".join(compact(row) for row in np.asarray(B))
+
+
+def matrix_lines(a: Sequence[int], B) -> List[str]:
+    """
+    The sign matrix ``[diag(a) | B]`` as plain-text lines with column numbers: the left block holds the
+    signs of ``a`` on its diagonal (``·`` elsewhere), the right block the signs of ``B``.  ``print(Ecology)``
+    shows these lines; the column numbers are those of the Plücker coordinates.
+    """
+    B = np.asarray(B)
+    n = len(a)
+    w = len(str(2 * n - 1))                        # width of a column number
+    cell = w + 1
+    lab = len(str(n - 1)) + 1                      # width of the row label
+    sgn = lambda v: "+" if v > 0 else "−"
+    lines = [" " * lab + " " + "a".center(n * cell) + " " + "B".center(n * cell),
+             " " * lab + " " + "".join(f"{c:>{cell}}" for c in range(n)) + " " + "".join(f"{c:>{cell}}" for c in range(n, 2 * n))]
+    for i in range(n):
+        left = "".join(f"{sgn(a[i]) if c == i else '·':>{cell}}" for c in range(n))
+        right = "".join(f"{sgn(B[i, j]):>{cell}}" for j in range(n))
+        lines.append(f"{i:>{lab}} {left} │{right}")
+    return lines
+
+
 def short_id(name: str) -> str:
     """The short name of a preset: ``"S-d"`` for ``"S-d {0,1}|{2,3}, ..."``, the name itself for the others."""
     return name.split()[0]
@@ -370,5 +401,5 @@ def canonical(codes: Sequence[int], n: int) -> np.ndarray:
 
 __all__ = ["Pattern", "ELEVEN", "PATTERNS", "sym", "cycle_pattern", "parity_pattern", "cycle_types", "cycle",
            "TREES", "TREE_RULES", "TREE_NOTES", "preset_rules",
-           "parse_signs", "parse_pattern", "short_id", "presets", "resolve_preset", "random_pattern", "all_patterns", "trivial", "canonical_classes",
+           "parse_signs", "parse_pattern", "compact", "compact_pattern", "matrix_lines", "short_id", "presets", "resolve_preset", "random_pattern", "all_patterns", "trivial", "canonical_classes",
            "off", "perms", "key", "encode", "decode", "canonical"]

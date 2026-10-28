@@ -141,7 +141,54 @@ class Ecology:
     ----------
     a_signs : sequence of ±1 (signs of the growth rates)
     B_signs : n×n array of ±1, with +1 on the diagonal
+
+    ``Ecology.parse("+---", "+-++/-+++/+++-/++-+")`` reads the sign strings of the command line;
+    ``repr(eco)`` is that call, ``print(eco)`` the sign matrix ``[diag(a) | B]``.
     """
+
+    @classmethod
+    def parse(cls, a, B, name: str = "") -> "Ecology":
+        """
+        An ``Ecology`` from the sign strings the ``signrules`` command accepts: ``a`` as ``"1,-1,-1"``,
+        ``"+,-,-"`` or ``"+--"``; ``B`` with its rows separated by ``/``, each row in any of these forms
+        (``"+++/-++/--+"``).  Sequences and arrays of ±1 are accepted unchanged, so ``Ecology.parse(a, B)``
+        takes whatever ``Ecology(a, B)`` takes.  Raises ValueError for a bad sign, a B that is not n×n or a
+        diagonal entry that is not +.
+        """
+        from .patterns import parse_signs, parse_pattern
+        if isinstance(a, str) and isinstance(B, str):
+            a, B = parse_pattern(a, B)
+        elif isinstance(a, str):
+            a = parse_signs(a)
+        elif isinstance(B, str):
+            B = parse_pattern(",".join(str(int(s)) for s in a), B)[1]
+        return cls(a, B, name)
+
+    def __repr__(self) -> str:
+        from .patterns import compact_pattern
+        a, B = compact_pattern(self.a, self.B)
+        return f"Ecology.parse({a!r}, {B!r}" + (f", name={self.name!r})" if self.name else ")")
+
+    def __str__(self) -> str:
+        from .patterns import matrix_lines
+        head = [self.name] if self.name else []
+        return "\n".join(head + matrix_lines(self.a, self.B))
+
+    def minor_signs(self, chi, fmt: str = "plain") -> Dict[str, int]:
+        """
+        The signs of the minors of B that a sign table ``chi`` (a completion, or any table) determines,
+        as ``{"det B_{1,3},{0,2}": -1, ..., "det B": 1}`` in basis-id order; unknown signs are left out.
+        Keys are ``labels.minor_name`` in the format ``fmt`` ("plain", "text", "html" or "tex").
+        """
+        from . import labels
+        out: Dict[str, int] = {}
+        for S, (_, P, Q, _) in enumerate(self.idx.decomps):
+            if not P:
+                continue
+            sign = self.minor(chi, P, Q)
+            if sign != UNKNOWN:
+                out[labels.convert("$" + labels.minor_name(self, self.idx.bases[S]) + "$", fmt)] = int(sign)
+        return out
 
     def __init__(self, a_signs: Sequence[int], B_signs, name: str = ""):
         self.a = [int(s) for s in a_signs]
