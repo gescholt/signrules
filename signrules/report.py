@@ -93,24 +93,25 @@ MEANING = {
 
 
 def verdict(res: SearchResult):
-    """(word, explanation, meaning) for the outcome of ``res``: the headline word, what the search found, and
-    one sentence on what that says about the ecology (``MEANING``)."""
-    if res.root_conflict:
+    """(word, explanation, meaning) for the outcome of ``res``: the headline word (``res.verdict`` in words),
+    what the search found, and one sentence on what that says about the ecology (``MEANING``)."""
+    v = res.verdict
+    if v == "impossible" and res.root_conflict:
         return ("IMPOSSIBLE", f"killed at the root by {L.rule(res.root_conflict).headline('plain')}",
                 MEANING["root"])
-    if res.completions:
+    if v == "open":
         more = " (the search stopped early: there may be more)" if res.stopped else ""
         k = len(res.completions)
         return ("NOT DECIDED BY THE RULES",
                 f"{k:,} completion{'s' if k != 1 else ''}{more}: sign tables consistent with every rule used, so the "
                 "rules cannot kill this pattern; it may still be impossible, or have a realisation",
                 MEANING["open"])
-    if res.stopped:
-        return ("UNDECIDED", "the search stopped at its limit before finding a completion; raise --max-nodes",
-                MEANING["undecided"])
+    if v == "undecided":
+        how = "Ctrl-C" if getattr(res, "interrupted", False) else "its limit"
+        return ("UNDECIDED", f"the search stopped at {how} before finding a completion; raise the node limit "
+                "(--max-nodes)", MEANING["undecided"])
     return ("IMPOSSIBLE", f"every branch closed: {res.conflicts:,} contradictions in {res.nodes:,} nodes",
             MEANING["closed"])
-
 
 def report(eco: Ecology, res: SearchResult, use: Sequence[str], console: Optional[Console] = None,
            closed: Optional[Counter] = None, covered: Optional[float] = None, verbose: bool = False,

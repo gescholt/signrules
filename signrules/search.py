@@ -34,7 +34,6 @@ reproduces the feasibility + weak-stability algorithm of the Annals paper
 (Çelik–Haas–Scholten–Wang–Zucal, Ann. Comb. 2026), and ``()`` runs the chirotope propagation alone.
 """
 
-import random
 import time
 from typing import Dict, List, Optional, Sequence, Tuple
 
@@ -97,12 +96,29 @@ class SearchResult:
         self.rule_stats: Optional[dict] = None     # {rule: {"root"|"below": {runs, signs, conflicts}}} (stats=True)
         self.assumed: Dict[int, int] = {}          # the extra hypotheses of complete(assume=...), by basis id
 
+    @property
+    def verdict(self) -> str:
+        """
+        ``"impossible"`` (killed at the root, or every branch closed: the pattern is proved impossible),
+        ``"open"`` (completions exist: sign tables consistent with every rule used, so the rules cannot kill
+        the pattern, which may have a realisation) or ``"undecided"`` (a node or completion limit stopped the
+        search before a completion or a proof).  ``report.verdict`` prints the same decision in words.
+        """
+        if self.root_conflict:
+            return "impossible"
+        if self.completions:
+            return "open"
+        return "undecided" if self.stopped else "impossible"
+
     def summary(self) -> str:
         """One line: the root conflict, or completions / nodes / pruned branches (and whether the search stopped early)."""
         if self.root_conflict:
             return f"impossible at the root ({self.root_conflict})"
         tail = " (search stopped early)" if self.stopped else ""
         return f"{len(self.completions)} completions, {self.nodes} nodes, {self.conflicts} pruned{tail}"
+
+    def __repr__(self) -> str:
+        return f"SearchResult({self.verdict}: {self.summary()})"
 
 
 SUBSUMED = {"R6": frozenset({"R5", "R7"}), "R4": frozenset({"R2", "R3", "R5", "R7", "R8"})}
@@ -119,15 +135,39 @@ def complete(eco: Ecology, use: Sequence[str] = Ecology.ALL_RULES,
              record_tree: bool = False, max_nodes: Optional[int] = None,
              progress=None, engine: str = "trigger", branching: str = "conflict",
              probe=None, symmetry: bool = False, decide: Optional[Sequence[int]] = None,
-             seed: Optional[int] = None, root_only: Sequence[str] = (), stats: bool = False,
+             root_only: Sequence[str] = (), stats: bool = False,
              assume: Optional[Dict[int, int]] = None, idle="auto") -> SearchResult:
     """
     Complete the sign table of ``eco`` by propagation and branching.
+
+    ``result.verdict`` is "impossible", "open" or "undecided"; ``result.summary()`` says it in one
+    line; ``result.completions`` holds the sign tables found (``eco.minor_signs(table)`` names them).
 
     Parameters
     ----------
     eco : Ecology
     use : rule names to apply at every node (default: all)
+    max_nodes : stop the search after visiting this many nodes (``result.stopped`` is then True and,
+        with ``record_tree``, the unsearched nodes are marked "stopped")
+    max_completions : stop after this many completions (None = exhaustive)
+    record_tree : record every node of the binary search tree in ``result.tree`` as a dict with
+        ``id``, ``parent``, ``depth``, ``basis`` and ``sign`` (the choice that led here),
+        ``forced`` (signs forced by propagation at this node), ``unknown`` (signs still open),
+        ``status`` ("root", "branch", "completion", "conflict", or "stopped" when the completion
+        limit ended the search there), ``branch_on`` (the basis this
+        node branches on), ``completion`` (index) and ``reason`` (for conflicts).
+        ``certificate.search_tree_text`` / ``search_tree_dot`` draw it.
+    progress : optional callable, called with one dict per event of the search: ``kind`` ("root",
+        "node", "forced" (propagation after a branch choice), "completion", "conflict", "stopped"), ``depth``, ``path`` (the branch choices),
+        ``unknown`` (open signs), ``log`` / ``gp_log`` (the signs forced by this event) and, for
+        conflicts, ``reason``.  ``livesearch.LiveSearch`` renders these as a terminal dashboard.
+    keep_derivations : record branch choices and forced signs for every completion
+        (``result.derivations``); switch off to save memory in very large searches
+
+    For the ablations and the paper's experiments
+    ---------------------------------------------
+    Verdicts and completions never depend on these.
+
     idle : names among ``use`` that are never run.  The default ``"auto"`` idles the subsumed
         rules whose subsuming rules are in ``use``: R6 when R5 and R7 are, R4 when R2, R3, R5, R7
         and R8 are (on a table closed under those rules they force nothing: docs/SIGNRULES.md,
@@ -139,22 +179,6 @@ def complete(eco: Ecology, use: Sequence[str] = Ecology.ALL_RULES,
         the root certificate is unchanged; the pruning below the root may be weaker.
     stats : count the runs, signs set and conflicts raised per rule, at the root and below
         (``result.rule_stats``; trigger engine)
-    max_completions : stop after this many completions (None = exhaustive)
-    keep_derivations : record branch choices and forced signs for every completion
-        (``result.derivations``); switch off to save memory in very large searches
-    record_tree : record every node of the binary search tree in ``result.tree`` as a dict with
-        ``id``, ``parent``, ``depth``, ``basis`` and ``sign`` (the choice that led here),
-        ``forced`` (signs forced by propagation at this node), ``unknown`` (signs still open),
-        ``status`` ("root", "branch", "completion", "conflict", or "stopped" when the completion
-        limit ended the search there), ``branch_on`` (the basis this
-        node branches on), ``completion`` (index) and ``reason`` (for conflicts).
-        ``certificate.search_tree_text`` / ``search_tree_dot`` draw it.
-    max_nodes : stop the search after visiting this many nodes (``result.stopped`` is then True and,
-        with ``record_tree``, the unsearched nodes are marked "stopped")
-    progress : optional callable, called with one dict per event of the search: ``kind`` ("root",
-        "node", "forced" (propagation after a branch choice), "completion", "conflict", "stopped"), ``depth``, ``path`` (the branch choices),
-        ``unknown`` (open signs), ``log`` / ``gp_log`` (the signs forced by this event) and, for
-        conflicts, ``reason``.  ``livesearch.LiveSearch`` renders these as a terminal dashboard.
     engine : "trigger" (``engine.Engine``: re-run only the propagators whose bases changed, cheap
         rules first) or "sweep" (rerun every relation and rule until nothing changes).  Both reach
         the same fixed points, hence the same verdicts and completions; the rule that reports a
@@ -187,10 +211,6 @@ def complete(eco: Ecology, use: Sequence[str] = Ecology.ALL_RULES,
         ``result.completions``: the *coarse cells*, the distinct projections of the completions onto
         these coordinates that propagation allows (a coarse cell may still have no completion; every
         completion projects into one).  Branching is restricted to open ids in ``decide``.
-    seed : when given, the branch to try first at every node (+ or -) is drawn at random with this
-        seed, so ``max_completions=1`` returns a random completion (or coarse cell) at the cost of one
-        root-to-leaf path.  Verdicts and the full set of completions are unchanged, the tree is not.
-        Not with ``symmetry``.
     assume : extra hypotheses {basis id: ±1} written into the initial table before root propagation,
         so the search runs over the completions with these signs (``result.assumed``).  A sign that
         contradicts the initial table is a root conflict.  With ``max_completions=1`` this decides
@@ -201,9 +221,6 @@ def complete(eco: Ecology, use: Sequence[str] = Ecology.ALL_RULES,
     t0 = time.time()
     bases = eco.idx.bases
     decide_set = None if decide is None else set(decide)
-    if seed is not None and symmetry:
-        raise ValueError("seed (random branch order) cannot be combined with symmetry (its nogoods assume + first)")
-    value_rng = None if seed is None else random.Random(seed)
     if engine != "trigger" and (root_only or stats):
         raise ValueError("root_only and stats need engine='trigger'")
     relations = build_relation_ids(eco.n)
@@ -351,7 +368,7 @@ def complete(eco: Ecology, use: Sequence[str] = Ecology.ALL_RULES,
         S = pick(table, unknown)
         if record_tree:
             result.tree[node_id]["branch_on"] = bases[S]
-        first = 1 if value_rng is None else value_rng.choice((1, -1))
+        first = 1
         for sign in (first, -first):
             # the branch chi[S] = first is searched once we get to -first: below, g(branches) => not g(chi[S] = first)
             child_nogoods = nogoods + ((tuple(branch_ids), S),) if sign == -first and result.symmetry else nogoods
