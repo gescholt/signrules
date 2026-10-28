@@ -303,7 +303,7 @@ HELP = """[b]signrules[/b]: the pattern as the sign matrix [diag(a) | B], its ne
 [b]l[/b] library   presets, the eleven n = 4 patterns, the minimal impossible n = 5, 6 patterns
 [b]< >[/b]       one species less / more (also [ ]); [b]2[/b]–[b]7[/b] set n directly; [b]n[/b] opens the chooser
          the top-left block is kept; new species are free and compete with everyone
-[b]u[/b] rules     the rules to run (space toggles; a all, c R1,R2n) and the node limit
+[b]u[/b] rules     the rules to run (space toggles; a all, c annals = R1,R2n) and the node limit
 [b]r[/b] run       the search, with its live dashboard; then the verdict (the certificate and its replay for a
          kill at the root). There: h writes the tree viewer (HTML), c the certificate drawing, x stops,
          esc comes back here
@@ -335,7 +335,7 @@ class RulesScreen(ModalScreen):
     """The rules to run and the node limit of the search; esc applies."""
 
     BINDINGS = [Binding("escape", "done", "done"), Binding("a", "all", "all rules"),
-                Binding("c", "classical", "R1,R2n (Annals)")]
+                Binding("c", "classical", "annals (R1,R2n)")]
     DEFAULT_CSS = """
     RulesScreen { align: center middle; }
     #rules-box { width: 100; height: auto; max-height: 90%; border: round $accent; background: $surface; }

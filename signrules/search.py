@@ -92,7 +92,8 @@ class SearchResult:
         self.symmetry: List = []                   # stabilizer actions used (symmetry=True), identity excluded
         self.symmetry_forced = 0                   # signs forced by symmetry in second branches
         self.symmetry_cut = 0                      # nodes cut because a relabelling maps them into a searched branch
-        self.stopped = False                       # search cut short by max_completions / max_nodes
+        self.stopped = False                       # search cut short by max_completions / max_nodes / Ctrl-C
+        self.interrupted = False                   # Ctrl-C (KeyboardInterrupt) ended the search; stopped is True too
         self.seconds = 0.0
         self.rule_stats: Optional[dict] = None     # {rule: {"root"|"below": {runs, signs, conflicts}}} (stats=True)
         self.assumed: Dict[int, int] = {}          # the extra hypotheses of complete(assume=...), by basis id
@@ -433,7 +434,10 @@ def complete(eco: Ecology, use: Sequence[str] = Ecology.ALL_RULES,
     if progress:
         progress(dict(kind="root", depth=0, path=[], unknown=result.root_unknowns,
                       log=result.root_log, gp_log=result.root_gp_log))
-    dfs(chi, [], [], result.root_log, result.root_gp_log, [], root_id)
+    try:
+        dfs(chi, [], [], result.root_log, result.root_gp_log, [], root_id)
+    except KeyboardInterrupt:                      # Ctrl-C keeps what was found: a stopped, partial result
+        result.stopped = result.interrupted = True
     result.seconds = time.time() - t0
     result.rule_stats = trigger.rule_stats() if stats else None
     return result

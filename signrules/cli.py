@@ -11,6 +11,7 @@ them from there.  ``signrules-live``, ``signrules-tree`` and ``signrules-screen`
 ``signrules run``, ``signrules tree`` and ``signrules screen``.
 """
 import argparse
+import re
 import sys
 from typing import Optional, Sequence
 
@@ -63,30 +64,72 @@ KNOWN_RULES = tuple(Ecology.ALL_RULES) + ("R2n",)
 
 # --------------------------------------------------------------------------- shared options
 
-def add_pattern_args(ap: argparse.ArgumentParser) -> None:
-    """--preset, --a/--B, --random/--seed, --name."""
+def _help(text: str, full: bool) -> str:
+    """The help of an option for the ablations: shown by --help-all, hidden from --help."""
+    return text if full else argparse.SUPPRESS
+
+
+def add_pattern_args(ap: argparse.ArgumentParser, full: bool = False) -> None:
+    """--preset, --a/--B, --random/--seed, --name (--name only with ``full``)."""
     g = ap.add_argument_group("pattern (one of --preset, --a with --B, --random)")
     g.add_argument("--preset", help="a named pattern: short id (S-d, A-e, parity_k2) or a prefix of its name; "
                                     "'signrules presets' lists them")
-    g.add_argument("--a", help="signs of the growth rates: 1,-1,-1 or +,-,- or +--  "
-                               "(write --a=-1,... when the first sign is negative, as for --B)")
+    g.add_argument("--a", help="signs of the growth rates: 1,-1,-1 or +,-,- or +--")
     g.add_argument("--B", help="signs of B, rows separated by /: 1,1,1/-1,1,1/-1,-1,1 or +++/-++/--+ "
                                "(diagonal +; B[i,j] < 0: j benefits i)")
     g.add_argument("--random", type=int, metavar="N", help="a uniformly random pattern on N species")
     g.add_argument("--seed", type=int, default=None, help="seed for --random (printed when omitted)")
-    g.add_argument("--name", default="", help="a label for the pattern in the output")
+    g.add_argument("--name", default="", help=_help("a label for the pattern in the output", full))
 
 
-def add_rule_args(ap: argparse.ArgumentParser) -> None:
-    """--rules, --idle, --root-only."""
+ANNALS = ("R1", "R2n")      # --rules annals: feasibility and weak stability, the algorithm of the Annals paper
+
+
+def add_rule_args(ap: argparse.ArgumentParser, full: bool = False) -> None:
+    """--rules; with ``full`` also the ablation options --idle and --root-only."""
     g = ap.add_argument_group("rules")
     g.add_argument("--rules", default=None,
-                   help=f"'all' (R1–R8, the default; a tree_* preset brings its own) or a comma list of "
-                        f"{', '.join(KNOWN_RULES)}; R1,R2n is the algorithm of the Annals paper")
+                   help="all (R1–R8, the default; a tree_* preset brings its own), annals (R1,R2n: the algorithm "
+                        f"of the Annals paper) or a comma list of {', '.join(KNOWN_RULES)}")
     g.add_argument("--idle", default="auto",
-                   help="rules among --rules that are registered but never run: 'auto' (default: R4 and R6 "
-                        "when the rules that subsume them are on), a list such as R4,R6, or '' to run everything")
-    g.add_argument("--root-only", default="", help="rules among --rules to run at the root only, such as R4,R6")
+                   help=_help("rules among --rules that are registered but never run: 'auto' (default: R4 and R6 "
+                              "when the rules that subsume them are on), a list such as R4,R6, or '' to run "
+                              "everything", full))
+    g.add_argument("--root-only", default="",
+                   help=_help("rules among --rules to run at the root only, such as R4,R6", full))
+
+
+class _HelpAll(argparse.Action):
+    """--help-all: the help of this command with the options for the ablations included."""
+
+    def __init__(self, option_strings, dest, **kw):
+        super().__init__(option_strings, dest, nargs=0, **kw)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        full = build_parser(full=True)
+        sub = next(a for a in full._actions if isinstance(a, argparse._SubParsersAction))
+        sub.choices[parser.prog.split()[-1]].print_help()
+        parser.exit()
+
+
+def node_limit(value) -> Optional[int]:
+    """The ``max_nodes`` of ``complete()`` for a --max-nodes value: 0 (or None) means no limit."""
+    return value if value else None
+
+
+def _join_sign_values(argv: list) -> list:
+    """``--a -+-`` becomes ``--a=-+-``: a sign string that starts with - is a value, not an option."""
+    out, i = [], 0
+    while i < len(argv):
+        tok = argv[i]
+        if tok in ("--a", "--B") and i + 1 < len(argv) and argv[i + 1].startswith("-") \
+                and re.fullmatch(r"[-+−,/0-9]+", argv[i + 1]):
+            out.append(f"{tok}={argv[i + 1]}")
+            i += 2
+            continue
+        out.append(tok)
+        i += 1
+    return out
 
 
 def _rule_list(text: str, ap: argparse.ArgumentParser, what: str = "--rules") -> tuple:
@@ -113,7 +156,7 @@ def rules_from_args(args, ap: argparse.ArgumentParser):
             rules = ",".join(own)
         else:
             rules = "all"
-    use = tuple(Ecology.ALL_RULES) if rules == "all" else _rule_list(rules, ap)
+    use = tuple(Ecology.ALL_RULES) if rules == "all" else ANNALS if rules == "annals" else _rule_list(rules, ap)
     idle = "auto" if args.idle == "auto" else _rule_list(args.idle, ap, "--idle")
     return use, idle, _rule_list(args.root_only, ap, "--root-only")
 
@@ -172,31 +215,42 @@ def cmd_run(args, ap) -> int:
             return 1
         _fill_from_menu(args, picked)
         picked_rules = picked["rules"]
-        args.max_completions = args.max_completions or picked["max_completions"]
-        args.max_nodes = args.max_nodes or picked["max_nodes"]
+        args.max_completions, args.max_nodes = picked["max_completions"], picked["max_nodes"] or 0
         args.html = args.html or picked["html"]
     eco = pattern_from_args(args, ap)
     use, idle, root_only = rules_from_args(args, ap)
     if picked_rules is not None:
         use = picked_rules
-    kw = dict(use=use, record_tree=bool(args.html), keep_derivations=bool(args.cert), max_nodes=args.max_nodes,
+    limit = node_limit(args.max_nodes)
+    kw = dict(use=use, record_tree=bool(args.html), keep_derivations=bool(args.cert), max_nodes=limit,
               max_completions=args.max_completions, root_only=root_only, idle=idle)
     console = Console()
+    console.print(f"[dim]{limit_notice(limit, args.max_completions)}[/dim]")
     tally = LiveSearch(eco, use)
     if args.plain or not sys.stdout.isatty():
         res = complete(eco, progress=tally, **kw)
     else:
-        try:
-            with tally:
-                res = complete(eco, progress=tally, **kw)
-        except KeyboardInterrupt:
-            console.print(f"\ninterrupted after {tally.nodes:,} nodes: {tally.completions:,} completions, "
-                          f"{tally.conflicts:,} contradictions, {100 * tally.covered:.2f}% swept")
-            return 130
+        with tally:
+            res = complete(eco, progress=tally, **kw)
         console.print()
+    if res.interrupted:
+        console.print(f"interrupted after {res.nodes:,} nodes: {len(res.completions):,} completions, "
+                      f"{res.conflicts:,} contradictions, {100 * tally.covered:.2f}% swept")
     report(eco, res, use, console, closed=tally.closed, covered=tally.covered, verbose=args.verbose)
     _outputs(eco, res, use, args, console)
     return 0
+
+
+def limit_notice(max_nodes: Optional[int], max_completions: Optional[int] = None) -> str:
+    """One line before the search: the stopping rule and how to change it."""
+    parts = []
+    if max_nodes:
+        parts.append(f"limit {max_nodes:,} nodes (--max-nodes N; 0 = none)")
+    if max_completions:
+        parts.append(f"{max_completions:,} completion{'s' if max_completions != 1 else ''}")
+    if not parts:
+        parts.append("no node limit")
+    return "; ".join(parts) + "; Ctrl-C keeps what was found"
 
 
 def _outputs(eco, res, use, args, console) -> None:
@@ -237,7 +291,8 @@ def cmd_tree(args, ap) -> int:
         _fill_from_menu(args, picked)
     eco = pattern_from_args(args, ap)
     use, idle, root_only = rules_from_args(args, ap)
-    res = complete(eco, use=use, record_tree=True, max_nodes=args.max_nodes, idle=idle, root_only=root_only)
+    res = complete(eco, use=use, record_tree=True, max_nodes=node_limit(args.max_nodes), idle=idle,
+                   root_only=root_only)
     save_tree_viewer(eco, res, args.out, use=use)
     print(f"{res.summary()}  ->  {args.out}")
     return 0
@@ -284,7 +339,10 @@ def cmd_presets(args, ap) -> int:
         console.print(f"[bold]{group}[/bold]")
         tb = Table(box=None, padding=(0, 2), show_header=False)
         tb.add_column(min_width=width, no_wrap=True); tb.add_column(no_wrap=True); tb.add_column(no_wrap=True)
-        tb.add_column(style="dim")
+        if getattr(args, "long", False):
+            tb.add_column(style="dim")
+        else:                                             # one line per preset; --long wraps the whole note
+            tb.add_column(style="dim", no_wrap=True, overflow="ellipsis")
         for name in names:
             a, _ = table[name]
             from .patterns import TREE_NOTES, preset_rules
@@ -293,7 +351,8 @@ def cmd_presets(args, ap) -> int:
                 note += f"  [rules {','.join(preset_rules(name))}]"
             tb.add_row(short_id(name), f"n = {len(a)}", f"a = {_signs(a)}", note)
         console.print(tb)
-    console.print("[dim]use the id (or a prefix of the name):  signrules run --preset tree_S-d_annals[/dim]")
+    console.print("[dim]use the id (or a prefix of the name):  signrules run --preset tree_S-d_annals"
+                  + ("" if getattr(args, "long", False) else ";  --long shows the whole notes") + "[/dim]")
     return 0
 
 
@@ -345,8 +404,12 @@ HANDLERS = {"run": cmd_run, "tree": cmd_tree, "replay": cmd_replay, "edit": cmd_
 
 # --------------------------------------------------------------------------- the parser
 
-def build_parser() -> argparse.ArgumentParser:
-    """The parser of ``signrules`` with one subparser per entry of ``COMMANDS``."""
+def build_parser(full: bool = False) -> argparse.ArgumentParser:
+    """
+    The parser of ``signrules`` with one subparser per entry of ``COMMANDS``.  The options for the
+    ablations (--idle, --root-only, --name) are accepted always but listed only with ``full``
+    (``signrules <command> --help-all``).
+    """
     from . import screen
     ap = argparse.ArgumentParser(
         prog="signrules", description=DESCRIPTION, formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -359,10 +422,12 @@ def build_parser() -> argparse.ArgumentParser:
                             formatter_class=argparse.RawDescriptionHelpFormatter)
         sp.set_defaults(_parser=sp)
         if name in ("run", "tree", "replay"):
-            add_pattern_args(sp)
-            add_rule_args(sp)
+            add_pattern_args(sp, full)
+            add_rule_args(sp, full)
+            sp.add_argument("--help-all", action=_HelpAll,
+                            help="this help with the options for the ablations (--idle, --root-only, --name)")
         if name == "edit":
-            add_pattern_args(sp)
+            add_pattern_args(sp, full)
             sp.add_argument("--n", type=int, default=4, help="number of species to start from, without a pattern "
                                                            "(default 4: free competitors)")
         if name in ("run", "replay"):
@@ -376,15 +441,19 @@ def build_parser() -> argparse.ArgumentParser:
             out.add_argument("--plain", action="store_true",
                              help="no dashboard, only the verdict (automatic when the output is not a terminal)")
             g = sp.add_argument_group("search")
-            g.add_argument("--max-nodes", type=int, default=None, help="stop after this many nodes (default: no limit)")
+            g.add_argument("--max-nodes", type=int, default=20000,
+                           help="stop after this many nodes (default 20,000; 0 = no limit, which at five or more "
+                                "species can take hours; Ctrl-C stops early and keeps what was found)")
             g.add_argument("--max-completions", type=int, default=None,
                            help="stop after this many completions (default: no limit; 1 is enough to show the "
                                 "rules cannot kill the pattern)")
         if name == "tree":
             g = sp.add_argument_group("output")
             g.add_argument("--max-nodes", type=int, default=20000,
-                           help="stop after this many nodes (default 20000, so the page stays small)")
+                           help="stop after this many nodes (default 20,000, so the page stays small; 0 = no limit)")
             g.add_argument("--out", default="tree.html", help="the HTML file (default tree.html)")
+        if name == "presets":
+            sp.add_argument("--long", action="store_true", help="the whole note of every preset (wrapped)")
         if name == "screen":
             screen.add_arguments(sp)
     return ap
@@ -434,7 +503,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             return 0
         ap.print_help()
         return 0
-    args = ap.parse_args(argv)
+    args = ap.parse_args(_join_sign_values(argv))
     return HANDLERS[args.command](args, args._parser) or 0
 
 
