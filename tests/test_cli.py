@@ -89,11 +89,13 @@ def test_run_kill_prints_certificate_and_replay(capsys):
     assert "IMPOSSIBLE" in cap.out and "killed at the root by R7" in cap.out
     assert "contradiction" in cap.out and "p_4567 > 0" in cap.out
     assert "replay OK" in cap.out
+    assert "independent checker" in cap.out          # the one-sentence meaning of the verdict
 
 
 def test_run_completions(capsys):
     code, cap = run(capsys, "run", "--preset", "S-d", "--rules", "R1,R2n", "--plain")
     assert code == 0 and "NOT DECIDED BY THE RULES" in cap.out and "64 completions" in cap.out
+    assert "may have a realisation" in cap.out
 
 
 def test_run_exhausted_and_undecided(capsys):
@@ -101,7 +103,7 @@ def test_run_exhausted_and_undecided(capsys):
     _, cap = run(capsys, "run", "--preset", "S-a", "--rules", "R1,R2n", "--plain")
     assert "IMPOSSIBLE" in cap.out and "every branch closed" in cap.out and "contradictions by rule" in cap.out
     _, cap = run(capsys, "run", "--preset", "S-a", "--rules", "R1,R2n", "--max-nodes", "1", "--plain")
-    assert "UNDECIDED" in cap.out
+    assert "UNDECIDED" in cap.out and "node limit" in cap.out
 
 
 @pytest.mark.parametrize("argv, message", [

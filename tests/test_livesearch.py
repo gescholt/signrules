@@ -18,7 +18,9 @@ def test_counters_match_result_and_sweep_is_complete():
     assert live.conflicts == res.conflicts
     assert abs(live.covered - 1.0) < 1e-12               # an exhaustive search sweeps everything
     assert sum(live.closed.values()) == res.conflicts
-    Console(file=io.StringIO(), width=120).print(live)  # renders without error
+    out = io.StringIO()
+    Console(file=out, width=120).print(live)            # renders without error, with the gloss under the header
+    assert "a node" in out.getvalue() and "completion" in out.getvalue()
 
 
 def test_root_conflict_and_limits():
