@@ -71,3 +71,20 @@ At n = 5 these are 24 minimal impossible patterns. Ten of them are covered by no
 stable-coexistence paper, and they sharpen the earlier upper bound of 30 candidates to 24. At n = 6 there are 41. Every other candidate has a
 certificate of possibility (tropical witness) in the companion repository `feasible_ecologies`, so the
 lists are complete.
+
+## 5. Achievements
+
+| area | achievement | result |
+|---|---|---|
+| **n = 4** | the eleven candidate impossible patterns | all 11 killed at the root, in milliseconds |
+| **n = 5** | exhaustive screen of all 248,436 non-trivial classes | 24 minimal impossible patterns, 10 covered by no published theorem; the bound of 30 sharpened to 24 |
+| **n = 6** | extension screen by the deletion lemma | 41 minimal impossible patterns among 143 candidates |
+| **all n** | infinite families | benefactor-permutation patterns impossible for every n (rule R8) |
+| **completeness** | with the possibility certificates of the tropical side | every pattern with n ≤ 6 decided |
+| **rules** | new propagation rules | R2, R3, R5, R7, R8 added; R4 and R6 shown to be covered by the others |
+| **trust** | certificates | every kill has a certificate that an independent checker replays; tampered steps are caught |
+| **soundness** | tests | the rules never reject a random feasible, stable system |
+| **speed** | propagation engine | trigger-driven: 5–9× faster |
+|  | data layout | five- and six-species screens 97 s → 51 s |
+|  | branching | n = 6 screen 39,062 → 16,034 nodes; slowest candidate 290 s → 3.4 s |
+|  | optional search tools | probing (20,000 → 117 nodes on the hardest n = 6 candidate); symmetry breaking (search trees halve) |
