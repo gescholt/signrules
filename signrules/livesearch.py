@@ -237,11 +237,20 @@ class LiveSearch:
             tb.add_row(Text(f"{t:7.2f}s", style="dim"), Text(text, style=colors.get(kind, "")))
         return Panel(tb, title="events", border_style="dim")
 
+    GLOSS = ("The search fixes one unknown minor sign per step (a node); a leaf where every sign is fixed is a "
+             "completion, one where a rule is violated is a contradiction. Rules on the right count the signs "
+             "they forced and the branches they closed.")
+
+    def _gloss(self) -> Text:
+        """One orienting sentence under the header: what a node, a completion and a contradiction are."""
+        return Text(self.GLOSS, style="dim", overflow="fold")
+
     def __rich__(self):
         mid = Table.grid(expand=True, padding=(0, 1))
         mid.add_column(ratio=1); mid.add_column(ratio=1)
         mid.add_row(self._counters(), self._rules())
-        return Group(self._header(), self._progress(), mid, self._path(), self._leaves(), self._events())
+        return Group(self._header(), self._gloss(), self._progress(), mid, self._path(), self._leaves(),
+                     self._events())
 
     # ------------------------------------------------------------------ context manager
     def __enter__(self):
