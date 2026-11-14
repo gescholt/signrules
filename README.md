@@ -45,6 +45,9 @@ pip install -e .                 # the core alone: numpy, matplotlib, networkx, 
 pip install -e ".[all,dev]"      # + pytest; then `pytest -q` (under a minute)
 ```
 
+With [uv](https://docs.astral.sh/uv/), `uv sync --all-extras` creates the environment from the lock file
+(`uv.lock`, the versions the tests last ran with) and `uv run pytest -q` runs the tests in it.
+
 Graphviz (`dot`; `apt install graphviz` or `brew install graphviz`) is needed only for the drawings of
 certificates, completions and `write_search_tree`.
 

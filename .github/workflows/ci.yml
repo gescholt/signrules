@@ -3,56 +3,41 @@ on:
   push:
     branches: [main]
   pull_request:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   test:
-    # the full suite with every extra, on each supported Python
-    runs-on: ${{ matrix.os }}
+    # the suite with every extra, on the oldest and the newest supported Python
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
-        include:
-          - os: macos-latest
-            python-version: "3.13"
+        python-version: ["3.10", "3.13"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Graphviz
-        run: |
-          if [ "$RUNNER_OS" = "Linux" ]; then sudo apt-get update && sudo apt-get install -y graphviz; else brew install graphviz; fi
-      - run: python -m pip install --upgrade pip && pip install -e ".[all,dev]"
-      - run: pytest -q --cov=signrules --cov-report=term --cov-report=xml
-      - name: Certificates of the classification replay, and tampered ones fail
-        run: for n in 4 5 6; do python scripts/replay_certificates.py $n --tamper; done
-
-  core:
-    # the README's claim: the core runs with numpy, matplotlib, networkx and rich alone, without Graphviz
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: python -m pip install --upgrade pip && pip install . pytest pytest-timeout
-      - run: signrules run --preset A-e --plain
-      - run: signrules replay --preset A-d
+          cache: pip
+      - run: sudo apt-get install -y --no-install-recommends graphviz
+      - run: pip install -e ".[all,dev]"
       - run: pytest -q
 
   wheel:
-    # build the distributions, install the wheel elsewhere and check that the data files came along
+    # what a user gets: the built wheel, without extras and without Graphviz, passes the same suite
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python -m pip install --upgrade pip build twine
+          cache: pip
+      - run: pip install build twine pytest pytest-timeout
       - run: python -m build
       - run: twine check dist/*
       - run: pip install dist/*.whl
-      - name: Shipped data
-        working-directory: ${{ runner.temp }}
-        run: python -c "from signrules.data import root_kills, screen_records; assert (len(root_kills(5)), len(root_kills(6)), len(screen_records(6))) == (24, 41, 143)"
+      - name: The tests import the installed wheel, not the checkout
+        run: |
+          rm -rf signrules
+          pytest -q

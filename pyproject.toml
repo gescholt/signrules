@@ -10,6 +10,7 @@ readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{name = "Georgy Scholten", email = "scholtengeorgy@gmail.com"}]
+maintainers = [{name = "Georgy Scholten", email = "scholtengeorgy@gmail.com"}]
 requires-python = ">=3.10"
 keywords = ["Lotka-Volterra", "sign pattern", "qualitative stability", "mathematical ecology", "oriented matroid",
             "chirotope", "Grassmannian", "computer-assisted proof", "certificate"]
@@ -35,7 +36,11 @@ dependencies = [
 live = ["questionary>=2.0", "textual>=1.0"]  # the menus and the pattern editor (signrules edit)
 html = ["plotly>=5.0"]                        # interactive search-tree page (save_search_tree_html)
 all = ["signrules[live,html]"]
-dev = ["pytest>=7.0", "pytest-timeout>=2.0", "pytest-cov>=4.0"]
+dev = ["pytest>=7.0", "pytest-timeout>=2.0"]
+
+# `uv sync` installs the package and this group; `uv sync --all-extras` adds the app and the HTML viewer
+[dependency-groups]
+dev = ["pytest>=7.0", "pytest-timeout>=2.0"]
 
 [project.scripts]
 signrules = "signrules.cli:main"

@@ -1,7 +1,10 @@
 """The figure text is generated from the run: parser and formats of signrules/labels.py."""
 
 
+import shutil
+
 import numpy as np
+import pytest
 
 
 from signrules.patterns import ELEVEN
@@ -46,6 +49,7 @@ def test_rule_parameters_are_typeset():
     assert L.rule("R2 Cramer: x*_2 det B_JJ, J=(0, 1, 2)").detail == r"$x^*_{2}\,\det B_{\{0,1,2\}}$, $J=\{0,1,2\}$"
 
 
+@pytest.mark.skipif(shutil.which("dot") is None, reason="Graphviz (dot) is not installed")
 def test_diagrams_render(tmp_path):
     a, B = ELEVEN["A-e competitor + 3-cycle (Thm 3.5)"]
     eco = Ecology(a, B, "Theorem 3.5")

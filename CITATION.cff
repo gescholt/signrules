@@ -7,6 +7,7 @@ date-released: 2026-10-27
 authors:
   - family-names: Scholten
     given-names: Georgy
+    email: scholtengeorgy@gmail.com
 repository-code: "https://github.com/gescholt/signrules"
 license: MIT
 references:
