@@ -17,7 +17,7 @@ def from_econet(signs, edges):
     return a, B
 
 
-# the four three-species networks of the example on monomial curves in the paper on tropical certificates
+# four three-species networks: two obligate cycles and two patterns with a free species
 EX_THREE = [("m,m,m", "0/1/b,1/2/b,2/0/b"), ("m,m,m", "0/1/b,1/0/b,1/2/b,2/1/b,2/0/b,0/2/b"),
             ("p,m,m", "1/2/b,2/1/b,0/1/c,0/2/c"), ("p,m,m", "1/2/b,2/1/b,0/1/b,0/2/b")]
 

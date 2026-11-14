@@ -1,9 +1,9 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite the first two papers below (the algorithm and the arguments it encodes)."
+message: "If you use this software, please cite it together with the two papers below (the algorithm and the arguments it encodes)."
 title: "signrules: sign completion on the ecological Grassmannian"
 type: software
-version: 0.4.1
-date-released: 2026-10-27
+version: 0.5.0
+date-released: 2026-11-14
 authors:
   - family-names: Scholten
     given-names: Georgy
@@ -41,17 +41,3 @@ references:
         given-names: Giulio
     year: 2026
     url: "https://arxiv.org/abs/2609.09286"
-  - type: article
-    title: "Sign rules and the classification of Lotka-Volterra sign patterns with at most six species"
-    authors:
-      - family-names: Scholten
-        given-names: Georgy
-    year: 2026
-    notes: "draft; states the rules R1-R8 and reports the screens this package runs"
-  - type: article
-    title: "Tropical certificates of coexistence for Lotka-Volterra sign patterns"
-    authors:
-      - family-names: Scholten
-        given-names: Georgy
-    year: 2026
-    notes: "draft; the companion repository feasible_ecologies holds the certificates of possibility (tropical witnesses) that complete the classification for n <= 6"

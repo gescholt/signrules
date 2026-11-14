@@ -1,5 +1,7 @@
 # signrules
 
+[![tests](https://github.com/gescholt/signrules/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/gescholt/signrules/actions/workflows/ci.yml)
+
 A Python package that proves Lotka–Volterra sign patterns **impossible**, with a machine certificate for
 every proof and an independent checker that replays it.
 
@@ -211,19 +213,6 @@ patterns, `screen_records(6)` the 143 six-species candidates with their verdicts
 
 ## Papers
 
-The rules and the classification this package computes are in
-
-* G. Scholten, *Sign rules and the classification of Lotka–Volterra sign patterns with at most six
-  species* (2026),
-
-and the certificates that the surviving patterns *are* possible (tropical witnesses) are in
-
-* G. Scholten, *Tropical certificates of coexistence for Lotka–Volterra sign patterns* (2026),
-
-with their code and data in the companion repository
-[`feasible_ecologies`](https://github.com/gescholt/feasible_ecologies), which depends on this package.
-Nothing here needs it.
-
 The package extends the sign-completion algorithm, implemented in Maple, of
 
 * T. Ö. Çelik, P. A. Haas, G. Scholten, K. Wang, G. Zucal, *Strata of ecological coexistence via
@@ -240,6 +229,10 @@ read as propagation rules. The patterns these papers start from are those of
 * Y. Meng, S. Horvát, C. D. Modes, P. A. Haas, *Impossible ecologies: interaction networks and stability
   of coexistence in ecological communities*, Cell Systems 16 (2025) 101297,
   [doi:10.1016/j.cels.2025.101297](https://doi.org/10.1016/j.cels.2025.101297).
+
+Certificates that a pattern the rules leave open *is* possible (tropical witnesses) are computed in the
+companion repository [`feasible_ecologies`](https://github.com/gescholt/feasible_ecologies), which depends on
+this package. Nothing here needs it.
 
 ## Layout
 
