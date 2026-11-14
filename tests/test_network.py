@@ -1,4 +1,4 @@
-"""The interaction network drawn as the article's \\econet: edges, the macro call, the drawings."""
+"""The interaction network drawn as the \\econet of the papers: edges, the macro call, the drawings."""
 import pytest
 
 from signrules.network import econet_edges, econet_tex, network_text, save_network
@@ -17,7 +17,7 @@ def from_econet(signs, edges):
     return a, B
 
 
-# the four networks of ex:three in the article (feasible_ecologies, docs/tex/article.tex)
+# the four three-species networks of the example on monomial curves in the paper on tropical certificates
 EX_THREE = [("m,m,m", "0/1/b,1/2/b,2/0/b"), ("m,m,m", "0/1/b,1/0/b,1/2/b,2/1/b,2/0/b,0/2/b"),
             ("p,m,m", "1/2/b,2/1/b,0/1/c,0/2/c"), ("p,m,m", "1/2/b,2/1/b,0/1/b,0/2/b")]
 
@@ -30,7 +30,7 @@ def test_econet_round_trip(signs, edges):
     assert set(out.split("}{")[1].rstrip("}").split(",")) == set(edges.split(","))
 
 
-def test_edges_follow_the_article():
+def test_edges_follow_the_papers():
     a, B = ELEVEN["A-e competitor + 3-cycle (Thm 3.5)"]          # free competitor 0 over the obligate cycle 1 -> 2 -> 3
     assert set(econet_edges(a, B)) == {(1, 2, "b"), (2, 3, "b"), (3, 1, "b"), (0, 1, "c"), (0, 2, "c"), (0, 3, "c")}
     assert econet_tex(a, B).startswith("\\econet[4]{p,m,m,m}")

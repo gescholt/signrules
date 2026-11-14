@@ -52,7 +52,7 @@ GP_RULE = "Grassmann–Plücker 3-term relation"
 
 
 class ReplayError(Exception):
-    pass
+    """A step or the conflict of a certificate does not follow; the message says which and why."""
 
 
 @dataclass
@@ -191,6 +191,7 @@ class Replayer:
             raise ReplayError(f"{what}: identity forces {coef * target}, step claims {sign}")
 
     def check_sum_conflict(self, terms, target, target_key, what: str):
+        """The identity ``sum of terms = target`` is violated: every term is known and has the sign opposite to the target."""
         signs = self._term_signs(terms)
         if target == UNKNOWN:
             target = self.sign(target_key) if target_key is not None else UNKNOWN
@@ -202,9 +203,11 @@ class Replayer:
     # ------------------------------------------------------------------ the identities, rule by rule
 
     def r1_terms(self, k: int):
+        """R1: the principal minors of order k, whose sum is the k-th coefficient of the characteristic polynomial."""
         return [(+1, (I, I)) for I in combinations(self.species, k)]
 
     def r2_terms(self, J: Index, j: int):
+        """R2: Cramer's rule for species j in the subsystem J, as signed terms (sign of a_k times cofactor, minor)."""
         pj = J.index(j)
         cols = tuple(c for c in J if c != j)
         terms = []
@@ -216,6 +219,7 @@ class Replayer:
         return terms
 
     def r5_expansions(self, P: Index, Q: Index):
+        """R5: the Laplace expansions of det B_{P,Q} along each row and each column, one list of terms each."""
         for along_rows in (True, False):
             for pr, r in enumerate(P if along_rows else Q):
                 terms = []

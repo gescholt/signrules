@@ -7,7 +7,7 @@ The full-screen app of ``signrules`` (also ``signrules edit``): every step witho
 The left panel is the n × 2n sign matrix [diag(a) | B]: the diagonal block holds the signs of a (only its
 diagonal is editable), the right block holds B (its diagonal is fixed +).  Column numbers are those of
 [diag(a) | B], so the Plücker coordinate p_0257 is the minor on the columns 0, 2, 5, 7.  The right panel
-draws the interaction network as the article's ``\\econet`` (``network.py``).  Below them, recomputed after
+draws the interaction network as the ``\\econet`` of the papers (``network.py``).  Below them, recomputed after
 every change: whether the pattern is trivial, which library pattern it is up to relabelling, the verdict
 of the root propagation, and the rules and node limit of the search.
 
@@ -307,7 +307,7 @@ HELP = """[b]signrules[/b]: the pattern as the sign matrix [diag(a) | B], its ne
 [b]r[/b] run       the search, with its live dashboard; then the verdict (the certificate and its replay for a
          kill at the root). There: h writes the tree viewer (HTML), c the certificate drawing, x stops,
          esc comes back here
-[b]e[/b] export    write <name>_network.png / .pdf / .tex (the \\econet call for the article)
+[b]e[/b] export    write <name>_network.png / .pdf / .tex (the \\econet call of the papers)
 [b]s[/b] classification  what the rules decide for n = 4, 5, 6 (the shipped screens)
 [b]q[/b] quit      leave (the command line of the pattern is printed)
 

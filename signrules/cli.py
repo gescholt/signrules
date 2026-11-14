@@ -42,7 +42,7 @@ COMMANDS = {
                "signrules replay --preset parity_k2 --cert out/"),
     "edit": ("the full-screen app (also plain `signrules`): library, matrix editor, network, rules, search, verdict",
              "Open the pattern editor: the n × 2n sign matrix [diag(a) | B] on the left (arrows move, space flips), "
-             "the interaction network on the right in the style of the article (pink free, blue obligate, dashed "
+             "the interaction network on the right in the style of the papers (pink free, blue obligate, dashed "
              "blue arrow i → j where i benefits from j, red line where both lose), and below them the root verdict "
              "and the library pattern it matches, recomputed after every change.  l opens the library, n changes "
              "the number of species, r runs the search, e exports the network.  Needs the live extra (textual).",
@@ -202,6 +202,7 @@ def _fill_from_menu(args, picked) -> None:
 # --------------------------------------------------------------------------- the commands
 
 def cmd_run(args, ap) -> int:
+    """``signrules run``: complete one pattern with the live dashboard, then print the verdict."""
     from rich.console import Console
     from .livesearch import LiveSearch, _pick, _presets
     from .report import report
@@ -279,6 +280,7 @@ def _outputs(eco, res, use, args, console) -> None:
 
 
 def cmd_tree(args, ap) -> int:
+    """``signrules tree``: complete one pattern and write the HTML viewer of its search tree."""
     from .livesearch import _pick_pattern, _presets
     from .search import complete
     from .treeview import save_tree_viewer
@@ -299,6 +301,7 @@ def cmd_tree(args, ap) -> int:
 
 
 def cmd_replay(args, ap) -> int:
+    """``signrules replay``: kill one pattern at the root and replay its certificate; exit code 1 if the replay fails."""
     from rich.console import Console
     from .livesearch import _pick_pattern, _presets
     from .report import report
@@ -325,6 +328,7 @@ def cmd_replay(args, ap) -> int:
 
 
 def cmd_presets(args, ap) -> int:
+    """``signrules presets``: list the named patterns with their short ids."""
     from rich.console import Console
     from rich.table import Table
     from .livesearch import _group, _signs
@@ -357,6 +361,7 @@ def cmd_presets(args, ap) -> int:
 
 
 def cmd_edit(args, ap) -> int:
+    """``signrules edit``: open the full-screen app (needs the ``live`` extra)."""
     if not _interactive():
         ap.error("the editor needs a terminal (stdin and stdout must be a tty)")
     try:
@@ -393,6 +398,7 @@ def edited_pattern() -> Optional[dict]:
 
 
 def cmd_screen(args, ap) -> int:
+    """``signrules screen``: list the extension candidates on n species and run the rules on each."""
     from .screen import run_args
     run_args(args)
     return 0

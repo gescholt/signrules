@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,15 +7,21 @@ name = "signrules"
 version = "0.4.1"
 description = "Sign completion on the ecological Grassmannian: rules that prove Lotka-Volterra sign patterns impossible, with machine certificates and an independent replay checker"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{name = "Georgy Scholten", email = "scholtengeorgy@gmail.com"}]
 requires-python = ">=3.10"
-keywords = ["Lotka-Volterra", "sign pattern", "oriented matroid", "Grassmannian", "chirotope", "mathematical ecology"]
+keywords = ["Lotka-Volterra", "sign pattern", "qualitative stability", "mathematical ecology", "oriented matroid",
+            "chirotope", "Grassmannian", "computer-assisted proof", "certificate"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 dependencies = [
@@ -29,7 +35,7 @@ dependencies = [
 live = ["questionary>=2.0", "textual>=1.0"]  # the menus and the pattern editor (signrules edit)
 html = ["plotly>=5.0"]                        # interactive search-tree page (save_search_tree_html)
 all = ["signrules[live,html]"]
-dev = ["pytest>=7.0", "pytest-timeout>=2.0"]
+dev = ["pytest>=7.0", "pytest-timeout>=2.0", "pytest-cov>=4.0"]
 
 [project.scripts]
 signrules = "signrules.cli:main"

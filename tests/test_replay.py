@@ -69,6 +69,24 @@ def test_tampered_certificates_fail():
             assert not rep.ok or res.root_conflict.startswith("R8")
 
 
+@pytest.mark.parametrize("n, count", [(5, 24), (6, 41)])
+def test_every_minimal_impossible_pattern_replays_and_resists_tampering(n, count):
+    """The certificates the classification rests on: each root kill of the n-species screen replays, and
+    flipping the sign of any single step makes the replay fail."""
+    from signrules.data import root_kills
+    kills = root_kills(n)
+    assert len(kills) == count
+    for r in kills:
+        a, B = r["a"], np.array(r["B"])
+        eco, res, steps, prem = _kill(a, B)
+        rep = replay_certificate(a, B, steps, res.root_conflict, prem)
+        assert rep.ok, (r["code"], rep.message)
+        for k, (S, sign, why, p) in enumerate(steps):
+            bad = list(steps)
+            bad[k] = (S, -sign, why, p)
+            assert not replay_certificate(a, B, bad, res.root_conflict, prem).ok, (r["code"], k, why)
+
+
 def test_a_possible_pattern_has_nothing_to_replay():
     rep = replay_kill(Ecology([-1, 1], [[1, -1], [1, 1]]))
     assert not rep.ok and "no kill" in rep.message

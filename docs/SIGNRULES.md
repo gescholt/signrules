@@ -11,8 +11,8 @@ Citations below: Theorem, Lemma and Figure numbers 2.x–3.x refer to Çelik–I
 (arXiv:2609.09286, "CIPZ" for short); "the Annals paper" is Çelik–Haas–Scholten–Wang–Zucal, Ann. Comb. 2026
 (arXiv:2509.00165), whose Maple implementation is "the Maple algorithm"; Meng et al. is Y. Meng, S. Horvát,
 C. D. Modes, P. A. Haas, *Impossible ecologies*, Cell Systems 16 (2025) 101297. A LaTeX version of the rules
-with precise statements and soundness proofs is in the repository
-[feasible_ecologies](https://github.com/gescholt/feasible_ecologies) (`docs/tex/sign_rules.pdf` and the article there).
+with precise statements and soundness proofs is in the paper
+*Sign rules and the classification of Lotka–Volterra sign patterns with at most six species* (G. Scholten, 2026).
 
 Everything below is at the level of signs. A pattern that the rules *kill* is a proved impossible
 ecology (the rules are sound, see §5). A pattern that survives is merely not decided by sign

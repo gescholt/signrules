@@ -1,13 +1,13 @@
 """
-The interaction network of a sign pattern, drawn as the article's ``\\econet`` macro.
+The interaction network of a sign pattern, drawn as the ``\\econet`` macro of the papers.
 
-Conventions (``fig:legend`` of the article in feasible_ecologies): a pink node is free (a_i > 0), a blue
+Conventions (the legend figure of the two papers): a pink node is free (a_i > 0), a blue
 node obligate (a_i < 0); a benefit of i from j (b_ij < 0) is a blue dashed arrow i → j; a pair that loses
 both ways (b_ij, b_ji > 0) is a thin red line; a one-way loss is not drawn.  Species 0 is on top and the
 others follow clockwise, as in the macro.
 
 * ``econet_edges(a, B)`` — the edges, as the macro's ``i/j/b`` and ``i/j/c``;
-* ``econet_tex(a, B)`` — the macro call, ready to paste into the article;
+* ``econet_tex(a, B)`` — the macro call, ready to paste into a document that defines the macro;
 * ``draw_network(ax, a, B)`` / ``save_network(a, B, stem)`` — the matplotlib drawing (png, pdf, and the
   ``.tex`` call);
 * ``network_text(a, B, width, height)`` — the same network in a terminal: a braille canvas as a
@@ -37,7 +37,7 @@ def econet_edges(a: Sequence[int], B) -> List[Edge]:
 
 
 def econet_tex(a: Sequence[int], B) -> str:
-    """The article's ``\\econet[n]{signs}{edges}`` call for this pattern."""
+    """The ``\\econet[n]{signs}{edges}`` call of the papers for this pattern."""
     n = len(a)
     signs = ",".join("p" if v > 0 else "m" for v in a)
     edges = ",".join(f"{i}/{j}/{t}" for i, j, t in econet_edges(a, B))
@@ -96,7 +96,7 @@ def save_network(a: Sequence[int], B, stem: str, title: str = "") -> List[str]:
         ax.set_title(title, fontsize=9)
     paths = []
     for ext in ("png", "pdf"):
-        fig.savefig(f"{stem}.{ext}", dpi=200, bbox_inches="tight")
+        fig.savefig(f"{stem}.{ext}", dpi=400, bbox_inches="tight")
         paths.append(f"{stem}.{ext}")
     plt.close(fig)
     with open(f"{stem}.tex", "w") as f:

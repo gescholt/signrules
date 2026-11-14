@@ -41,6 +41,13 @@ references:
     year: 2026
     url: "https://arxiv.org/abs/2609.09286"
   - type: article
+    title: "Sign rules and the classification of Lotka-Volterra sign patterns with at most six species"
+    authors:
+      - family-names: Scholten
+        given-names: Georgy
+    year: 2026
+    notes: "draft; states the rules R1-R8 and reports the screens this package runs"
+  - type: article
     title: "Tropical certificates of coexistence for Lotka-Volterra sign patterns"
     authors:
       - family-names: Scholten
