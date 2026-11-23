@@ -5,13 +5,15 @@ The Graphviz and matplotlib figures of the sign-rule notes, in `docs/figures/`.
 Every figure is generated; no label is typed by hand. Regenerate all of them with
 
 ```bash
-python docs/figures/make_figures.py     # dictionary, tope, zblock, balanced
-python docs/figures/make_graphs.py      # certificate_*, search_tree_*, completion_sd
-python docs/figures/make_diagrams.py    # algorithm, sign_rules
+uv run python docs/figures/make_figures.py     # dictionary, tope, zblock, balanced
+uv run python docs/figures/make_graphs.py      # certificate_*, search_tree_*, completion_sd
+uv run python docs/figures/make_diagrams.py    # algorithm, sign_rules
+uv run python docs/figures/make_screenshots.py # app_A-e, app_A-e_verdict (the README; needs cairosvg)
 ```
 
 | file | shows | made by |
 |---|---|---|
+| `app_A-e.png`, `app_A-e_verdict.png` | the app on the pattern A-e: the editor, and the verdict screen after `r` | `make_screenshots.py` |
 | `algorithm.*` | one run of `complete()`: initial signs → propagation to a fixed point → ⊥ or branch | `make_diagrams.py` |
 | `sign_rules.*` | the rules grouped by the hypothesis they use, new ones highlighted, the retired R4 and R6 dotted | `make_diagrams.py` |
 | `dictionary.*` | a Plücker coordinate $p_S$ of $[\operatorname{diag}(a)\,\|\,B]$ collapsing to a minor of $B$ | `make_figures.py` — `fig_dictionary(eco, S)` |

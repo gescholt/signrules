@@ -77,7 +77,8 @@ R8  real_eig       if a twist s and a permutation σ ≠ id make S B P_σ a Z-ma
                    singular for some t₁ > 0 and −t₁ is an eigenvalue of B X.  With
                    one wrong sign D_0 is still an M-matrix when k is even.)
 
-R7 and R8 are not in the papers; R1–R6 correspond to Çelik–Isoldi–Portakal–Zucal, "Stable Coexistence in
+Sources.  R1 and R2n are the algorithm of Çelik–Haas–Scholten–Wang–Zucal (Ann. Comb. 2026).  R7 and R8 are
+new (not in the papers).  R2–R6 correspond to Çelik–Isoldi–Portakal–Zucal, "Stable Coexistence in
 Ecologies and Games" (arXiv:2609.09286) as follows: R3 ↔ Theorems 3.1–3.2, R4 ↔ Theorems 3.4–3.6 and the
 Schur steps of Lemmas 3.8–3.10, R2/R5/R6 ↔ the Cramer, Laplace and "forced
 sign" steps inside those proofs.

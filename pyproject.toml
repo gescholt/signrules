@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "signrules"
-version = "0.5.0"
+version = "0.5.1"
 description = "Sign completion on the ecological Grassmannian: rules that prove Lotka-Volterra sign patterns impossible, with machine certificates and an independent replay checker"
 readme = "README.md"
 license = "MIT"
@@ -30,10 +30,11 @@ dependencies = [
     "matplotlib>=3.7",     # certificate and completion drawings (gvrender, treeplot); the palette of style.py
     "networkx>=3.0",       # tree layout in treeplot
     "rich>=13.0",          # the dashboard and the verdict of the signrules command
+    "textual>=1.0",        # the app: plain `signrules`, `signrules edit`
 ]
 
 [project.optional-dependencies]
-live = ["questionary>=2.0", "textual>=1.0"]  # the menus and the pattern editor (signrules edit)
+live = ["questionary>=2.0"]                  # arrow-key menus of `signrules run` without a pattern
 html = ["plotly>=5.0"]                        # interactive search-tree page (save_search_tree_html)
 all = ["signrules[live,html]"]
 dev = ["pytest>=7.0", "pytest-timeout>=2.0"]

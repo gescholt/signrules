@@ -8,7 +8,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   test:
-    # the suite with every extra, on the oldest and the newest supported Python
+    # the suite with every extra, on the oldest and the newest supported Python, from the lock file
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -16,28 +16,27 @@ jobs:
         python-version: ["3.10", "3.13"]
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: astral-sh/setup-uv@v10
         with:
           python-version: ${{ matrix.python-version }}
-          cache: pip
+          enable-cache: true
       - run: sudo apt-get install -y --no-install-recommends graphviz
-      - run: pip install -e ".[all,dev]"
-      - run: pytest -q
+      - run: uv sync --locked --all-extras
+      - run: uv run pytest -q
 
   wheel:
     # what a user gets: the built wheel, without extras and without Graphviz, passes the same suite
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v7
+      - uses: astral-sh/setup-uv@v10
         with:
           python-version: "3.12"
-          cache: pip
-      - run: pip install build twine pytest pytest-timeout
-      - run: python -m build
-      - run: twine check dist/*
-      - run: pip install dist/*.whl
+          enable-cache: true
+      - run: uv build
+      - run: uvx twine check dist/*
+      - run: uv venv /tmp/wheel-env && uv pip install --python /tmp/wheel-env dist/*.whl pytest pytest-timeout
       - name: The tests import the installed wheel, not the checkout
         run: |
           rm -rf signrules
-          pytest -q
+          /tmp/wheel-env/bin/pytest -q

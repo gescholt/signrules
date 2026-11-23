@@ -45,7 +45,7 @@ COMMANDS = {
              "the interaction network on the right in the style of the papers (pink free, blue obligate, dashed "
              "blue arrow i → j where i benefits from j, red line where both lose), and below them the root verdict "
              "and the library pattern it matches, recomputed after every change.  l opens the library, n changes "
-             "the number of species, r runs the search, e exports the network.  Needs the live extra (textual).",
+             "the number of species, r runs the search, e exports the network.",
              "signrules edit\n"
              "signrules edit --n 5\n"
              "signrules edit --preset A-e"),
@@ -361,13 +361,13 @@ def cmd_presets(args, ap) -> int:
 
 
 def cmd_edit(args, ap) -> int:
-    """``signrules edit``: open the full-screen app (needs the ``live`` extra)."""
+    """``signrules edit``: open the full-screen app."""
     if not _interactive():
         ap.error("the editor needs a terminal (stdin and stdout must be a tty)")
     try:
         from .editor import command_line, edit
     except ImportError:
-        ap.error("the editor needs textual:  pip install -e \".[live]\"  (or pip install textual)")
+        ap.error("the editor needs textual:  uv sync  (in a checkout) or  uv pip install textual")
     if args.preset or args.a or args.B or args.random:
         from .patterns import short_id
         eco = pattern_from_args(args, ap)

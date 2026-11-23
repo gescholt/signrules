@@ -7,7 +7,7 @@ Live terminal dashboard of one sign-completion search.
     signrules run                    # menus
 
 ``signrules-live`` is the same command.  The menus need questionary (the ``live`` extra,
-``pip install -e ".[live]"``).  Write ``--a=-1,...`` with ``=``: a value starting with ``-`` is otherwise read
+``uv sync --extra live``).  Write ``--a=-1,...`` with ``=``: a value starting with ``-`` is otherwise read
 as an option (or write the signs as ``+--``).  ``signrules.cli`` holds the command line, ``signrules.report``
 the verdict printed at the end.
 
@@ -313,7 +313,7 @@ def questionary_kit():
         import questionary
         from questionary import Choice, Separator, Style
     except ImportError:                                   # pragma: no cover
-        print("the interactive menus need questionary:  python -m pip install questionary  (or the [live] extra)")
+        print("the interactive menus need questionary:  uv sync --extra live  (or uv pip install questionary)")
         return None
     st = Style([("qmark", "fg:#5f87ff bold"), ("question", "bold"), ("pointer", "fg:#5f87ff bold"),
                 ("highlighted", "fg:#5f87ff bold"), ("selected", "fg:#5faf5f"), ("separator", "fg:#8a8a8a"),

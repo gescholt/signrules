@@ -522,3 +522,21 @@ with $s\cdot\mathbf a>0$ (the screen kills #2, #4, #7, #17, #21 and `parity_k2`)
 * Symmetry: relabeling ($\mathfrak S_n$) is used in the $n=5$ screen and, through the pattern
   stabilizer, inside the search (`symmetry=True`, §3); the sign torus acting on (pattern, orthant)
   pairs could shrink the enumeration further.
+
+## 9. Layout of the repository
+
+```
+signrules/
+  plucker_index.py, chirotope.py     minors of B <-> Plücker coordinates; 3-term Grassmann–Plücker propagation
+  rules.py, engine.py, search.py     rules R1–R8 (Ecology, Conflict); trigger-driven fixpoint; complete()
+  certificate.py, replay.py          derivation DAG of a kill or completion; independent replay of a certificate
+  symmetry.py                        the pattern's relabelling stabilizer, used inside the search
+  labels.py, style.py, gvrender.py, treeplot.py, treeview.py   the drawings and the HTML tree viewer
+  cli.py, report.py, livesearch.py   the signrules command, the verdict, the live dashboard
+  editor.py, network.py              the app (textual) and the interaction network as the \econet macro of the papers
+  screen.py, patterns.py, data/      extension screen; ELEVEN, PATTERNS, parsers; candidate lists and kills
+scripts/              reproduce the numbers of the table above
+tests/                conventions, soundness against random feasible-stable systems, golden search trees, replay
+docs/                 SIGNRULES.md, CHANGES.md, figures (with their generators), rule_ladder_table.tex
+.github/workflows/    pytest on Python 3.10 and 3.13
+```
