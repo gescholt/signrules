@@ -148,3 +148,21 @@ def test_probing_keeps_the_completions(name, probe):
     assert r1.nodes <= r0.nodes
     if name.startswith("S-a"):
         assert r0.root_conflict is None and r0.nodes > 0 and r1.root_conflict.startswith("failed-literal")
+
+
+def test_seed_changes_the_order_not_the_set():
+    # used downstream (feasible_ecologies: random coarse cells via complete(decide=..., max_completions=1, seed=k))
+    a = [1, -1, 1, -1]
+    B = [[1, -1, 1, 1], [1, 1, -1, 1], [-1, 1, 1, -1], [1, -1, 1, 1]]
+    eco = Ecology(a, B)
+    ref = sorted(map(tuple, complete(eco, keep_derivations=False).completions))
+    firsts = set()
+    for seed in range(4):
+        r = complete(eco, keep_derivations=False, seed=seed)
+        assert sorted(map(tuple, r.completions)) == ref
+        one = complete(eco, keep_derivations=False, seed=seed, max_completions=1)
+        assert len(one.completions) == 1 and tuple(one.completions[0]) in ref
+        firsts.add(tuple(one.completions[0]))
+    assert len(firsts) > 1
+    with pytest.raises(ValueError):
+        complete(eco, seed=0, symmetry=True)

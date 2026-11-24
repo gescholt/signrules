@@ -37,6 +37,7 @@ ordered); a step whose premises never become known fails.  Usage::
 from __future__ import annotations
 
 import ast
+import functools
 import re
 from dataclasses import dataclass, field
 from itertools import combinations, permutations
@@ -53,6 +54,20 @@ GP_RULE = "Grassmann–Plücker 3-term relation"
 
 class ReplayError(Exception):
     """A step or the conflict of a certificate does not follow; the message says which and why."""
+
+
+def _malformed_is_replay_error(method):
+    """A step that names bases, indices or rules that do not fit the pattern is a failed replay, not a crash:
+    ValueError, IndexError, KeyError and TypeError raised while checking it become ReplayError."""
+    @functools.wraps(method)
+    def wrapped(self, *args, **kw):
+        try:
+            return method(self, *args, **kw)
+        except ReplayError:
+            raise
+        except (ValueError, IndexError, KeyError, TypeError) as e:
+            raise ReplayError(f"malformed step ({type(e).__name__}: {e})") from e
+    return wrapped
 
 
 @dataclass
@@ -313,6 +328,7 @@ class Replayer:
 
     # ------------------------------------------------------------------ one step
 
+    @_malformed_is_replay_error
     def verify_step(self, S: Index, chi_sign: int, why: str, premises: Sequence[Index]):
         """Check that sign chi[S] = chi_sign follows by the rule ``why`` from the established signs, and record it."""
         key = self.key_of[S]
@@ -523,6 +539,7 @@ class Replayer:
     _SET_CONFLICT = re.compile(r"^(.*): det B_(\(.*?\)),(\(.*?\)) must be ([<>]) 0 but is ([<>]) 0$")
     _SUM_CONFLICT = re.compile(r"^(.*): every term is ([<>]) 0 but the sum must be ([<>]) 0$")
 
+    @_malformed_is_replay_error
     def verify_conflict(self, reason: str, premises: Sequence) -> str:
         """Check that ``reason`` is a contradiction with the established signs; returns the rule name."""
         if reason == "3-term Grassmann–Plücker relation":
@@ -661,6 +678,8 @@ class Replayer:
             rules[name] = rules.get(name, 0) + 1
         except ReplayError as e:
             return ReplayReport(False, str(e), done, rules, conflict)
+        except (ValueError, TypeError) as e:          # a step that is not (basis, sign, why, premises)
+            return ReplayReport(False, f"malformed step ({type(e).__name__}: {e})", done, rules, conflict)
         return ReplayReport(True, f"{done} steps and the conflict replayed", done, rules, conflict)
 
 

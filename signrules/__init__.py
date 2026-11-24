@@ -17,6 +17,13 @@ Typical use::
 
 See docs/SIGNRULES.md for the mathematics and rules.py for the rule catalogue.
 """
+from importlib.metadata import PackageNotFoundError, version as _version
+
+try:
+    __version__ = _version("signrules")
+except PackageNotFoundError:                  # imported from a checkout that was never installed
+    __version__ = "unknown"
+
 from .plucker_index import PluckerIndex, UNKNOWN, index
 from .chirotope import build_relations, build_relation_ids, propagate, violates
 from .rules import Ecology, Conflict

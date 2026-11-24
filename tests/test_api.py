@@ -79,15 +79,15 @@ def test_minor_signs_names_a_completion():
     assert 0 < len(partial) < len(m)
 
 
-def test_complete_has_no_seed_and_documents_the_two_groups():
+def test_complete_documents_the_two_groups():
     params = inspect.signature(complete).parameters
-    assert "seed" not in params
+    assert "seed" in params                     # random branch order; feasible_ecologies draws random cells with it
     doc = inspect.cleandoc(complete.__doc__)
     split = doc.index("For the ablations")
     assert doc.index("Parameters") < split
     for k in ("use", "max_nodes", "max_completions", "record_tree", "progress", "keep_derivations"):
         assert doc.index(f"\n{k} :") < split
-    for k in ("idle", "root_only", "stats", "engine", "branching", "probe", "symmetry", "decide", "assume"):
+    for k in ("idle", "root_only", "stats", "engine", "branching", "probe", "symmetry", "decide", "assume", "seed"):
         assert doc.index(f"\n{k} :") > split
 
 

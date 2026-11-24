@@ -34,6 +34,7 @@ reproduces the feasibility + weak-stability algorithm of the Annals paper
 (Çelik–Haas–Scholten–Wang–Zucal, Ann. Comb. 2026), and ``()`` runs the chirotope propagation alone.
 """
 
+import random
 import time
 from typing import Dict, List, Optional, Sequence, Tuple
 
@@ -137,7 +138,8 @@ def complete(eco: Ecology, use: Sequence[str] = Ecology.ALL_RULES,
              progress=None, engine: str = "trigger", branching: str = "conflict",
              probe=None, symmetry: bool = False, decide: Optional[Sequence[int]] = None,
              root_only: Sequence[str] = (), stats: bool = False,
-             assume: Optional[Dict[int, int]] = None, idle="auto") -> SearchResult:
+             assume: Optional[Dict[int, int]] = None, idle="auto",
+             seed: Optional[int] = None) -> SearchResult:
     """
     Complete the sign table of ``eco`` by propagation and branching.
 
@@ -180,6 +182,10 @@ def complete(eco: Ecology, use: Sequence[str] = Ecology.ALL_RULES,
         the root certificate is unchanged; the pruning below the root may be weaker.
     stats : count the runs, signs set and conflicts raised per rule, at the root and below
         (``result.rule_stats``; trigger engine)
+    seed : when given, the branch to try first at every node (+ or -) is drawn at random with this
+        seed, so ``max_completions=1`` returns a random completion (or, with ``decide``, a random coarse
+        cell) at the cost of one search.  The set of completions does not depend on it.  Not with
+        ``symmetry`` (its nogoods assume + first).
     engine : "trigger" (``engine.Engine``: re-run only the propagators whose bases changed, cheap
         rules first) or "sweep" (rerun every relation and rule until nothing changes).  Both reach
         the same fixed points, hence the same verdicts and completions; the rule that reports a
@@ -224,6 +230,9 @@ def complete(eco: Ecology, use: Sequence[str] = Ecology.ALL_RULES,
     decide_set = None if decide is None else set(decide)
     if engine != "trigger" and (root_only or stats):
         raise ValueError("root_only and stats need engine='trigger'")
+    if seed is not None and symmetry:
+        raise ValueError("seed (random branch order) cannot be combined with symmetry (its nogoods assume + first)")
+    value_rng = None if seed is None else random.Random(seed)
     relations = build_relation_ids(eco.n)
     if isinstance(idle, str):
         if idle != "auto":
@@ -369,7 +378,7 @@ def complete(eco: Ecology, use: Sequence[str] = Ecology.ALL_RULES,
         S = pick(table, unknown)
         if record_tree:
             result.tree[node_id]["branch_on"] = bases[S]
-        first = 1
+        first = 1 if value_rng is None else value_rng.choice((1, -1))
         for sign in (first, -first):
             # the branch chi[S] = first is searched once we get to -first: below, g(branches) => not g(chi[S] = first)
             child_nogoods = nogoods + ((tuple(branch_ids), S),) if sign == -first and result.symmetry else nogoods

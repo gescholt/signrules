@@ -198,3 +198,12 @@ def test_keyboard_interrupt_keeps_the_partial_result():
     res = complete(Ecology(a, B), use=("R1", "R2n"), progress=interrupt)
     assert res.interrupted and res.stopped and 0 < len(res.completions) < 64
     assert "stopped early" in res.summary()
+
+
+def test_version(capsys):
+    import signrules
+    from importlib.metadata import version
+    assert signrules.__version__ == version("signrules")
+    with pytest.raises(SystemExit):
+        cli.main(["--version"])
+    assert capsys.readouterr().out.strip() == f"signrules {signrules.__version__}"

@@ -55,7 +55,7 @@ def test_r8_parity_pattern_replays():
 
 def test_tampered_certificates_fail():
     from signrules.patterns import ELEVEN
-    for name, (a, B) in list(ELEVEN.items())[:4]:
+    for name, (a, B) in ELEVEN.items():
         eco, res, steps, prem = _kill(a, B)
         assert replay_certificate(a, B, steps, res.root_conflict, prem).ok
         for k in range(len(steps)):
@@ -98,3 +98,19 @@ def test_a_wrong_conflict_is_rejected():
     bogus = "R8 real eigenvalue s=(1, 1, 1) σ=(1, 2, 0): nonsense"
     assert not replay_certificate(a, B, steps, bogus, []).ok
     assert not replay_certificate(a, B, steps, "R1 det B > 0: det B_(0, 1, 2),(0, 1, 2) must be > 0 but is < 0", []).ok
+
+
+def test_malformed_steps_fail_the_replay_instead_of_crashing():
+    from signrules.patterns import ELEVEN
+    from signrules.replay import Replayer, ReplayError
+    a, B = ELEVEN["S-c {0,1}|{2,3}, {2,3} obligate, a01=(+,+)"]
+    eco, res, steps, prem = _kill(a, B)
+    k, (S, sign, why, p) = next((k, st) for k, st in enumerate(steps) if st[2].startswith("R2"))
+    bad = list(steps)
+    bad[k] = (S, sign, why.replace("x*_2", "x*_9"), p)            # j not in J
+    rep = replay_certificate(a, B, bad, res.root_conflict, prem)
+    assert not rep.ok and "malformed" in rep.message
+    rep = replay_certificate(a, B, [steps[0][:3]] + list(steps[1:]), res.root_conflict, prem)   # wrong arity
+    assert not rep.ok and "malformed" in rep.message
+    with pytest.raises(ReplayError):                                 # a GP step without its relation
+        Replayer(a, B).verify_step((0, 4, 6, 7), 1, "Grassmann–Plücker 3-term relation", [])

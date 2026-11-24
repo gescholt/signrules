@@ -40,3 +40,18 @@ jobs:
         run: |
           rm -rf signrules
           /tmp/wheel-env/bin/pytest -q
+
+  install:
+    # the README's one-line install, from this commit on GitHub: no checkout, no lock file
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: astral-sh/setup-uv@v10
+        with:
+          python-version: "3.12"
+      - name: uvx --from git+…@sha signrules
+        run: |
+          SRC="git+${{ github.server_url }}/${{ github.repository }}@${{ github.sha }}"
+          uvx --from "$SRC" signrules --version
+          uvx --from "$SRC" signrules run --preset A-e --plain | tee out.txt
+          grep -qi "impossible" out.txt

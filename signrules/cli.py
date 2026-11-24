@@ -421,6 +421,8 @@ def build_parser(full: bool = False) -> argparse.ArgumentParser:
         prog="signrules", description=DESCRIPTION, formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="With no command, in a terminal: the full-screen app (pattern library, matrix editor, rules, "
                "search, verdict; every action is a key).  Run 'signrules <command> --help' for the options of a command.")
+    from . import __version__
+    ap.add_argument("--version", action="version", version=f"signrules {__version__}")
     sub = ap.add_subparsers(dest="command", title="commands", metavar="<command>")
     for name, (summary, description, examples) in COMMANDS.items():
         sp = sub.add_parser(name, help=summary, description=description or screen.__doc__,
