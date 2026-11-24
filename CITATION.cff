@@ -3,7 +3,7 @@ message: "If you use this software, please cite it together with the two papers 
 title: "signrules: sign completion on the ecological Grassmannian"
 type: software
 version: 0.5.3
-date-released: 2026-11-23
+date-released: 2026-11-24
 authors:
   - family-names: Scholten
     given-names: Georgy
