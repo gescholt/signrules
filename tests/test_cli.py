@@ -203,7 +203,7 @@ def test_keyboard_interrupt_keeps_the_partial_result():
 def test_version(capsys):
     import signrules
     from importlib.metadata import version
-    assert signrules.__version__ == version("signrules")
+    assert signrules.__version__ == version("ecological_sign_rules")
     with pytest.raises(SystemExit):
         cli.main(["--version"])
     assert capsys.readouterr().out.strip() == f"signrules {signrules.__version__}"

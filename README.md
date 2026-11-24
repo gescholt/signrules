@@ -14,11 +14,13 @@ otherwise. `signrules` takes a pattern and searches for a proof that it is impos
 ## Start here
 
 ```bash
-uv tool install git+https://github.com/gescholt/signrules     # installs the signrules command (Python 3.10 or later)
+uv tool install ecological_sign_rules     # installs the signrules command (Python 3.10 or later)
 signrules
 ```
 
-Without installing: `uvx --from git+https://github.com/gescholt/signrules signrules`. [uv](https://docs.astral.sh/uv/)
+Without installing: `uvx --from ecological_sign_rules signrules`. The package is `ecological_sign_rules` on
+[PyPI](https://pypi.org/project/ecological_sign_rules/); it imports as `signrules`. In another project:
+`uv add ecological_sign_rules`. The latest commit: `uv tool install git+https://github.com/gescholt/signrules`. [uv](https://docs.astral.sh/uv/)
 is installed with `curl -LsSf https://astral.sh/uv/install.sh | sh` (or `brew install uv`).
 
 <img src="docs/figures/app_A-e.png" width="760" alt="the signrules app: the sign matrix of the pattern A-e, its interaction network, and the verdict IMPOSSIBLE in the status line">
@@ -147,7 +149,7 @@ uv run signrules                 # the app from the checkout
 ```
 
 `uv sync` alone leaves out the extras `live` (questionary, the menus of `signrules run`) and `html` (plotly,
-the HTML tree viewer). Not on PyPI yet. Graphviz (`dot`; `apt install graphviz` or `brew install graphviz`)
+the HTML tree viewer). Graphviz (`dot`; `apt install graphviz` or `brew install graphviz`)
 is needed only for the drawings of certificates, completions and `write_search_tree`.
 
 ## Conventions

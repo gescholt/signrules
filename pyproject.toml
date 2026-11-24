@@ -3,8 +3,8 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "signrules"
-version = "0.5.2"
+name = "ecological_sign_rules"
+version = "0.5.3"
 description = "Sign completion on the ecological Grassmannian: rules that prove Lotka-Volterra sign patterns impossible, with machine certificates and an independent replay checker"
 readme = "README.md"
 license = "MIT"
@@ -36,7 +36,7 @@ dependencies = [
 [project.optional-dependencies]
 live = ["questionary>=2.0"]                  # arrow-key menus of `signrules run` without a pattern
 html = ["plotly>=5.0"]                        # interactive search-tree page (save_search_tree_html)
-all = ["signrules[live,html]"]
+all = ["ecological_sign_rules[live,html]"]
 dev = ["pytest>=7.0", "pytest-timeout>=2.0"]
 
 # `uv sync` installs the package and this group; `uv sync --all-extras` adds the app and the HTML viewer

@@ -20,7 +20,7 @@ See docs/SIGNRULES.md for the mathematics and rules.py for the rule catalogue.
 from importlib.metadata import PackageNotFoundError, version as _version
 
 try:
-    __version__ = _version("signrules")
+    __version__ = _version("ecological_sign_rules")
 except PackageNotFoundError:                  # imported from a checkout that was never installed
     __version__ = "unknown"
 
