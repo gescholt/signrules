@@ -18,7 +18,7 @@ table to and from the dict {basis: sign} used in displays and tests.
 
 from functools import lru_cache
 from itertools import combinations, permutations
-from typing import Dict, List, Tuple, Sequence, Iterable, Optional
+from typing import Dict, List, Tuple, Sequence, Iterable
 
 import numpy as np
 
@@ -107,12 +107,6 @@ class PluckerIndex:
         """Sign of det B_{P,Q} (rows/cols sorted) from the chi table, or UNKNOWN."""
         i, eps = self.key_id(P, Q)
         return eps * self.a_factor(a_signs, P) * chi[i]
-
-    def chi_from_minor(self, a_signs: Sequence[int], P: Iterable[int], Q: Iterable[int],
-                       minor_sign: int) -> Tuple[Basis, int]:
-        """Basis and Plücker sign corresponding to a prescribed sign of det B_{P,Q}."""
-        S, eps = self.key(P, Q)
-        return S, eps * self.a_factor(a_signs, P) * minor_sign
 
     # ----- tables ---------------------------------------------------------------
 

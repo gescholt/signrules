@@ -14,8 +14,8 @@ status killed_root in signrules/data/n<n>/extension_screen.jsonl (24 and 41).  F
     python scripts/rule_ladder.py 4 5 --workers 8                  # JSONL + the LaTeX table
     python scripts/rule_ladder.py 4 5 6 --workers 8 --max-nodes 2000
 
-Writes signrules/data/rule_ladder.jsonl (one record per (n, rule set, pattern)) and
-docs/rule_ladder_table.tex (rows = rule sets, columns = root / search / open per n).
+Writes data/rule_ladder.jsonl (one record per (n, rule set, pattern)) and
+data/rule_ladder_table.tex (rows = rule sets, columns = root / search / open per n).
 """
 
 import json
@@ -28,6 +28,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 import numpy as np
 from signrules.data import DATA_DIR
+
+RECORDS = Path(__file__).resolve().parents[1] / "data"          # the records of the repository (not in the package)
 
 # R4 and R6 are subsumed by the other rules (docs/SIGNRULES.md "R4 and R6 are subsumed") and no longer in
 # the ladder (the rows (R1,R4), (R1,R6) of earlier versions were dropped).
@@ -97,8 +99,8 @@ def main():
     ap.add_argument("ns", type=int, nargs="+")
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--max-nodes", type=int, default=2000)
-    ap.add_argument("--out", default=str(DATA_DIR / "rule_ladder.jsonl"))
-    ap.add_argument("--tex", default=str(ROOT / "docs" / "rule_ladder_table.tex"))
+    ap.add_argument("--out", default=str(RECORDS / "rule_ladder.jsonl"))
+    ap.add_argument("--tex", default=str(RECORDS / "rule_ladder_table.tex"), help="the LaTeX table of the paper")
     ap.add_argument("--tex-only", action="store_true", help="rebuild the table from --out without rerunning the search")
     args = ap.parse_args()
     if args.tex_only:

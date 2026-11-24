@@ -40,7 +40,7 @@ CHOICE = "#222222"                 # a branch choice: dashed border in this colo
 BOTTOM = "#222222"                 # contradiction
 COMPLETION = "#2e7d32"
 STOPPED = "#b5b5b5"
-RULE_INK, RULE_EDGE = "#333333", "#9a9a9a"
+RULE_EDGE = "#9a9a9a"
 INK, GREY, LIGHT = "#222222", "#777777", "#dddddd"
 
 # highlight tints for subsets (not signs)

@@ -134,9 +134,9 @@ def _pairs_plus_benefactor(a):
 
 # Presets of the live search. "parity_k2" and "r8_*" are killed by R8 alone (the real eigenvalue of
 # benefactor-permutation patterns) and open under R1-R7; the next three are five-species patterns next to
-# proved-impossible ones ("kill #k" is the id in signrules/data/n5/killed_patterns.json); "n6_hard_*" are
-# six-species patterns that are possible, whose certificates of possibility (tropical witnesses, in the
-# repository feasible_ecologies) were the hardest to find.
+# proved-impossible ones ("kill #k" is the id in data/n5/killed_patterns.json of the repository); "n6_hard_*"
+# are six-species patterns that are possible, whose certificates of possibility (signrules.data.possible(6))
+# were the hardest to find.
 PATTERNS: Dict[str, Pattern] = {
     # even-k parity family with a fixed point: two obligate pairs plus one universal beneficiary (killed by R8 only)
     "parity_k2": parity_pattern(5, [[0, 1], [2, 3]], [4]),
@@ -160,7 +160,7 @@ PATTERNS: Dict[str, Pattern] = {
                                                       [1, 1, 1, 1, -1, 1], [1, 1, 1, -1, 1, 1], [-1, -1, -1, -1, -1, 1]]),
     "r8_n6_1593702241": _n6([1, -1, -1, -1, -1, 1], [[1, 1, -1, 1, 1, 1], [-1, 1, 1, 1, 1, 1], [1, -1, 1, 1, 1, 1],
                                                     [1, 1, 1, 1, -1, 1], [1, 1, 1, -1, 1, 1], [-1, -1, -1, -1, -1, 1]]),
-    # possible six-species patterns whose tropical witnesses (feasible_ecologies) were the hardest to find
+    # possible six-species patterns whose certificates of possibility were the hardest to find
     "n6_hard_1065088896": _n6([-1, -1, -1, -1, -1, -1], [[1, -1, 1, 1, 1, 1], [-1, 1, 1, 1, 1, 1], [1, 1, 1, -1, 1, 1],
                                                         [1, 1, -1, 1, 1, 1], [1, 1, 1, 1, 1, -1], [-1, -1, -1, -1, -1, 1]]),
     "n6_hard_1316222848": _n6([-1, -1, -1, -1, -1, -1], [[1, -1, 1, 1, 1, 1], [-1, 1, 1, 1, 1, 1], [1, 1, 1, -1, -1, 1],

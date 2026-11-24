@@ -15,11 +15,11 @@ complete(max_completions=1, max_nodes=20000).  Variants:
     drop4, drop6
 
     python scripts/rule_ablation.py 4 5 6 --variant all root46 drop46 --workers 8
-    python scripts/rule_ablation.py --compare signrules/data/rule_ablation/all.jsonl signrules/data/rule_ablation/root46.jsonl
+    python scripts/rule_ablation.py --compare data/rule_ablation/all.jsonl data/rule_ablation/root46.jsonl
     python scripts/rule_ablation.py 3 4 --census --max-nodes 3000 --workers 20
     python scripts/rule_ablation.py 5 --census --random 20000 --max-nodes 2000 --workers 20
 
-Writes signrules/data/rule_ablation/<variant>.jsonl, one record per pattern: status, nodes, conflicts,
+Writes data/rule_ablation/<variant>.jsonl, one record per pattern: status, nodes, conflicts,
 the hash of the first completion, seconds and the per-rule counts (runs, signs set, conflicts
 raised; at the root and below).  ``--compare`` joins two files on (n, name), lists every pattern
 whose verdict or tree differs, sums the seconds and the R4/R6 counts, and exits 1 on a changed
@@ -45,9 +45,13 @@ import argparse
 from multiprocessing import Pool
 
 import numpy as np
+from pathlib import Path
+
 from signrules.data import DATA_DIR
 
-OUT = DATA_DIR / "rule_ablation"
+RECORDS = Path(__file__).resolve().parents[1] / "data"          # the records of the repository (not in the package)
+
+OUT = RECORDS / "rule_ablation"
 ALL = ("R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8")
 VARIANTS = {                                 # idle=(): every variant really runs R4 and R6 where it names them
     "all": dict(use=ALL, root_only=(), idle=()),
@@ -218,7 +222,7 @@ def census(n, workers, max_nodes, max_completions, random_count, seed):
     Run every pattern under the full rule set and count the signs and conflicts that R4 and R6
     contribute: they sit at the highest priority levels, so each of their runs sees a table closed
     under GP, R1, R2, R5, R7, R8, and a nonzero count is a pattern where the other rules do not
-    subsume them.  Writes signrules/data/rule_ablation/census<n>[_random].jsonl and lists the offenders.
+    subsume them.  Writes data/rule_ablation/census<n>[_random].jsonl and lists the offenders.
     """
     OUT.mkdir(exist_ok=True)
     pats = census_patterns(n, random_count, seed)

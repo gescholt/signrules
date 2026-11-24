@@ -7,8 +7,7 @@ Interactive viewer of a sign-completion search tree: one self-contained HTML fil
     signrules tree --a=1,-1,-1 --B=1,1,1/-1,1,1/-1,-1,1 --rules R1,R2n --out tree.html
     signrules tree                                   # menu for the pattern (needs the ``live`` extra)
 
-``signrules-tree`` is the same command; ``signrules run --html FILE`` writes the same page after the
-dashboard.
+``signrules run --html FILE`` writes the same page after the dashboard.
 
 The page shows the binary search tree (edges red when the branch chose +, blue when it chose −;
 completions green, contradictions black squares framed in the colour of the rule that closed them,
@@ -36,14 +35,13 @@ file works offline and can be shared as it is.
 import html
 import itertools
 import json
-from typing import Dict, List, Optional, Sequence
+from typing import Dict, Optional, Sequence
 
 from . import labels as L
 from . import style
 from .certificate import _steps
-from .plucker_index import UNKNOWN
 from .rules import Ecology
-from .search import SearchResult, complete
+from .search import SearchResult
 
 
 def _coord(S) -> str:
@@ -140,14 +138,6 @@ def save_tree_viewer(eco: Ecology, result: SearchResult, path: str, use: Optiona
     """Write the self-contained HTML viewer of a recorded search tree to ``path``."""
     with open(path, "w", encoding="utf-8") as fh:
         fh.write(tree_viewer_html(eco, result, use))
-
-
-# --------------------------------------------------------------------------- command line
-
-def main(argv=None):
-    """``signrules-tree``: the same as ``signrules tree``."""
-    from .cli import tree_alias
-    return tree_alias(argv)
 
 
 _TEMPLATE = r"""<!doctype html>
@@ -559,6 +549,3 @@ window.addEventListener('resize', fit);
 </html>
 """
 
-
-if __name__ == "__main__":
-    main()

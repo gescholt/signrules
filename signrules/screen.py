@@ -19,8 +19,7 @@ impossible or trivial; ``run`` runs the sign rules (root, then branching) on eac
 
 The (n-1)-species impossible classes (``base``):
   census  every class of canonical_classes(n-1) on which complete() finds no completion; complete
-          when n-1 <= 4, since the rules and the tropical witnesses of the repository feasible_ecologies
-          decide every pattern there
+          when n-1 <= 4, since every pattern there is killed or certified possible (signrules.data.census(4))
   known   the 24 minimal impossible five-species classes, the killed_root rows of
           signrules/data/n5/extension_screen.jsonl (n = 6 only); complete, since the n = 5 screen
           decided every candidate
@@ -32,14 +31,14 @@ The (n-1)-species impossible classes (``base``):
 
 The output goes to signrules/data/n<n>/extension_screen.jsonl (``--out`` for another file): one record
 per candidate with ``code``, ``a``, ``B``, ``status`` (killed_root / killed_search / open / undecided),
-``info``, ``seconds``. What the rules leave open is decided by certificates of possibility outside this
-package (the tropical witnesses of the repository feasible_ecologies).
+``info``, ``seconds``. What the rules leave open is decided by the certificates of possibility of
+``signrules.data.possible(n)``; ``signrules verify`` checks both.
 """
 import argparse
 import json
 import time
 from multiprocessing import Pool
-from typing import List, Optional, Sequence, Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np
 
@@ -161,7 +160,7 @@ def run(n: int, base: Optional[str] = None, workers: int = 4, max_nodes: int = 2
 
 
 def add_arguments(ap: argparse.ArgumentParser) -> None:
-    """The options of the screen (shared by ``signrules screen`` and ``signrules-screen``)."""
+    """The options of the screen (``signrules screen``)."""
     ap.add_argument("n", type=int, help="number of species of the candidates (5 or 6)")
     ap.add_argument("--base", default=None, help="census | known | FILE (default: census for n <= 5, known for n = 6)")
     ap.add_argument("--workers", type=int, default=4, help="parallel processes (default 4)")
@@ -176,14 +175,3 @@ def run_args(args) -> None:
     from pathlib import Path
     run(args.n, args.base, args.workers, args.max_nodes, Path(args.out) if args.out else None, args.candidates_only)
 
-
-def main(argv: Optional[Sequence[str]] = None):
-    """Command line of the screen (``signrules-screen``, the same as ``signrules screen``)."""
-    ap = argparse.ArgumentParser(prog="signrules-screen", description=__doc__,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    add_arguments(ap)
-    run_args(ap.parse_args(argv))
-
-
-if __name__ == "__main__":
-    main()

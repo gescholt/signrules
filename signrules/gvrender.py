@@ -20,7 +20,6 @@ import shutil
 import subprocess
 from typing import Dict, List, Optional, Sequence, Tuple, Union
 
-import matplotlib
 from matplotlib.patches import FancyBboxPatch, Circle, FancyArrowPatch, Rectangle
 from matplotlib.path import Path as MplPath
 
@@ -134,12 +133,6 @@ class Diagram:
     def same_rank(self, nids: Sequence[str]) -> None:
         self.ranks.append(list(nids))
 
-    def hull(self, nids: Sequence[str], fill: str, label: Optional[str] = None, pad: float = 6.0,
-             edge: Optional[str] = None, size: Optional[float] = None) -> None:
-        """A pale rounded box behind the nodes ``nids`` (their bounding box after layout), e.g. a subtree."""
-        self.hulls.append(dict(nodes=list(nids), fill=fill, label=label, pad=pad, edge=edge,
-                               size=size or self.fontsize * 0.8))
-
     def legend_item(self, text: str, **node_style) -> None:
         self.legend.append((text, node_style))
 
@@ -147,11 +140,11 @@ class Diagram:
 
     def _dot_source(self, plain_labels: bool = False) -> str:
         """DOT for layout (empty fixed-size nodes) or, with ``plain_labels``, a human-readable export."""
-        g = [f'digraph G {{',
+        g = ['digraph G {',
              f'  graph [rankdir={self.rankdir}, nodesep={self.nodesep}, ranksep={self.ranksep}, '
              f'fontname="Helvetica", fontsize={self.fontsize}, dpi=72, compound=true];',
              f'  node [fontname="Helvetica", fontsize={self.fontsize}, style="rounded,filled"];',
-             f'  edge [arrowsize=0.6];']
+             '  edge [arrowsize=0.6];']
 
         def node_line(nid: str, nd: dict, indent: str) -> str:
             shape = {"round": "box", "box": "box", "circle": "circle", "plain": "plaintext"}[nd["shape"]]
@@ -170,7 +163,7 @@ class Diagram:
         def emit_cluster(cid: str, indent: str):
             c = self.clusters[cid]
             g.append(f'{indent}subgraph "cluster_{cid}" {{')
-            attrs = [f'style="rounded"', f'color="{c.get("color", style.LIGHT)}"', f'margin={c.get("margin", 8.0)}']
+            attrs = ['style="rounded"', f'color="{c.get("color", style.LIGHT)}"', f'margin={c.get("margin", 8.0)}']
             if c.get("label"):
                 w, _ = measure(c["label"], c["size"])
                 lab = L.convert(c["label"], "text").replace('"', "'") if plain_labels else "M" * max(1, int(w / (0.62 * c["size"])))

@@ -111,7 +111,6 @@ def plot_search_tree(eco: Ecology, result: SearchResult, ax=None, labels="auto",
 
     # hulls around repeated subtrees: subtrees are contiguous in x in this layout
     classes = repeated_subtrees(result, max_classes=repeats) if repeats else []
-    node_r = 0.5 * (size ** 0.5) / 30.0                       # rough node radius in data units
     for k, (ids, copies, sz, root) in enumerate(classes):
         for r in ids:
             pts = [pos[j] for j in subtree_ids(result, r)]

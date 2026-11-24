@@ -1,0 +1,7 @@
+# the source archive on PyPI: the package, its licence and citation; tests, scripts, docs and the
+# experiment records are in the repository and its Zenodo archive
+include LICENSE CITATION.cff README.md
+prune tests
+prune scripts
+prune docs
+prune data

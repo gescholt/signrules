@@ -579,7 +579,6 @@ class Replayer:
         m = self._SUM_CONFLICT.match(reason)
         if m:
             why = m.group(1)
-            target = 1 if m.group(3) == ">" else -1
             if self._R1C.match(why):
                 k = self.n - int(self._R1C.match(why).group(1))
                 self.check_sum_conflict(self.r1_terms(k), +1, None, "R1")

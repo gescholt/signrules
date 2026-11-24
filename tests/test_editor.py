@@ -114,7 +114,6 @@ def test_leave_actions_and_helpers():
 def test_run_inside_the_app(tmp_path, monkeypatch):
     """r runs the search on its own screen; the verdict appears; editor keys do nothing there; h writes HTML."""
     monkeypatch.chdir(tmp_path)
-    from signrules.editor import RunScreen
     seen = {}
 
     def look(app):

@@ -127,7 +127,10 @@ def verdict_panel(eco: Ecology, res: SearchResult, use: Sequence[str], closed: O
     word, why, meaning = verdict(res)
     colour = style.COMPLETION if word.startswith("NOT") else ("" if word == "UNDECIDED" else "bold")
     body = [Text.assemble((word, f"bold {colour}".strip()), "  ·  ", why)]
-    body.append(Text(f"{eco.name + ' · ' if eco.name else ''}{L.pattern(eco, 'plain')} · rules {', '.join(use) or 'none'}"
+    from .search import subsumed_rules
+    idle = set(subsumed_rules(use))                     # never run by default: subsumed by the others
+    active = [r for r in use if r not in idle]
+    body.append(Text(f"{eco.name + ' · ' if eco.name else ''}{L.pattern(eco, 'plain')} · rules {', '.join(active) or 'none'}"
                      f" · {res.seconds:.2f}s", style="dim"))
     body.append(Text(meaning, style="dim", overflow="fold"))
     if res.root_conflict:

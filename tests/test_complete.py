@@ -151,7 +151,7 @@ def test_probing_keeps_the_completions(name, probe):
 
 
 def test_seed_changes_the_order_not_the_set():
-    # used downstream (feasible_ecologies: random coarse cells via complete(decide=..., max_completions=1, seed=k))
+    # used downstream: random coarse cells via complete(decide=..., max_completions=1, seed=k)
     a = [1, -1, 1, -1]
     B = [[1, -1, 1, 1], [1, 1, -1, 1], [-1, 1, 1, -1], [1, -1, 1, 1]]
     eco = Ecology(a, B)

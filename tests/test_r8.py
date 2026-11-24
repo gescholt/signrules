@@ -1,7 +1,7 @@
 """
 R8 (real eigenvalue): the benefactor-permutation patterns (scripts/families.py, cases (c) and (d)).
 The statement is checked numerically, and R8 is checked never to kill an n = 3 pattern that
-R1-R7 leave open (all of those are certified possible by the tropical witnesses of feasible_ecologies).
+R1-R7 leave open (all of those are certified possible: signrules.data.census(4)).
 """
 import itertools
 
@@ -109,7 +109,7 @@ def test_one_wrong_sign_patterns_have_a_negative_real_eigenvalue(pattern):
 def test_one_wrong_sign_needs_even_cycles():
     """One wrong growth sign with k odd (obligate 3-cycle, one fixed point): R8 stays silent, and the
     pattern (all four species obligate, a 3-cycle under a species benefiting from everyone) is possible: it has a
-    tropical witness in feasible_ecologies."""
+    certificate of possibility in signrules.data.census(4)."""
     a, B = _flip(parity_pattern(4, [[0, 1, 2]], [3]), 3)              # (-,-,-,-), k = 1
     assert complete(Ecology(a, B), use=("R8",), max_nodes=0).root_conflict is None
     a, B = _flip(parity_pattern(5, [[0, 1], [2, 3]], [4]), 0)
@@ -134,7 +134,7 @@ def _twisted(a, B):
 
 
 def test_r8_with_one_wrong_sign_kills_nothing_open_at_n4():
-    """Every n = 4 class that R1-R7 leave open has a tropical witness (feasible_ecologies), so R8 must not fire on any of
+    """Every n = 4 class that R1-R7 leave open has a certificate of possibility (signrules.data.census(4)), so R8 must not fire on any of
     them (exhaustive over the 65,536 four-species patterns)."""
     rest = [r for r in Ecology.ALL_RULES if r != "R8"]
     fired = checked = 0

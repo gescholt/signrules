@@ -248,7 +248,6 @@ def _structured_diagram(eco: Ecology, d_, index: int, title, label_style: str, i
         title = _default_title(eco, f"Completion {index}") + [
             (f"{n_init} signs from the entries, {len(d_.branches)} branch choices, {len(steps_all)} forced", 9, style.GREY)]
     d = Diagram(title=title, nodesep=0.16, ranksep=0.3)
-    fs_small = d.fontsize * 0.68
 
     rows = []
     if initial_band:

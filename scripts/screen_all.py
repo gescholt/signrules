@@ -13,7 +13,7 @@ Output: one JSON line per ecology with a, B, code (20-bit encoding of the off-di
 signs), status ("killed" / "open") and info (the kill reason, or the number of signs still
 unknown after root propagation).  The default ``--out`` is signrules/data/n5/screen_results.jsonl (not
 shipped: 248,436 lines).  The run of 2026-09 with ``--rules R1,R2,R3,R4,R5,R6`` took about 100 CPU-minutes
-and killed 21 patterns (signrules/data/n5/killed_patterns.json); with R8 three more are killed.  Resumable.
+and killed 21 patterns (data/n5/killed_patterns.json); with R8 three more are killed.  Resumable.
 
     python scripts/screen_all.py --workers 2 --out results.jsonl --seconds 3000
     python scripts/screen_all.py --workers 2 --out results.jsonl --resume      # continue
@@ -29,7 +29,8 @@ from multiprocessing import Pool
 
 
 import numpy as np
-from signrules.data import DATA_DIR
+
+RECORDS = Path(__file__).resolve().parents[1] / "data"          # the records of the repository (not in the package)
 
 N = 5
 RULES = None                                                         # set from --rules; None = Ecology.ALL_RULES
@@ -113,7 +114,7 @@ def _root(job):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--workers", type=int, default=2)
-    ap.add_argument("--out", default=str(DATA_DIR / "n5" / "screen_results.jsonl"))
+    ap.add_argument("--out", default=str(RECORDS / "n5" / "screen_results.jsonl"))
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--resume", action="store_true", help="skip ecologies already present in --out")
     ap.add_argument("--seconds", type=float, default=None, help="stop cleanly after this many seconds")

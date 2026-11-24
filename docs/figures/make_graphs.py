@@ -11,7 +11,6 @@ and one open three-species pattern; every label on the drawings is generated fro
 
 from pathlib import Path
 
-import numpy as np
 
 from signrules.patterns import ELEVEN
 from signrules import Ecology, complete, write_certificate, write_search_tree, write_completion
@@ -35,8 +34,7 @@ ORIGINAL = dict(engine="sweep", branching="first")
 
 def main():
     # certificates: kills at the root under all rules
-    for key, name, stem in [("A-e", "competitor + obligate 3-cycle (Theorem 3.5)", "certificate_thm35"),
-                            ("A-a", "Figure 3(a) (Lemma 3.8)", "certificate_lemma38")]:
+    for key, name, stem in [("A-e", "competitor + obligate 3-cycle (Theorem 3.5)", "certificate_thm35")]:
         eco = pattern(key, name)
         res = complete(eco, **ORIGINAL)
         assert res.root_conflict, name
@@ -49,12 +47,6 @@ def main():
     write_search_tree(eco, res, str(OUT / "search_tree_sd"), use=CLASSICAL, completion_numbers=False)
     write_completion(eco, res, str(OUT / "completion_sd"), index=0)
     print("wrote search_tree_sd, completion_sd:", res.summary())
-
-    # an open three-species pattern: all rules, eight completions
-    eco = Ecology([1, -1, 1], np.array([[1, -1, 1], [1, 1, -1], [-1, 1, 1]]), "an open three-species pattern")
-    res = complete(eco, record_tree=True, **ORIGINAL)
-    write_search_tree(eco, res, str(OUT / "search_tree_n3"), use=Ecology.ALL_RULES)
-    print("wrote search_tree_n3:", res.summary())
 
 
 if __name__ == "__main__":

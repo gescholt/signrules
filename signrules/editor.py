@@ -16,8 +16,6 @@ set a sign (a click flips too); l opens the library, < and > (or 2–7, or n for
 number of species, u chooses the rules and the node limit, r runs the search on a screen with the live
 dashboard and then the verdict (where h writes the tree viewer and c the certificate drawing), e exports
 the network (png, pdf and the \\econet call), s shows the classification, ? shows the help, q quits.
-
-Needs textual (the ``live`` extra).
 """
 from typing import Dict, List, Optional, Sequence, Tuple
 
@@ -528,8 +526,7 @@ class ClassificationScreen(ModalScreen):
         intro = Text("Every impossible pattern on n species deletes to an impossible one on n − 1 (the deletion "
                      "lemma), so the candidates at n are the one-species extensions of the kills at n − 1.  The "
                      "rules kill the candidates below at the root; the others have certificates of possibility, so "
-                     "these kills are exactly the minimal impossible patterns (the certificates of possibility, tropical witnesses, are in "
-                     "the repository feasible_ecologies).\n", style="")
+                     "these kills are exactly the minimal impossible patterns (signrules verify checks it all).\n", style="")
         foot = Text("\nl opens the library, where every kill can be loaded (\"minimal impossible\" groups); "
                     "esc goes back.  Recomputing the screens takes minutes: signrules screen 5 / 6 in a shell.",
                     style="dim")

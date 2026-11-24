@@ -81,7 +81,7 @@ def test_minor_signs_names_a_completion():
 
 def test_complete_documents_the_two_groups():
     params = inspect.signature(complete).parameters
-    assert "seed" in params                     # random branch order; feasible_ecologies draws random cells with it
+    assert "seed" in params                     # random branch order (random completions or coarse cells)
     doc = inspect.cleandoc(complete.__doc__)
     split = doc.index("For the ablations")
     assert doc.index("Parameters") < split

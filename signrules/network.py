@@ -160,7 +160,6 @@ class _Canvas:
 
 def network_text(a: Sequence[int], B, width: int = 40, height: int = 16, legend: bool = True):
     """The network as a ``rich.text.Text`` of ``width × height`` cells (plus two legend lines)."""
-    from rich.text import Text
     n = len(a)
     cv = _Canvas(width, height)
     W, H = 2 * width, 4 * height                          # dots; a dot is about square in a terminal

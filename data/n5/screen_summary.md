@@ -1,8 +1,12 @@
 # Five-species screen: results
 
-`scripts/screen_all.py --rules R1,R2,R3,R4,R5,R6` ran chirotope propagation + rules R1–R6 at the root (no branching)
-on all 248,436 non-trivial five-species ecologies up to relabeling (count matches Meng et al. 2025; run of 2026-09,
-about 100 CPU-minutes on two cores). Theorem numbers refer to Çelik–Isoldi–Portakal–Zucal (arXiv:2609.09286).
+> The record of the exhaustive root screen under the rules R1–R6, made before R7 and R8 existed. Under the
+> current rules the same 21 patterns die (mostly through R7 and R2 instead of R4 and R6), and R8 kills three
+> more, 24 in all; `signrules verify` checks that these 24 are all. See docs/SIGNRULES.md §6.2–6.4.
+
+`scripts/screen_all.py --rules R1,R2,R3,R4,R5,R6` ran chirotope propagation and rules R1–R6 at the root (no
+branching) on all 248,436 non-trivial five-species ecologies up to relabeling (the count of Meng et al. 2025;
+about 100 CPU-minutes). Theorem numbers refer to Çelik–Isoldi–Portakal–Zucal (arXiv:2609.09286).
 
 **21 ecologies are proved impossible at the root**; the remaining 248,415 are not decided by root
 propagation. The 59 survivors with the fewest undetermined Plücker signs (≤110 of 252) all admit a
@@ -10,7 +14,7 @@ sign-consistent completion under branching, so no further kills come from the ch
 
 Meng et al. report an upper bound of 30 candidate impossible five-species ecologies (Fig. S3). All 21 kills
 here are theorems (the rules are sound). Rule R8, added later, kills a 22nd (`parity_k2`) and, with
-one wrong growth sign admitted (rule R8, docs/SIGNRULES.md §3 and §7 (d)), two more; the extension screen
+one wrong growth sign admitted (rule R8, docs/SIGNRULES.md §3 and §6.4 (d)), two more; the extension screen
 (`signrules screen 5`) shows that every other five-species ecology
 is possible: exactly 24 are impossible.
 

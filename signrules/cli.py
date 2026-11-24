@@ -7,8 +7,7 @@ The command ``signrules``: one entry point for the sign completion.
     signrules <command> --help        # --help-all adds the options kept for the ablations
 
 The commands and their one-line descriptions are ``COMMANDS``; the help, the menu and the README take
-them from there (a test checks the README's table against ``COMMANDS``).  The older entry points
-``signrules-live``, ``signrules-tree`` and ``signrules-screen`` are ``signrules run``, ``tree`` and ``screen``.
+them from there (a test checks the README's table against ``COMMANDS``).
 """
 import argparse
 import re
@@ -57,6 +56,16 @@ COMMANDS = {
                None,                                          # the docstring of signrules.screen
                "signrules screen 6 --candidates-only\n"
                "signrules screen 5 --workers 12 --out out/n5.jsonl"),
+    "verify": ("check the classification on four, five and six species: every pattern killed or certified possible",
+               "Check the classification from the data shipped with the package (signrules.data).  n = 4: every "
+               "class up to relabelling is in the census, and each is killed at the root or has a certificate of "
+               "possibility.  n = 5, 6: the deletion lemma, applied to the impossible classes on one species fewer, "
+               "gives exactly the shipped candidates, and each is killed at the root or certified possible.  Every "
+               "kill is redone and its certificate replayed by the independent checker; every certificate of "
+               "possibility, a rational matrix whose equilibrium x* = (1, ..., 1) must be stable, is checked in exact "
+               "arithmetic (signrules.possible).  Exit code 1 if anything fails.  About 15 seconds.",
+               "signrules verify          # n = 4, 5 and 6\n"
+               "signrules verify 5"),
 }
 
 KNOWN_RULES = tuple(Ecology.ALL_RULES) + ("R2n",)
@@ -367,7 +376,7 @@ def cmd_edit(args, ap) -> int:
     try:
         from .editor import command_line, edit
     except ImportError:
-        ap.error("the editor needs textual:  uv sync  (in a checkout) or  uv pip install textual")
+        ap.error("the editor needs textual, a dependency of the package: reinstall it (uv tool install --reinstall ecological_sign_rules)")
     if args.preset or args.a or args.B or args.random:
         from .patterns import short_id
         eco = pattern_from_args(args, ap)
@@ -404,8 +413,67 @@ def cmd_screen(args, ap) -> int:
     return 0
 
 
+def cmd_verify(args, ap) -> int:
+    """``signrules verify``: the classification on four, five and six species, from the shipped data alone."""
+    import time
+    import numpy as np
+    from rich.console import Console
+    from .data import census, possible, root_kills, screen_records
+    from .patterns import canonical, encode, trivial
+    from .possible import check_witness
+    from .replay import replay_kill
+    from .screen import candidates
+    con = Console(highlight=False)
+    if any(n not in (4, 5, 6) for n in args.n):
+        ap.error("the classification data covers n = 4, 5 and 6")
+
+    def replays(rows):
+        return [r["code"] for r in rows if not replay_kill(Ecology(r["a"], np.array(r["B"]))).ok]
+
+    def report(n, ok, line, problems, t0):
+        con.print(f"[{'green' if ok else 'red'}]n = {n}: {line}[/]  [dim]{time.time() - t0:.0f} s[/]")
+        for what, codes in problems:
+            if codes:
+                con.print(f"  [red]{what}:[/] {sorted(codes)[:20]}")
+        return ok
+
+    failed = False
+    for n in sorted(set(args.n)):
+        t0 = time.time()
+        if n == 4:
+            rows = census(4)
+            classes = {int(c) for c in np.unique(canonical(range(1 << 16), 4))}
+            killed = [r for r in rows if r["status"] == "killed_root"]
+            certs = [r for r in rows if r["status"] == "possible"]
+            forms = [int(c) for c in canonical([r["code"] for r in rows], 4)]   # the class of each row
+            problems = [("missing classes", classes - set(forms)),
+                        ("a class listed twice", {c for c in forms if forms.count(c) > 1}),
+                        ("code does not match the pattern", {r["code"] for r in rows if encode(r["a"], r["B"]) != r["code"]}),
+                        ("replay failed", replays(killed)),
+                        ("certificate failed", [r["code"] for r in certs if not check_witness(r)]),
+                        ("neither killed nor certified", [r["code"] for r in rows if r["status"] not in ("killed_root", "possible")])]
+            nontrivial = sum(not trivial(r["a"], r["B"]) for r in killed)
+            line = (f"all {len(classes)} classes = {len(killed)} impossible ({nontrivial} non-trivial) "
+                    f"+ {len(certs)} possible, every certificate checked")
+        else:
+            base = (census(4) if n == 5 else root_kills(5))
+            base = [(r["a"], np.array(r["B"])) for r in base
+                    if r.get("status", "killed_root") == "killed_root" and not trivial(r["a"], r["B"])]
+            _, _, cands = candidates(n, base)
+            screen = {r["code"] for r in screen_records(n)}
+            kills, certs = root_kills(n), possible(n)
+            problems = [("candidate list differs from the deletion lemma", set(cands) ^ screen),
+                        ("replay failed", replays(kills)),
+                        ("certificate failed", [r["code"] for r in certs if not check_witness(r)]),
+                        ("neither killed nor certified", screen - {r["code"] for r in kills} - {r["code"] for r in certs})]
+            line = (f"{len(screen)} candidates (deletion lemma, from the {len(base)} impossible classes on {n - 1}) "
+                    f"= {len(kills)} impossible + {len(certs)} possible, every certificate checked")
+        failed |= not report(n, not any(codes for _, codes in problems), line, problems, t0)
+    return 1 if failed else 0
+
+
 HANDLERS = {"run": cmd_run, "tree": cmd_tree, "replay": cmd_replay, "edit": cmd_edit, "presets": cmd_presets,
-            "screen": cmd_screen}
+            "screen": cmd_screen, "verify": cmd_verify}
 
 
 # --------------------------------------------------------------------------- the parser
@@ -464,6 +532,8 @@ def build_parser(full: bool = False) -> argparse.ArgumentParser:
             sp.add_argument("--long", action="store_true", help="the whole note of every preset (wrapped)")
         if name == "screen":
             screen.add_arguments(sp)
+        if name == "verify":
+            sp.add_argument("n", type=int, nargs="*", default=[4, 5, 6], help="numbers of species among 4, 5, 6 (default: all)")
     return ap
 
 
@@ -514,12 +584,3 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     args = ap.parse_args(_join_sign_values(argv))
     return HANDLERS[args.command](args, args._parser) or 0
 
-
-def run_alias(argv: Optional[Sequence[str]] = None) -> int:
-    """``signrules-live``."""
-    return main(["run", *(sys.argv[1:] if argv is None else argv)])
-
-
-def tree_alias(argv: Optional[Sequence[str]] = None) -> int:
-    """``signrules-tree``."""
-    return main(["tree", *(sys.argv[1:] if argv is None else argv)])

@@ -1,7 +1,6 @@
 """
 The flat sign table (a list indexed by basis id, UNKNOWN = 0) and the search statistics it must
-reproduce.  The golden numbers were recorded with the earlier dict-based table (feasible_ecologies
-history, 2026-10) before the change: same propagators, same priority levels, same branching order, hence the same trees.
+reproduce.  The golden numbers were recorded with the earlier dict-based table (2026-10) before the change: same propagators, same priority levels, same branching order, hence the same trees.
 """
 import json
 
@@ -29,7 +28,7 @@ GOLDEN_N4 = {
     'A-f super-predator + 3-cycle (Thm 3.6)': ((False, 31027, 4, 15512), (True, 0, 0, 0)),
 }
 # code -> (root kill, nodes, conflicts, completions, open signs after root propagation), all rules,
-# first completion, node limit 20000 (as scripts/extension_screen.py)
+# first completion, node limit 20000 (as signrules screen)
 GOLDEN_N5 = {
     1162680: (False, 51, 0, 1, 125),
     1539539: (False, 67, 0, 1, 141),
@@ -38,7 +37,7 @@ GOLDEN_N5 = {
     3636688: (False, 69, 0, 1, 125),
 }
 # the same for five open n = 6 patterns of signrules/data/n6/extension_screen.jsonl (recorded with
-# scripts/rule_ablation.py, variant "all"; the full 237-pattern record is signrules/data/rule_ablation/all.jsonl)
+# scripts/rule_ablation.py, variant "all"; the full 237-pattern record is data/rule_ablation/all.jsonl)
 GOLDEN_N6 = {
     15518791496: (False, 188, 29, 1, 723),
     1132328688: (False, 123, 0, 1, 588),

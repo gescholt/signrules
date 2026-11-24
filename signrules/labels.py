@@ -60,10 +60,6 @@ def sign_symbol(sign, fmt: str = "tex") -> str:
     return "+" if sign > 0 else MINUS
 
 
-def sign_word(sign) -> str:
-    return "positive" if sign > 0 else "negative"
-
-
 # --------------------------------------------------------------------------- format conversion
 
 _TEX_TO_HTML = [
@@ -296,6 +292,3 @@ def pattern(eco, fmt: str = "tex") -> str:
     """'$n=4$, $a=(+,-,-,-)$' — the data of a run, without the matrix."""
     return convert(rf"$n={eco.n}$, $\mathrm{{sign}}\,a={tex_signs(eco.a)}$", fmt)
 
-
-def rules_used(use: Sequence[str]) -> str:
-    return ", ".join(use)

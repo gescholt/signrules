@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ecological_sign_rules"
 version = "0.5.3"
-description = "Sign completion on the ecological Grassmannian: rules that prove Lotka-Volterra sign patterns impossible, with machine certificates and an independent replay checker"
+description = "Prove Lotka-Volterra sign patterns impossible, with machine certificates and an independent checker"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -16,6 +16,7 @@ keywords = ["Lotka-Volterra", "sign pattern", "qualitative stability", "mathemat
             "chirotope", "Grassmannian", "computer-assisted proof", "certificate"]
 classifiers = [
     "Development Status :: 4 - Beta",
+    "Environment :: Console",
     "Intended Audience :: Science/Research",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
@@ -24,6 +25,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 dependencies = [
     "numpy>=1.24",
@@ -35,29 +37,28 @@ dependencies = [
 
 [project.optional-dependencies]
 live = ["questionary>=2.0"]                  # arrow-key menus of `signrules run` without a pattern
-html = ["plotly>=5.0"]                        # interactive search-tree page (save_search_tree_html)
+html = ["plotly>=5.0"]                        # the plotly figure of a search tree (save_search_tree_html)
 all = ["ecological_sign_rules[live,html]"]
-dev = ["pytest>=7.0", "pytest-timeout>=2.0"]
 
-# `uv sync` installs the package and this group; `uv sync --all-extras` adds the app and the HTML viewer
+# `uv sync` installs the package and this group; `uv sync --all-extras` adds the extras
 [dependency-groups]
 dev = ["pytest>=7.0", "pytest-timeout>=2.0"]
 
 [project.scripts]
 signrules = "signrules.cli:main"
-signrules-live = "signrules.cli:run_alias"
-signrules-tree = "signrules.cli:tree_alias"
-signrules-screen = "signrules.screen:main"
 
 [project.urls]
 Repository = "https://github.com/gescholt/signrules"
 Documentation = "https://github.com/gescholt/signrules/blob/main/docs/SIGNRULES.md"
+Issues = "https://github.com/gescholt/signrules/issues"
+Changelog = "https://github.com/gescholt/signrules/blob/main/CHANGELOG.md"
+DOI = "https://doi.org/10.5281/zenodo.24214426"
 
 [tool.setuptools.packages.find]
 include = ["signrules*"]
 
 [tool.setuptools.package-data]
-signrules = ["data/**/*.jsonl", "data/**/*.json", "data/**/*.md"]
+signrules = ["data/n4/*.jsonl", "data/n5/*.jsonl", "data/n6/*.jsonl"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"

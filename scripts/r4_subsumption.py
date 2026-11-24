@@ -28,7 +28,7 @@ then: branching on that minor refutes the wrong side immediately, and the census
 (``scripts/rule_ablation.py --census``, ``tests/test_subsumption.py``) shows that the DFS, which decides small minors first, never even reaches such a table.
 
 A configuration that fails is printed; with ``--others`` the failing ones are retried under the full rule
-set on explicit patterns (R2, R3, R5 and R8 read the pattern).  Writes signrules/data/r4_subsumption/<n>_*.json.
+set on explicit patterns (R2, R3, R5 and R8 read the pattern).  Writes data/r4_subsumption/<n>_*.json.
 
     python scripts/r4_subsumption.py 3 4 --workers 8 --wlog --rules R1,R7 --others
     python scripts/r4_subsumption.py 5 --workers 16 --wlog --rules R1,R7 --others --patterns 256
@@ -42,13 +42,16 @@ from itertools import combinations, permutations, product
 from multiprocessing import Pool
 
 import numpy as np
-from signrules.data import DATA_DIR
+from pathlib import Path
+
+
+RECORDS = Path(__file__).resolve().parents[1] / "data"          # the records of the repository (not in the package)
 
 from signrules import Ecology, Conflict
 from signrules.engine import Engine
 from signrules.plucker_index import UNKNOWN
 
-OUT = DATA_DIR / "r4_subsumption"
+OUT = RECORDS / "r4_subsumption"
 
 
 def premises(eco, P, Q, sigma, case, dPP):

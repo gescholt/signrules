@@ -101,7 +101,7 @@ from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
 import numpy as np
 
-from .plucker_index import PluckerIndex, UNKNOWN, perm_sign, index, signed_perms
+from .plucker_index import UNKNOWN, perm_sign, index, signed_perms
 
 Index = Tuple[int, ...]
 MinorKey = Tuple[Index, Index]          # (rows, cols), both sorted

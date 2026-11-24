@@ -6,8 +6,8 @@ Live terminal dashboard of one sign-completion search.
     signrules run --random 5 --max-nodes 5000 --html tree.html   # a random pattern (--seed S to repeat one)
     signrules run                    # menus
 
-``signrules-live`` is the same command.  The menus need questionary (the ``live`` extra,
-``uv sync --extra live``).  Write ``--a=-1,...`` with ``=``: a value starting with ``-`` is otherwise read
+The menus need questionary (the ``live`` extra: ``uv tool install 'ecological_sign_rules[live]'``, or
+``uv sync --extra live`` in a checkout).  Write ``--a=-1,...`` with ``=``: a value starting with ``-`` is otherwise read
 as an option (or write the signs as ``+--``).  ``signrules.cli`` holds the command line, ``signrules.report``
 the verdict printed at the end.
 
@@ -30,7 +30,6 @@ What it shows, refreshed several times a second:
 * **events** — the latest completions, contradictions (with their rule) and new depth records.
 """
 
-import argparse
 import time
 from collections import Counter, deque
 from typing import Optional, Sequence
@@ -42,10 +41,9 @@ from rich.table import Table
 from rich.text import Text
 
 from . import labels as L
-from .patterns import TREE_NOTES, random_pattern  # re-exported: tests and scripts import it from here
+from .patterns import TREE_NOTES  # re-exported: tests and scripts import it from here
 from . import style
 from .rules import Ecology
-from .search import complete
 
 RULES = ["GP", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8"]
 POS, NEG = style.POS_LINE, style.NEG_LINE
@@ -301,7 +299,7 @@ def _group(name: str) -> str:
     if name.startswith("r8_") or name == "parity_k2":
         return "killed by R8 alone at the root, open under R1–R7"
     if name.startswith("n6_hard_"):
-        return "six species, possible: huge trees (certificates of possibility in feasible_ecologies)"
+        return "six species, possible: huge trees (certificate of possibility in signrules.data.possible(6))"
     if name[:2] in ("S-", "A-"):
         return "four species, proved impossible: killed at the root (R1,R2n gives a tree)"
     return "five species, open patterns near the kills: huge trees"
@@ -313,7 +311,7 @@ def questionary_kit():
         import questionary
         from questionary import Choice, Separator, Style
     except ImportError:                                   # pragma: no cover
-        print("the interactive menus need questionary:  uv sync --extra live  (or uv pip install questionary)")
+        print("the interactive menus need questionary:  uv tool install 'ecological_sign_rules[live]'  (in a checkout: uv sync --extra live)")
         return None
     st = Style([("qmark", "fg:#5f87ff bold"), ("question", "bold"), ("pointer", "fg:#5f87ff bold"),
                 ("highlighted", "fg:#5f87ff bold"), ("selected", "fg:#5faf5f"), ("separator", "fg:#8a8a8a"),
@@ -392,12 +390,3 @@ def _pick(presets: dict):
     out["html"] = questionary.text("File", default="tree.html", **kt).ask() if html else None
     return out
 
-
-def main(argv=None):
-    """``signrules-live``: the same as ``signrules run``."""
-    from .cli import run_alias
-    return run_alias(argv)
-
-
-if __name__ == "__main__":
-    main()

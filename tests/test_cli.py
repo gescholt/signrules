@@ -159,12 +159,10 @@ def test_screen_candidates(capsys):
     assert code == 0 and "83 non-trivial candidates" in cap.out
 
 
-def test_module_and_aliases_run():
-    for cmd in ([sys.executable, "-m", "signrules", "--help"],
-                [sys.executable, "-c", "from signrules.livesearch import main; main(['--preset', 'A-e', '--plain'])"],
-                [sys.executable, "-c", "from signrules.treeview import main; main(['--help'])"]):
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
-        assert r.returncode == 0, r.stderr
+def test_python_m_signrules_runs():
+    r = subprocess.run([sys.executable, "-m", "signrules", "run", "--preset", "A-e", "--plain"],
+                       capture_output=True, text=True, timeout=120)
+    assert r.returncode == 0, r.stderr
 
 
 def test_readme_command_table_matches_commands():
@@ -207,3 +205,10 @@ def test_version(capsys):
     with pytest.raises(SystemExit):
         cli.main(["--version"])
     assert capsys.readouterr().out.strip() == f"signrules {signrules.__version__}"
+
+
+def test_verify_decides_every_candidate(capsys):
+    code, cap = run(capsys, "verify", "5")
+    assert code == 0
+    out = " ".join(cap.out.split())
+    assert "83 candidates" in out and "= 24 impossible + 59 possible" in out

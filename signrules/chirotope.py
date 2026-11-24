@@ -22,7 +22,7 @@ from functools import lru_cache
 from itertools import combinations
 from typing import List, Optional, Tuple
 
-from .plucker_index import UNKNOWN, perm_sign, Basis, index
+from .plucker_index import perm_sign, Basis, index
 
 # A term is (basis1, basis2, coefficient) meaning coefficient * p_basis1 * p_basis2
 Term = Tuple[Basis, Basis, int]
@@ -61,12 +61,6 @@ def build_relation_ids(n: int) -> List[IdRelation]:
     """The relations of ``build_relations(n)``, in the same order, with basis ids."""
     bid = index(n).id
     return [tuple((bid[k1], bid[k2], c) for k1, k2, c in rel) for rel in build_relations(n)]
-
-
-def term_sign(chi: List[int], term: IdTerm) -> int:
-    """Sign of coef · p_k1 · p_k2 in the table, or UNKNOWN (0)."""
-    k1, k2, coef = term
-    return coef * chi[k1] * chi[k2]
 
 
 def propagate(chi: List[int], relations: List[IdRelation], log: Optional[list] = None,
